@@ -29,21 +29,23 @@ class _RegisterPageState extends State<RegisterPage> {
 
             CustomTextField(controller: passController, validator: (value) {}),
             ElevatedButton(
-              onPressed: ()  {
+              onPressed: () async {
                 if (formKey.currentState!.validate()) {
                   try {
-                      AuthServices().createUser(
+                    final message = await AuthServices().createUser(
                       email: emailController.text,
                       password: passController.text,
                       username: nameController.text,
                     );
-                    // final message = response['message'] ?? 'No message';
 
-                    // ScaffoldMessenger.of(
-                    //   context,
-                    // ).showSnackBar(SnackBar(content: Text(message)));
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(message)));
+                    //need to handle email already exist
+                    Navigator.pop(context);
                   } catch (e) {
-                    print(e.toString());
+                 
+                
                   }
                 }
               },

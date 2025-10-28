@@ -19,7 +19,7 @@ class Api {
       body: jsonEncode(body),
       headers: headers,
     );
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode <=299) {
       if (response.body.isEmpty) {
         throw Exception("Empty response body from server");
       }

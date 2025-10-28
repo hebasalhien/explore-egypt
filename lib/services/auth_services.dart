@@ -11,7 +11,9 @@ class AuthServices {
         uri: 'http://192.168.1.4:83/register.php',
         body: {'user_name': username, 'email': email, 'password': password},
       );
-      return data;
-    } catch (e) {}
+      return data["message"];
+    } catch (e) {
+      return e.toString();
+    }
   }
 }
