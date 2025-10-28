@@ -1,3 +1,4 @@
+import 'package:explore_egypt/views/register_page.dart';
 import 'package:explore_egypt/views/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
@@ -45,11 +46,27 @@ class _LoginPageState extends State<LoginPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  
-                }
+                if (formKey.currentState!.validate()) {}
               },
               child: Text('Login'),
+            ),
+            Row(
+              children: [
+                Text('don\'t have account?'),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return RegisterPage();
+                        },
+                      ),
+                    );
+                  },
+                  child: Text('Sign up'),
+                ),
+              ],
             ),
           ],
         ),
