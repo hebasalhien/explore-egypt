@@ -43,10 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ).showSnackBar(SnackBar(content: Text(message)));
                     //need to handle email already exist
                     Navigator.pop(context);
-                  } catch (e) {
-                 
-                
-                  }
+                  } catch (e) {} 
                 }
               },
               child: Text('sign up'),

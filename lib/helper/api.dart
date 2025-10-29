@@ -6,14 +6,14 @@ class Api {
   Future<dynamic> post({
     required String uri,
     @required dynamic body,
-    // @required String? token,
+    @required String? token,
   }) async {
     Map<String, String> headers = {
       'Content-Type': 'application/json',
     };
-    // if (token != null) {
-    //   headers.addAll({'Authorization': 'Bearer $token'});
-    // }
+    if (token != null) {
+      headers.addAll({'Authorization': 'Bearer $token'});
+    }
     http.Response response = await http.post(
       Uri.parse(uri),
       body: jsonEncode(body),

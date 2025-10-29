@@ -1,3 +1,6 @@
+import 'package:explore_egypt/services/auth_services.dart';
+import 'package:explore_egypt/services/token_storage_services.dart';
+import 'package:explore_egypt/views/home_page.dart';
 import 'package:explore_egypt/views/register_page.dart';
 import 'package:explore_egypt/views/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -45,8 +48,23 @@ class _LoginPageState extends State<LoginPage> {
               isObscure: true,
             ),
             ElevatedButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {}
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  try {
+                    Map<String, dynamic> data = await AuthServices().login(
+                      email: emailController.text,
+                      password: passController.text,
+                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(data['message'])));
+
+                  
+                  } catch (e) {
+                      throw Exception('Exception $e.');
+
+                  }
+                }
               },
               child: Text('Login'),
             ),
