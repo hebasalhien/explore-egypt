@@ -9,8 +9,8 @@ class AuthServices {
   }) async {
     try {
       Map<String, dynamic> data = await Api().post(
-        uri: 'http://192.168.1.7:83/register.php',
-        body: {'user_name': username, 'email': email, 'password': password},
+        uri: 'http://10.0.2.2:8081/register',
+        body: {'username': username, 'email': email, 'password': password},
       );
       return data["message"];
     } catch (e) {
@@ -24,11 +24,11 @@ class AuthServices {
   }) async {
     try {
       Map<String, dynamic> data = await Api().post(
-        uri: 'http://192.168.1.7:83/login.php',
+        uri: 'http://10.0.2.2:8081/login',
         body: {'email': email, 'password': password},
       );
       bool tokensSaved = await TokenStorageServices.saveAccessToken(
-        data['data']['token'],
+        data['accessToken'],
       );
       if (tokensSaved) {
         print('Login successful, tokens saved');
