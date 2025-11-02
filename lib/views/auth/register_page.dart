@@ -1,4 +1,4 @@
-import 'package:explore_egypt/services/auth_services.dart';
+import 'package:explore_egypt/utils/validators.dart';
 import 'package:explore_egypt/view_models/cubits/auth_cubit/auth_cubit.dart';
 import 'package:explore_egypt/views/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -41,16 +41,16 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 CustomTextField(
                   controller: nameController,
-                  validator: (value) {},
+                  validator: Validators.validateName,
                 ),
                 CustomTextField(
                   controller: emailController,
-                  validator: (value) {},
+                  validator: Validators.emailValidator,
                 ),
 
                 CustomTextField(
                   controller: passController,
-                  validator: (value) {},
+                  validator: Validators.passwordValidatore,
                 ),
                 ElevatedButton(
                   onPressed: () async {

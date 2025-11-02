@@ -1,4 +1,4 @@
-import 'package:explore_egypt/services/auth_services.dart';
+import 'package:explore_egypt/utils/validators.dart';
 import 'package:explore_egypt/view_models/cubits/auth_cubit/auth_cubit.dart';
 import 'package:explore_egypt/views/auth/register_page.dart';
 import 'package:explore_egypt/views/widgets/custom_text_field.dart';
@@ -43,21 +43,11 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 CustomTextField(
                   controller: emailController,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'required field';
-                    }
-                    return null;
-                  },
+                  validator: Validators.emailValidator,
                 ),
                 CustomTextField(
                   controller: passController,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'required field ';
-                    }
-                    return null;
-                  },
+                  validator: Validators.passwordValidatore,
                   isObscure: true,
                 ),
                 ElevatedButton(

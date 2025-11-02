@@ -9,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 void main() {
    final storageService = StorageServices();
   final apiService = ApiService();
-  final authService = AuthServices(apiService, storageService);
   runApp( MyApp(authService: AuthServices(apiService,storageService),));
 }
 
