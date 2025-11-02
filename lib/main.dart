@@ -1,19 +1,29 @@
-import 'package:explore_egypt/views/login_page.dart';
+import 'package:explore_egypt/services/api_service.dart';
+import 'package:explore_egypt/services/auth_services.dart';
+import 'package:explore_egypt/services/token_storage_services.dart';
+import 'package:explore_egypt/view_models/cubits/auth_cubit/auth_cubit.dart';
+import 'package:explore_egypt/views/auth/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
-  runApp(const MyApp());
+   final storageService = StorageServices();
+  final apiService = ApiService();
+  final authService = AuthServices(apiService, storageService);
+  runApp( MyApp(authService: AuthServices(apiService,storageService),));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+    final AuthServices authService;
+
+  const MyApp({super.key,required this.authService});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home:  LoginPage(),
+    return BlocProvider(
+      create: (context) => AuthCubit(authService),
+      child: MaterialApp(debugShowCheckedModeBanner: false, home: LoginPage()),
     );
   }
 }

@@ -1,18 +1,21 @@
-import 'package:explore_egypt/helper/api.dart';
+import 'package:explore_egypt/services/api_service.dart';
 import 'package:explore_egypt/services/token_storage_services.dart';
 
 class AuthServices {
+  final ApiService _apiService;
+  final StorageServices _storageServices;
+  AuthServices(this._apiService, this._storageServices);
   Future<dynamic> createUser({
     required String email,
     required String password,
     required String username,
   }) async {
     try {
-      Map<String, dynamic> data = await Api().post(
-        uri: 'http://10.0.2.2:8081/register',
-        body: {'username': username, 'email': email, 'password': password},
+      final response = await _apiService.dio.post(
+        'register',
+        data: {'email': email, 'username': username, 'password': password},
       );
-      return data["message"];
+      return response.data;
     } catch (e) {
       return e.toString();
     }
@@ -23,11 +26,12 @@ class AuthServices {
     required String password,
   }) async {
     try {
-      Map<String, dynamic> data = await Api().post(
-        uri: 'http://10.0.2.2:8081/login',
-        body: {'email': email, 'password': password},
+      final response = await _apiService.dio.post(
+        'login',
+        data: {'username': email, 'password': password},
       );
-      bool tokensSaved = await TokenStorageServices.saveAccessToken(
+      Map<String, dynamic> data = response.data;
+      bool tokensSaved = await _storageServices.saveAccessToken(
         data['accessToken'],
       );
       if (tokensSaved) {
@@ -38,8 +42,6 @@ class AuthServices {
         // Show error to user
         return false;
       }
-    } catch (e) {
-      throw Exception(e.toString());
-    }
+    } catch (e) {}
   }
 }
