@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:explore_egypt/services/auth_services.dart';
 import 'package:meta/meta.dart';
 

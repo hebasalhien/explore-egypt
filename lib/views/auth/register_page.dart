@@ -1,5 +1,7 @@
 import 'package:explore_egypt/utils/validators.dart';
 import 'package:explore_egypt/view_models/cubits/auth_cubit/auth_cubit.dart';
+import 'package:explore_egypt/views/widgets/custom_button.dart';
+import 'package:explore_egypt/views/widgets/custom_password_text_field.dart';
 import 'package:explore_egypt/views/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,21 +40,23 @@ class _RegisterPageState extends State<RegisterPage> {
             key: formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 20,
               children: [
                 CustomTextField(
                   controller: nameController,
                   validator: Validators.validateName,
+                  label: 'User name',
                 ),
                 CustomTextField(
                   controller: emailController,
                   validator: Validators.emailValidator,
+                  label: 'Email',
                 ),
 
-                CustomTextField(
+                CustomPasswordTextField(
                   controller: passController,
-                  validator: Validators.passwordValidatore,
                 ),
-                ElevatedButton(
+                CustomButton(
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
                       context.read<AuthCubit>().register(
@@ -62,7 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       );
                     }
                   },
-                  child: Text('sign up'),
+                  label: 'Sign Up',
                 ),
               ],
             ),
