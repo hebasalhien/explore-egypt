@@ -98,11 +98,15 @@ class _RegisterPageState extends State<RegisterPage> {
                           CustomButton(
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {
-                                context.read<AuthCubit>().register(
-                                  email: emailController.text,
-                                  username: nameController.text,
-                                  password: passController.text,
-                                );
+                                try {
+                                 await context.read<AuthCubit>().register(
+                                    email: emailController.text,
+                                    username: nameController.text,
+                                    password: passController.text,
+                                  );
+                                } on Exception catch (e) {
+                                  print(e.toString());
+                                }
                               }
                             },
                             label: 'Sign Up',

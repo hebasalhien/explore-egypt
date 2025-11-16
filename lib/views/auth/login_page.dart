@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                             CustomButton(
                               onPressed: () async {
                                 if (formKey.currentState!.validate()) {
-                                  context.read<AuthCubit>().login(
+                                 await context.read<AuthCubit>().login(
                                     email: emailController.text,
                                     password: passController.text,
                                   );

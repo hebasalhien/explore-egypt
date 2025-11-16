@@ -16,8 +16,11 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       final data = await _authServices.login(email: email, password: password);
       emit(AuthSuccess(data));
+    } on Exception catch (e) {
+      String errorMessage = e.toString().replaceFirst('Exception: ', '');
+      emit(AuthError(errorMessage));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError('An unexpected error occurred'));
     }
   }
 
@@ -34,8 +37,11 @@ class AuthCubit extends Cubit<AuthState> {
         username: username,
       );
       emit(AuthSuccess(data));
+    } on Exception catch (e) {
+      String errorMessage = e.toString().replaceFirst('Exception: ', '');
+      emit(AuthError(errorMessage));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError('An un expected error occured'));
     }
   }
 }

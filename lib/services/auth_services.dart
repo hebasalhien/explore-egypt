@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:explore_egypt/services/api_service.dart';
 import 'package:explore_egypt/services/token_storage_services.dart';
 
@@ -16,8 +17,23 @@ class AuthServices {
         data: {'email': email, 'username': username, 'password': password},
       );
       return response.data;
+    } on DioException catch (e) {
+      String errorMessage = 'Registeration faild';
+      if (e.response?.data != null) {
+        final responseData = e.response!.data;
+        if (responseData is Map<String, dynamic> &&
+            responseData.containsKey('error')) {
+          errorMessage = responseData['error'].toString();
+        } else if (e.type == DioExceptionType.connectionTimeout ||
+            e.type == DioExceptionType.receiveTimeout) {
+          errorMessage = 'Connection Timeout. Please try again.';
+        } else if (e.type == DioExceptionType.connectionError) {
+          errorMessage = 'No internet connection. Please check you network.';
+        }
+        throw Exception(errorMessage);
+      }
     } catch (e) {
-      return e.toString();
+      throw Exception('An unexpected error occurred');
     }
   }
 
@@ -28,7 +44,7 @@ class AuthServices {
     try {
       final response = await _apiService.dio.post(
         'login',
-        data: {'username': email, 'password': password},
+        data: {'email': email, 'password': password},
       );
       Map<String, dynamic> data = response.data;
       bool tokensSaved = await _storageServices.saveAccessToken(
@@ -42,6 +58,23 @@ class AuthServices {
         // Show error to user
         return false;
       }
-    } catch (e) {}
+    } on DioException catch (e) {
+      String errorMessage = 'Login faild';
+      if (e.response?.data != null) {
+        final responseData = e.response!.data;
+        if (responseData is Map<String, dynamic> &&
+            responseData.containsKey('error')) {
+          errorMessage = responseData['error'].toString();
+        }
+      } else if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        errorMessage = 'Connection Timeout. Please try again.';
+      } else if (e.type == DioExceptionType.connectionError) {
+        errorMessage = 'No internet connection. Please check you network.';
+      }
+      throw Exception(errorMessage);
+    } catch (e) {
+      throw Exception('An unexpected error occurred');
+    }
   }
 }
