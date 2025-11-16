@@ -24,8 +24,18 @@ class Validators {
     }
     return null;
   }
-  
-    static String? validateName(String? value) {
+
+  static String? validatePassConfirm(String? value, String Password) {
+    if (value == null || value.isEmpty) {
+      return 'Please confirm your password';
+    }
+    if (value != Password) {
+      return 'Passwords do not match';
+    }
+    return null;
+  }
+
+  static String? validateName(String? value) {
     if (value == null || value.isEmpty) {
       return 'Name is required';
     }

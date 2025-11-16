@@ -13,6 +13,6 @@ final class AuthSuccess extends AuthState {
 }
 
 final class AuthError extends AuthState {
-  final message;
+  final String message;
   AuthError(this.message);
 }
