@@ -1,3 +1,4 @@
+import 'package:explore_egypt/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -7,7 +8,7 @@ class CustomTextField extends StatelessWidget {
     this.isObscure = false,
     required this.validator,
     required this.label,
-    this.sufixIcon
+    this.sufixIcon,
   });
   final TextEditingController controller;
   final bool isObscure;
@@ -23,9 +24,18 @@ class CustomTextField extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
         ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: AppConstants.kPrimaryVariant, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: AppConstants.kErrorColor, width: 2),
+        ),
         hint: Text(label, style: TextStyle(fontSize: 16)),
         suffixIcon: sufixIcon,
-        fillColor: Color(0XFF9E9E9E),
+        fillColor: Color(0XFFF8F9F7),
+        filled: true,
       ),
       validator: validator,
     );

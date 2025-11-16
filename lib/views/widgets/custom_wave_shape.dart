@@ -1,13 +1,11 @@
 import 'package:explore_egypt/views/widgets/helpers/wave_clipper.dart';
 import 'package:explore_egypt/views/widgets/helpers/custom_wave_border.dart';
-import 'package:explore_egypt/views/widgets/helpers/wave_clipper.dart';
 import 'package:flutter/material.dart';
 
 class CustomWaveShape extends StatelessWidget {
   const CustomWaveShape({
-    super.key, required this.child,
+    super.key,
   });
-final Widget child;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,7 +24,6 @@ final Widget child;
         child: Container(
           height: double.infinity,
           color: Colors.white,
-        child: child,
         ),
       ),
     );

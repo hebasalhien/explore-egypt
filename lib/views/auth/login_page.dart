@@ -24,10 +24,18 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passController = TextEditingController();
 
   GlobalKey<FormState> formKey = GlobalKey();
+  @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    passController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
@@ -46,69 +54,89 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               BackGround(),
 
-              CustomWaveShape(
-                child: Form(
-                  key: formKey,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: 40,
-                      children: [
-                        Text(
-                          'Login',
-                          style: TextStyle(
-                            fontSize: 30,
-                            color: AppConstants.kPrimaryColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        CustomTextField(
-                          controller: emailController,
-                          validator: Validators.emailValidator,
-                          label: 'Email',
-                        ),
-                        CustomPasswordTextField(controller: passController),
-                        CustomButton(
-                          onPressed: () async {
-                            if (formKey.currentState!.validate()) {
-                              context.read<AuthCubit>().login(
-                                email: emailController.text,
-                                password: passController.text,
-                              );
-                            }
-                          },
-                          label: 'Login',
-                        ),
-                        Row(
+              CustomWaveShape(),
+               SingleChildScrollView(
+                 child: Padding(
+                   padding: const EdgeInsets.symmetric(horizontal: 16),
+                   child: Form(
+                     key: formKey,
+                     child: SizedBox(
+                      height: MediaQuery.sizeOf(context).height,
+                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          spacing: 20,
                           children: [
-                            Text('Don\'t have account?'),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return RegisterPage();
-                                    },
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                'Sign up',
-                                style: TextStyle(
-                                  color: AppConstants.kPrimaryColor,
-                                ),
+                            Text(
+                              'Login',
+                              style: TextStyle(
+                                fontSize: 30,
+                                color: AppConstants.kPrimaryColor,
+                                fontWeight: FontWeight.bold,
                               ),
+                            ),
+                            CustomTextField(
+                              controller: emailController,
+                              validator: Validators.emailValidator,
+                              label: 'Email',
+                            ),
+                            CustomPasswordTextField(controller: passController),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                        
+                              children: [
+                                TextButton(
+                                  onPressed: () {},
+                                  child: Text(
+                                    'Forget Password?',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            CustomButton(
+                              onPressed: () async {
+                                if (formKey.currentState!.validate()) {
+                                  context.read<AuthCubit>().login(
+                                    email: emailController.text,
+                                    password: passController.text,
+                                  );
+                                }
+                              },
+                              label: 'Login',
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('Don\'t have account?'),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return RegisterPage();
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    'Sign up',
+                                    style: TextStyle(
+                                      color: AppConstants.kPrimaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+                     ),
+                   ),
+                 ),
+               ),
             ],
           );
         },

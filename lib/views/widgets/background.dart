@@ -1,4 +1,3 @@
-
 import 'package:explore_egypt/utils/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -20,12 +19,13 @@ class BackGround extends StatelessWidget {
         ),
       ),
       child: Opacity(
-        opacity: 0.3,
+        opacity: 0.2,
         child: Image.asset(
           AppConstants.bgImage,
           fit: BoxFit.fill,
           colorBlendMode: BlendMode.multiply,
           height: double.infinity,
+          width: double.infinity,
         ),
       ),
     );
