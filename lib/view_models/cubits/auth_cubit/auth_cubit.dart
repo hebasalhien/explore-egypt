@@ -1,3 +1,5 @@
+import 'package:explore_egypt/models/user_model.dart';
+import 'package:explore_egypt/services/profile_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:explore_egypt/services/auth_services.dart';
 import 'package:meta/meta.dart';
@@ -6,7 +8,8 @@ part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthServices _authServices;
-  AuthCubit(this._authServices) : super(AuthInitial());
+  final ProfileService _profileService;
+  AuthCubit(this._authServices, this._profileService) : super(AuthInitial());
 
   Future<dynamic> login({
     required String email,
@@ -15,12 +18,14 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       final data = await _authServices.login(email: email, password: password);
-      emit(AuthSuccess(data));
+      final userData = await _profileService.getUserProfile();
+
+      emit(AuthSuccess(data,userData));
     } on Exception catch (e) {
       String errorMessage = e.toString().replaceFirst('Exception: ', '');
       emit(AuthError(errorMessage));
     } catch (e) {
-      emit(AuthError('An unexpected error occurred'));
+      emit(AuthError('An unexpected error occurred:$e'));
     }
   }
 
@@ -31,12 +36,14 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(AuthLoading());
     try {
+
       final data = await _authServices.createUser(
         email: email,
         password: password,
         username: username,
       );
-      emit(AuthSuccess(data));
+
+      emit(AuthSuccess(data,null));
     } on Exception catch (e) {
       String errorMessage = e.toString().replaceFirst('Exception: ', '');
       emit(AuthError(errorMessage));
@@ -44,4 +51,6 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError('An un expected error occured'));
     }
   }
+
+
 }

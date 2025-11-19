@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:explore_egypt/services/api_service.dart';
-import 'package:explore_egypt/services/token_storage_services.dart';
+import 'package:explore_egypt/services/storage_services.dart';
 
 class AuthServices {
   final ApiService _apiService;
@@ -16,6 +16,7 @@ class AuthServices {
         'register',
         data: {'email': email, 'username': username, 'password': password},
       );
+
       return response.data;
     } on DioException catch (e) {
       String errorMessage = 'Registeration faild';
@@ -30,8 +31,8 @@ class AuthServices {
         } else if (e.type == DioExceptionType.connectionError) {
           errorMessage = 'No internet connection. Please check you network.';
         }
-        throw Exception(errorMessage);
       }
+      throw Exception(errorMessage);
     } catch (e) {
       throw Exception('An unexpected error occurred');
     }
@@ -47,17 +48,8 @@ class AuthServices {
         data: {'email': email, 'password': password},
       );
       Map<String, dynamic> data = response.data;
-      bool tokensSaved = await _storageServices.saveAccessToken(
-        data['accessToken'],
-      );
-      if (tokensSaved) {
-        print('Login successful, tokens saved');
-        return data;
-      } else {
-        print('Login successful but failed to save tokens');
-        // Show error to user
-        return false;
-      }
+      await _storageServices.saveAccessToken(data['accessToken']);
+      return response.data;
     } on DioException catch (e) {
       String errorMessage = 'Login faild';
       if (e.response?.data != null) {
@@ -74,7 +66,7 @@ class AuthServices {
       }
       throw Exception(errorMessage);
     } catch (e) {
-      throw Exception('An unexpected error occurred');
+      throw Exception('An unexpected error occurred:$e');
     }
   }
 }

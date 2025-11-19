@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:explore_egypt/services/token_storage_services.dart';
+import 'package:explore_egypt/services/storage_services.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class ApiService {

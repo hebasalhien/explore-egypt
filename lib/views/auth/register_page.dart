@@ -43,6 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(state.data['message'])));
+            Navigator.pop(context);
           } else if (state is AuthError) {
             ScaffoldMessenger.of(
               context,
@@ -99,7 +100,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {
                                 try {
-                                 await context.read<AuthCubit>().register(
+                                  await context.read<AuthCubit>().register(
                                     email: emailController.text,
                                     username: nameController.text,
                                     password: passController.text,

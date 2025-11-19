@@ -1,7 +1,7 @@
 import 'package:explore_egypt/utils/constants.dart';
+import 'package:explore_egypt/utils/route_names.dart';
 import 'package:explore_egypt/utils/validators.dart';
 import 'package:explore_egypt/view_models/cubits/auth_cubit/auth_cubit.dart';
-import 'package:explore_egypt/views/auth/register_page.dart';
 import 'package:explore_egypt/views/widgets/background.dart';
 import 'package:explore_egypt/views/widgets/custom_button.dart';
 import 'package:explore_egypt/views/widgets/custom_password_text_field.dart';
@@ -26,9 +26,9 @@ class _LoginPageState extends State<LoginPage> {
   GlobalKey<FormState> formKey = GlobalKey();
   @override
   void dispose() {
-    super.dispose();
     emailController.dispose();
     passController.dispose();
+    super.dispose();
   }
 
   @override
@@ -42,6 +42,7 @@ class _LoginPageState extends State<LoginPage> {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(state.data['message'])));
+            Navigator.pushReplacementNamed(context, RouteNames.chatPage,arguments: {'username':state.user!.username});
           } else if (state is AuthError) {
             ScaffoldMessenger.of(
               context,
@@ -55,88 +56,84 @@ class _LoginPageState extends State<LoginPage> {
               BackGround(),
 
               CustomWaveShape(),
-               SingleChildScrollView(
-                 child: Padding(
-                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                   child: Form(
-                     key: formKey,
-                     child: SizedBox(
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Form(
+                    key: formKey,
+                    child: SizedBox(
                       height: MediaQuery.sizeOf(context).height,
-                       child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          spacing: 20,
-                          children: [
-                            Text(
-                              'Login',
-                              style: TextStyle(
-                                fontSize: 30,
-                                color: AppConstants.kPrimaryColor,
-                                fontWeight: FontWeight.bold,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: 20,
+                        children: [
+                          Text(
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 30,
+                              color: AppConstants.kPrimaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          CustomTextField(
+                            controller: emailController,
+                            validator: Validators.emailValidator,
+                            label: 'Email',
+                          ),
+                          CustomPasswordTextField(controller: passController),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+
+                            children: [
+                              TextButton(
+                                onPressed: () {},
+                                child: Text(
+                                  'Forget Password?',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ),
-                            ),
-                            CustomTextField(
-                              controller: emailController,
-                              validator: Validators.emailValidator,
-                              label: 'Email',
-                            ),
-                            CustomPasswordTextField(controller: passController),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                        
-                              children: [
-                                TextButton(
-                                  onPressed: () {},
-                                  child: Text(
-                                    'Forget Password?',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            CustomButton(
-                              onPressed: () async {
-                                if (formKey.currentState!.validate()) {
-                                 await context.read<AuthCubit>().login(
-                                    email: emailController.text,
-                                    password: passController.text,
+                            ],
+                          ),
+                          CustomButton(
+                            onPressed: () async {
+                              if (formKey.currentState!.validate()) {
+                                await context.read<AuthCubit>().login(
+                                  email: emailController.text,
+                                  password: passController.text,
+                                );
+                              }
+                            },
+                            label: 'Login',
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Don\'t have account?'),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    RouteNames.register,
                                   );
-                                }
-                              },
-                              label: 'Login',
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('Don\'t have account?'),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          return RegisterPage();
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    'Sign up',
-                                    style: TextStyle(
-                                      color: AppConstants.kPrimaryColor,
-                                    ),
+                                },
+                                child: Text(
+                                  'Sign up',
+                                  style: TextStyle(
+                                    color: AppConstants.kPrimaryColor,
                                   ),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                     ),
-                   ),
-                 ),
-               ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           );
         },
