@@ -20,7 +20,7 @@ class AuthCubit extends Cubit<AuthState> {
       final data = await _authServices.login(email: email, password: password);
       final userData = await _profileService.getUserProfile();
 
-      emit(AuthSuccess(data,userData));
+      emit(AuthSuccess(data, userData));
     } on Exception catch (e) {
       String errorMessage = e.toString().replaceFirst('Exception: ', '');
       emit(AuthError(errorMessage));
@@ -36,14 +36,13 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(AuthLoading());
     try {
-
       final data = await _authServices.createUser(
         email: email,
         password: password,
         username: username,
       );
 
-      emit(AuthSuccess(data,null));
+      emit(AuthSuccess(data, null));
     } on Exception catch (e) {
       String errorMessage = e.toString().replaceFirst('Exception: ', '');
       emit(AuthError(errorMessage));
@@ -52,5 +51,15 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-
+  Future<dynamic> logout() async {
+    try {
+      final data = await _authServices.logout();
+      emit(AuthLoggedOut(data));
+    } on Exception catch (e) {
+      String errorMessage = e.toString().replaceFirst('Exception: ', '');
+      emit(AuthError(errorMessage));
+    } catch (e) {
+      emit(AuthError('An un expected error occured'));
+    }
+  }
 }

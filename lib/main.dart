@@ -12,7 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   final storageService = StorageServices();
-  final apiService = ApiService();
+  final apiService = ApiService(storageService);
   final profileService = ProfileService(apiService, storageService);
   runApp(
     MyApp(
@@ -49,7 +49,9 @@ class MyApp extends StatelessWidget {
             case RouteNames.chatPage:
               final args = settings.arguments as Map<String, dynamic>?;
               return MaterialPageRoute(
-                builder: (_) => ChatPage(username: args?['username'] ?? 'User'),
+                builder: (_) => ChatPage(
+                  username: args?['username'] ?? 'User',
+                ),
               );
 
             default:

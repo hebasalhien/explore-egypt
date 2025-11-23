@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:explore_egypt/services/api_service.dart';
 import 'package:explore_egypt/services/storage_services.dart';
+import 'package:explore_egypt/utils/api_constants.dart';
 
 class AuthServices {
   final ApiService _apiService;
@@ -13,7 +14,7 @@ class AuthServices {
   }) async {
     try {
       final response = await _apiService.dio.post(
-        'register',
+        ApiConstants.register,
         data: {'email': email, 'username': username, 'password': password},
       );
 
@@ -43,11 +44,14 @@ class AuthServices {
     required String password,
   }) async {
     try {
+      print('enter login function');
+
       final response = await _apiService.dio.post(
-        'login',
+        ApiConstants.login,
         data: {'email': email, 'password': password},
       );
       Map<String, dynamic> data = response.data;
+      print('login function');
       await _storageServices.saveAccessToken(data['accessToken']);
       return response.data;
     } on DioException catch (e) {
@@ -68,5 +72,19 @@ class AuthServices {
     } catch (e) {
       throw Exception('An unexpected error occurred:$e');
     }
+  }
+
+  Future<dynamic> logout() async {
+    try {
+      final response = await _apiService.dio.post(ApiConstants.logout);
+      await _storageServices.deleteAllData();
+      return response.data;
+    } catch (e) {
+      throw ('An unexpected error occurred $e');
+    }
+  }
+
+  Future<bool> isLoggedIn() async {
+    return await _storageServices.isLoggedIn();
   }
 }

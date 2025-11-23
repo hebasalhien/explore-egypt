@@ -19,7 +19,7 @@ class StorageServices {
     }
   }
 
-  static Future<String?> getAccessToken() async {
+   Future<String?> getAccessToken() async {
     try {
       return await _storage.read(key: _accessTokenKey);
     } catch (e) {
@@ -60,6 +60,23 @@ class StorageServices {
     } catch (e) {
       print(e.toString());
       return null;
+    }
+  }
+
+  Future<dynamic> deleteAllData() async {
+    try {
+      await _storage.deleteAll();
+    } on Exception catch (e) {
+      throw ('faild to clear storage :$e');
+    }
+  }
+
+  Future<bool> isLoggedIn() async {
+    try {
+      final token = await _storage.read(key: _accessTokenKey);
+      return token != null;
+    } catch (e) {
+      return false;
     }
   }
 }

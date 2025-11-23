@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:explore_egypt/services/api_service.dart';
 
 class ChatServices {
