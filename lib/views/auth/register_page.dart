@@ -39,10 +39,12 @@ class _RegisterPageState extends State<RegisterPage> {
       backgroundColor: Colors.transparent,
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state is AuthSuccess) {
+          if (state is AuthRegisterSuccess) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(state.data['message'])));
+
+            Navigator.pop(context);
           } else if (state is AuthError) {
             ScaffoldMessenger.of(
               context,
@@ -98,15 +100,11 @@ class _RegisterPageState extends State<RegisterPage> {
                           CustomButton(
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {
-                                try {
-                                 await context.read<AuthCubit>().register(
-                                    email: emailController.text,
-                                    username: nameController.text,
-                                    password: passController.text,
-                                  );
-                                } on Exception catch (e) {
-                                  print(e.toString());
-                                }
+                                await context.read<AuthCubit>().register(
+                                  email: emailController.text,
+                                  username: nameController.text,
+                                  password: passController.text,
+                                );
                               }
                             },
                             label: 'Sign Up',
