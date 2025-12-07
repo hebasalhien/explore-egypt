@@ -25,11 +25,11 @@ class Validators {
     return null;
   }
 
-  static String? validatePassConfirm(String? value, String Password) {
+  static String? validatePassConfirm(String? value, String password) {
     if (value == null || value.isEmpty) {
       return 'Please confirm your password';
     }
-    if (value != Password) {
+    if (value != password) {
       return 'Passwords do not match';
     }
     return null;
@@ -48,6 +48,12 @@ class Validators {
       return 'Name must be less than 50 characters';
     }
 
+    return null;
+  }
+  static String? generalValidator(String? value){
+     if (value == null || value.isEmpty) {
+      return 'This field is required';
+    }
     return null;
   }
 }

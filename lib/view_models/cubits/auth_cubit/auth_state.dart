@@ -13,6 +13,11 @@ final class AuthSuccess extends AuthState {
   AuthSuccess(this.data, this.user);
 }
 
+final class AuthRegisterSuccess extends AuthState {
+  final Map<String, dynamic> data;
+  AuthRegisterSuccess(this.data);
+}
+
 final class AuthError extends AuthState {
   final String message;
   AuthError(this.message);

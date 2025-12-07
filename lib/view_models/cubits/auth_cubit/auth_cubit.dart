@@ -1,5 +1,6 @@
 import 'package:explore_egypt/models/user_model.dart';
 import 'package:explore_egypt/services/profile_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:explore_egypt/services/auth_services.dart';
 import 'package:meta/meta.dart';
@@ -42,7 +43,7 @@ class AuthCubit extends Cubit<AuthState> {
         username: username,
       );
 
-      emit(AuthSuccess(data, null));
+      emit(AuthRegisterSuccess(data));
     } on Exception catch (e) {
       String errorMessage = e.toString().replaceFirst('Exception: ', '');
       emit(AuthError(errorMessage));
@@ -54,6 +55,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<dynamic> logout() async {
     try {
       final data = await _authServices.logout();
+      debugPrint(data);
       emit(AuthLoggedOut(data));
     } on Exception catch (e) {
       String errorMessage = e.toString().replaceFirst('Exception: ', '');

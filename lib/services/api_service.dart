@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:explore_egypt/services/services_constatnts.dart';
+import 'package:explore_egypt/services/shared_pref_helper.dart';
 import 'package:explore_egypt/services/storage_services.dart';
 import 'package:explore_egypt/utils/api_constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class ApiService {
@@ -28,19 +31,21 @@ class ApiService {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await storageServices.getAccessToken();
+          final token = await SharedPrefHelper.getSecuredString(
+            ServicesConstants.userToken,
+          );
 
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
-          print("Logout headers: ${options.headers}");
+          debugPrint("Logout headers: ${options.headers}");
 
           handler.next(options);
         },
         onError: (error, handler) async {
           if (error.response?.statusCode == 401) {
             if (error.requestOptions.path == ApiConstants.refreshToken) {
-              await storageServices.deleteAllData();
+              await SharedPrefHelper.clearAlldata();
               return handler.next(error);
             }
 
@@ -55,11 +60,12 @@ class ApiService {
 
                 if (refreshResponse.statusCode == 200) {
                   // 👇 Get new token from response
-                  final newToken = refreshResponse.data['accessToken'];
+                  final newToken =
+                      refreshResponse.data[ServicesConstants.userToken];
 
                   if (newToken != null) {
                     // Save new token
-                    await storageServices.saveAccessToken(newToken);
+                    await SharedPrefHelper.setSecureString(ServicesConstants.userToken,newToken);
 
                     // Update header for retry
                     error.requestOptions.headers['Authorization'] =
@@ -82,12 +88,12 @@ class ApiService {
                 }
 
                 // Refresh failed
-                await storageServices.deleteAllData();
+                await SharedPrefHelper.clearAlldata();
                 _isRefreshing = false;
                 return handler.next(error);
               } catch (e) {
-                print('Token refresh error: $e');
-                await storageServices.deleteAllData();
+                debugPrint('Token refresh error: $e');
+                await SharedPrefHelper.clearAlldata();
                 _isRefreshing = false;
                 return handler.next(error);
               }

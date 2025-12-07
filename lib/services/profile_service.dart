@@ -14,7 +14,7 @@ class ProfileService {
       final userModel = UserModel.fromjson(response.data);
       await _storageServices.saveUser(userModel);
       return userModel;
-    } on DioException catch (e) {
+    } on DioException   {
       throw Exception('Failed to fetch profile');
     }catch (e) {
       throw Exception(e.toString());

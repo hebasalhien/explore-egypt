@@ -42,7 +42,11 @@ class _LoginPageState extends State<LoginPage> {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(state.data['message'])));
-            Navigator.pushReplacementNamed(context, RouteNames.chatPage,arguments: {'username':state.user!.username});
+            Navigator.pushReplacementNamed(
+              context,
+              RouteNames.chatPage,
+              arguments: {'username': state.user!.username},
+            );
           } else if (state is AuthError) {
             ScaffoldMessenger.of(
               context,
@@ -77,10 +81,13 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           CustomTextField(
                             controller: emailController,
-                            validator: Validators.emailValidator,
+                            validator: Validators.generalValidator,
                             label: 'Email',
                           ),
-                          CustomPasswordTextField(controller: passController),
+                          CustomPasswordTextField(
+                            controller: passController,
+                            validator: Validators.generalValidator,
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
 

@@ -29,13 +29,17 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   cupertino_icons: ^1.0.8
+  # Networking
   dio: ^5.9.0
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
+  # Secure Storage provides API to store data in secure storage.
   flutter_secure_storage: ^9.2.4
-  http: ^1.5.0
+  # Dio interceptor that logs network calls in a pretty, easy to read format.
   pretty_dio_logger: ^1.4.0
+  # reading and writing simple key-value pairs.
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_lints: ^5.0.0

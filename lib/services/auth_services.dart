@@ -1,7 +1,12 @@
+import 'dart:isolate';
+
 import 'package:dio/dio.dart';
 import 'package:explore_egypt/services/api_service.dart';
+import 'package:explore_egypt/services/services_constatnts.dart';
+import 'package:explore_egypt/services/shared_pref_helper.dart';
 import 'package:explore_egypt/services/storage_services.dart';
 import 'package:explore_egypt/utils/api_constants.dart';
+import 'package:flutter/widgets.dart';
 
 class AuthServices {
   final ApiService _apiService;
@@ -44,15 +49,17 @@ class AuthServices {
     required String password,
   }) async {
     try {
-      print('enter login function');
-
       final response = await _apiService.dio.post(
         ApiConstants.login,
         data: {'email': email, 'password': password},
       );
       Map<String, dynamic> data = response.data;
-      print('login function');
-      await _storageServices.saveAccessToken(data['accessToken']);
+      debugPrint('login function');
+      //await _storageServices.saveAccessToken(data[ServicesConstants.userToken]);
+      await SharedPrefHelper.setSecureString(
+        ServicesConstants.userToken,
+        data[ServicesConstants.userToken],
+      );
       return response.data;
     } on DioException catch (e) {
       String errorMessage = 'Login faild';
@@ -76,15 +83,15 @@ class AuthServices {
 
   Future<dynamic> logout() async {
     try {
-      final response = await _apiService.dio.post(ApiConstants.logout);
-      await _storageServices.deleteAllData();
-      return response.data;
+      await SharedPrefHelper.clearAlldata();
+      debugPrint('token deleted');
+      return 'user logged out successfully';
     } catch (e) {
       throw ('An unexpected error occurred $e');
     }
   }
 
-  Future<bool> isLoggedIn() async {
-    return await _storageServices.isLoggedIn();
-  }
+  // Future<bool> isLoggedIn() async {
+  //   return await _storageServices.isLoggedIn();
+  // }
 }

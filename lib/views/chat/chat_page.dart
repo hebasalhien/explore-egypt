@@ -9,11 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ChatPage extends StatefulWidget {
   final String username;
 
-  const ChatPage({
-    super.key,
-    required this.username,
-   
-  });
+  const ChatPage({super.key, required this.username});
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
@@ -32,6 +28,7 @@ class _ChatPageState extends State<ChatPage> {
                 onPressed: () async {
                   try {
                     await context.read<AuthCubit>().logout();
+
                     Navigator.pushReplacementNamed(context, RouteNames.login);
                   } on Exception catch (e) {
                     print('an unexpected error happen $e');
