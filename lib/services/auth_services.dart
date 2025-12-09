@@ -1,17 +1,13 @@
-import 'dart:isolate';
-
 import 'package:dio/dio.dart';
 import 'package:explore_egypt/services/api_service.dart';
 import 'package:explore_egypt/services/services_constatnts.dart';
 import 'package:explore_egypt/services/shared_pref_helper.dart';
-import 'package:explore_egypt/services/storage_services.dart';
 import 'package:explore_egypt/utils/api_constants.dart';
 import 'package:flutter/widgets.dart';
 
 class AuthServices {
   final ApiService _apiService;
-  final StorageServices _storageServices;
-  AuthServices(this._apiService, this._storageServices);
+  AuthServices(this._apiService );
   Future<dynamic> createUser({
     required String email,
     required String password,

@@ -44,8 +44,7 @@ class _LoginPageState extends State<LoginPage> {
             ).showSnackBar(SnackBar(content: Text(state.data['message'])));
             Navigator.pushReplacementNamed(
               context,
-              RouteNames.chatPage,
-              arguments: {'username': state.user!.username},
+              RouteNames.profilePage,
             );
           } else if (state is AuthError) {
             ScaffoldMessenger.of(

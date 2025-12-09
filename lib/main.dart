@@ -1,41 +1,29 @@
 import 'package:explore_egypt/services/api_service.dart';
 import 'package:explore_egypt/services/auth_services.dart';
 import 'package:explore_egypt/services/profile_service.dart';
-import 'package:explore_egypt/services/storage_services.dart';
 import 'package:explore_egypt/utils/route_names.dart';
 import 'package:explore_egypt/view_models/cubits/auth_cubit/auth_cubit.dart';
 import 'package:explore_egypt/views/auth/login_page.dart';
 import 'package:explore_egypt/views/auth/register_page.dart';
 import 'package:explore_egypt/views/chat/chat_page.dart';
+import 'package:explore_egypt/views/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
-  final storageService = StorageServices();
-  final apiService = ApiService(storageService);
-  final profileService = ProfileService(apiService, storageService);
-  runApp(
-    MyApp(
-      authService: AuthServices(apiService, storageService),
-      profileService: profileService,
-    ),
-  );
+  final apiService = ApiService();
+  runApp(MyApp(authService: AuthServices(apiService)));
 }
 
 class MyApp extends StatelessWidget {
   final AuthServices authService;
-  final ProfileService profileService;
-  const MyApp({
-    super.key,
-    required this.authService,
-    required this.profileService,
-  });
+  const MyApp({super.key, required this.authService});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthCubit(authService, profileService),
+      create: (context) => AuthCubit(authService),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         onGenerateRoute: (settings) {
@@ -47,12 +35,10 @@ class MyApp extends StatelessWidget {
               return MaterialPageRoute(builder: (_) => const RegisterPage());
 
             case RouteNames.chatPage:
-              final args = settings.arguments as Map<String, dynamic>?;
-              return MaterialPageRoute(
-                builder: (_) => ChatPage(
-                  username: args?['username'] ?? 'User',
-                ),
-              );
+              return MaterialPageRoute(builder: (_) => ChatPage());
+
+            case RouteNames.profilePage:
+              return MaterialPageRoute(builder: (_) => ProfilePage());
 
             default:
               return MaterialPageRoute(builder: (_) => const LoginPage());

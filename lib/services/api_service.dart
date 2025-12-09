@@ -1,16 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:explore_egypt/services/services_constatnts.dart';
 import 'package:explore_egypt/services/shared_pref_helper.dart';
-import 'package:explore_egypt/services/storage_services.dart';
 import 'package:explore_egypt/utils/api_constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class ApiService {
+  
   late Dio dio;
   bool _isRefreshing = false;
-  final StorageServices storageServices;
-  ApiService(this.storageServices) {
+  ApiService() {
     dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,

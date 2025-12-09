@@ -9,8 +9,8 @@ final class AuthLoading extends AuthState {}
 
 final class AuthSuccess extends AuthState {
   final Map<String, dynamic> data;
-  final UserModel? user;
-  AuthSuccess(this.data, this.user);
+
+  AuthSuccess(this.data);
 }
 
 final class AuthRegisterSuccess extends AuthState {

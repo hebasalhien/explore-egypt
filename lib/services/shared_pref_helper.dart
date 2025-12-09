@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -16,18 +18,19 @@ class SharedPrefHelper {
   /// remove all key and values from sharedPreferences.
   static clearAlldata() async {
     debugPrint('SharedPrefHelper : all data had been removed');
-     try {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences.clear();
-  } on PlatformException catch (e) {
-    if (e.code == 'channel-error') {
-      debugPrint('Ignored SharedPreferences channel-error (safe to ignore).');
-    } else {
-      rethrow;
+    try {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      await sharedPreferences.clear();
+    } on PlatformException catch (e) {
+      if (e.code == 'channel-error') {
+        debugPrint('Ignored SharedPreferences channel-error (safe to ignore).');
+      } else {
+        rethrow;
+      }
+    } catch (e) {
+      debugPrint('Other error: $e');
     }
-  } catch (e) {
-    print('Other error: $e');
-  }
   }
 
   /// save a [value] with a [key] in sharedPreferences.
@@ -50,6 +53,26 @@ class SharedPrefHelper {
         break;
       default:
         return null;
+    }
+  }
+
+  /// save an object [value] with a [key] in sharePrefrences.
+  static setObject(String key, Map<String, dynamic> value) async {
+    debugPrint(
+      'SharedPrefHelper : setObject with key : $key and value: $value ',
+    );
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final String userJson = jsonEncode(value); // Serialize to JSON string
+    await sharedPreferences.setString(key, userJson);
+  }
+
+  /// Gets an object value from sharedPrefrences with a given [key].
+  static getObject(String key) async {
+    debugPrint('SharedPrefHelper : get object with key : $key');
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? jsonString = sharedPreferences.getString(key);
+    if (jsonString != null) {
+      return jsonDecode(jsonString);
     }
   }
 
@@ -100,7 +123,9 @@ class SharedPrefHelper {
 
   //   Future<bool> isLoggedIn() async {
   //   try {
-  //     final token = await _storage.read(key: _accessTokenKey);
+  // const flutterSecureStorage = FlutterSecureStorage();
+
+  //     final token = await flutterSecureStorage.read(key: _accessTokenKey);
   //     return token != null;
   //   } catch (e) {
   //     return false;
