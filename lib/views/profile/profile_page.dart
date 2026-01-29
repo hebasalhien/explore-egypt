@@ -1,4 +1,4 @@
-import 'package:explore_egypt/view_models/cubits/profile_cubit/profile_cubit.dart';
+import 'package:explore_egypt/views/profile/cubit/profile_cubit/profile_cubit.dart';
 import 'package:explore_egypt/views/widgets/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

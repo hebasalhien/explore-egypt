@@ -1,6 +1,6 @@
 import 'package:explore_egypt/utils/constants.dart';
 import 'package:explore_egypt/utils/validators.dart';
-import 'package:explore_egypt/view_models/cubits/auth_cubit/auth_cubit.dart';
+import 'package:explore_egypt/views/auth/cubit/auth_cubit/auth_cubit.dart';
 import 'package:explore_egypt/views/widgets/background.dart';
 import 'package:explore_egypt/views/widgets/custom_button.dart';
 import 'package:explore_egypt/views/widgets/custom_password_text_field.dart';
