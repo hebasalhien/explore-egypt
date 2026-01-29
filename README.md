@@ -43,19 +43,27 @@ Cross-platform Flutter Graduation-Project app focused on basic authentication, p
       - auth_cubit/
         - auth_cubit.dart
         - auth_state.dart
-      - chat_cubit/
-        - chat_cubit.dart
-        - chat_state.dart
-      - profile_cubit/
-        - profile_cubit.dart
-        - profile_state.dart
+
+
   - views/
     - auth/
+      - cubit/
+        - auth_cubit/
+          - auth_cubit.dart
+          - auth_state.dart
       - login_page.dart
       - register_page.dart
     - chat/
+      - cubit/
+        - chat_cubit/
+          - chat_cubit.dart
+          - chat_state.dart
       - chat_page.dart
     - profile/
+      - cubit/
+        - profile_cubit/
+          - profile_cubit.dart
+          - profile_state.dart
       - profile_page.dart
     - widgets/
       - background.dart

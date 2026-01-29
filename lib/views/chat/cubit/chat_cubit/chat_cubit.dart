@@ -1,4 +1,3 @@
-import 'package:explore_egypt/models/user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 part 'chat_state.dart';
