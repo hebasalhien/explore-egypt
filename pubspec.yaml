@@ -29,16 +29,19 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   cupertino_icons: ^1.0.8
-  # Networking
+  ### handle http requests
   dio: ^5.9.0
   flutter:
     sdk: flutter
+  ### state management
   flutter_bloc: ^9.1.1
-  # Secure Storage provides API to store data in secure storage.
+  ### secure storage
   flutter_secure_storage: ^9.2.4
-  # Dio interceptor that logs network calls in a pretty, easy to read format.
+  ### svg support
+  flutter_svg: ^2.2.3
+  ### debugging dio requests
   pretty_dio_logger: ^1.4.0
-  # reading and writing simple key-value pairs.
+  ### local storage
   shared_preferences: ^2.5.3
 
 dev_dependencies:
@@ -58,6 +61,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/icons/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
   # For details regarding adding assets from package dependencies, see

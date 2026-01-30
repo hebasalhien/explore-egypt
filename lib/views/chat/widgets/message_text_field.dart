@@ -1,5 +1,6 @@
 import 'package:explore_egypt/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MessageTextField extends StatelessWidget {
   const MessageTextField({
@@ -13,28 +14,67 @@ class MessageTextField extends StatelessWidget {
   final VoidCallback onPressed;
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      onSubmitted: onSubmitted,
-
-      cursorColor: AppConstants.kPrimaryColor,
-      scrollPhysics: ScrollPhysics(parent: BouncingScrollPhysics()),
-      decoration: InputDecoration(
-        hint: Text('Message', style: TextStyle(fontSize: 22)),
-        contentPadding: EdgeInsets.all(10),
-        suffixIcon: IconButton(
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 64,
+                  spreadRadius: -4,
+                  offset: Offset(0, 14),
+                  color: AppConstants.kShadowColor.withAlpha(31),
+                ),
+                BoxShadow(
+                  blurRadius: 22,
+                  spreadRadius: -6,
+                  offset: Offset(0, 8),
+                  color: AppConstants.kShadowColor.withAlpha(31),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: controller,
+              onSubmitted: onSubmitted,
+            
+              cursorColor: AppConstants.kPrimaryColor,
+              decoration: InputDecoration(
+                
+                hint: Text('Generate a name of ...', style: TextStyle(fontSize: 22)),
+              
+                contentPadding: EdgeInsets.all(10),
+            
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color:Colors.white),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.white),
+            
+                ),
+            
+                
+              ),
+            ),
+          ),
+        ),
+ElevatedButton(
           onPressed: onPressed,
-          icon: Icon(Icons.send, color: AppConstants.kPrimaryColor, size: 30),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppConstants.kPrimaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: SvgPicture.asset(
+            AppConstants.sendIcon,
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppConstants.kPrimaryColor),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppConstants.kPrimaryColor),
-        ),
-      ),
+      ],
     );
   }
 }

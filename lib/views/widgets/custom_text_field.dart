@@ -35,7 +35,7 @@ class CustomTextField extends StatelessWidget {
         ),
         hint: Text(label, style: TextStyle(fontSize: 16)),
         suffixIcon: sufixIcon,
-        fillColor: Color(0XFFF8F9F7),
+        fillColor: AppConstants.kWhite,
         filled: true,
       ),
       validator: validator,

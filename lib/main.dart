@@ -6,7 +6,7 @@ import 'package:explore_egypt/views/auth/login_page.dart';
 import 'package:explore_egypt/views/auth/register_page.dart';
 import 'package:explore_egypt/views/chat/chat_page.dart';
 import 'package:explore_egypt/views/home/home_page.dart';
-import 'package:explore_egypt/views/main_page.dart';
+import 'package:explore_egypt/views/main/main_page.dart';
 import 'package:explore_egypt/views/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
