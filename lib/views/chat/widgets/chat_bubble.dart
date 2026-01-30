@@ -1,5 +1,6 @@
 import 'package:explore_egypt/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ChatBubble extends StatelessWidget {
   const ChatBubble({super.key, required this.isBot, required this.message});
@@ -8,7 +9,9 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-mainAxisAlignment: isBot ? MainAxisAlignment.start : MainAxisAlignment.end,
+      mainAxisAlignment: isBot
+          ? MainAxisAlignment.start
+          : MainAxisAlignment.end,
       children: [
         Container(
           width: MediaQuery.of(context).size.width * 0.8,
@@ -35,7 +38,7 @@ mainAxisAlignment: isBot ? MainAxisAlignment.start : MainAxisAlignment.end,
               bottomLeft: isBot ? Radius.zero : Radius.circular(19),
               bottomRight: isBot ? Radius.circular(19) : Radius.zero,
             ),
-            color: isBot ? AppConstants.kWhite: AppConstants.kPrimaryColor ,
+            color: isBot ? AppConstants.kWhite : AppConstants.kPrimaryColor,
           ),
           child: Text(
             message,
@@ -48,8 +51,13 @@ mainAxisAlignment: isBot ? MainAxisAlignment.start : MainAxisAlignment.end,
             softWrap: true,
           ),
         ),
-        if(isBot)
-        Icon(Icons.copy_rounded, size: 24, color: AppConstants.kGrey),
+        if (isBot)
+          IconButton(
+            icon: Icon(Icons.copy_rounded, size: 24, color: AppConstants.kGrey),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: message));
+            },
+          ),
       ],
     );
   }
