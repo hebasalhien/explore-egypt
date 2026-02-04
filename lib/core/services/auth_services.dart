@@ -6,15 +6,13 @@ import 'package:explore_egypt/core/utils/api_constants.dart';
 import 'package:flutter/widgets.dart';
 
 class AuthServices {
-  final ApiService _apiService;
-  AuthServices(this._apiService );
   Future<dynamic> createUser({
     required String email,
     required String password,
     required String username,
   }) async {
     try {
-      final response = await _apiService.dio.post(
+      final response = await ApiService().dio.post(
         ApiConstants.register,
         data: {'email': email, 'username': username, 'password': password},
       );
@@ -45,10 +43,11 @@ class AuthServices {
     required String password,
   }) async {
     try {
-      final response = await _apiService.dio.post(
+      final response = await ApiService().dio.post(
         ApiConstants.login,
         data: {'email': email, 'password': password},
       );
+      debugPrint('Login response: ${response.headers}');
       Map<String, dynamic> data = response.data;
       debugPrint('login function');
       await SharedPrefHelper.setSecureString(

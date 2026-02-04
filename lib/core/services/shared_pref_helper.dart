@@ -120,7 +120,7 @@ class SharedPrefHelper {
   static getSecuredString(String key) async {
     const flutterSecureStorage = FlutterSecureStorage();
     debugPrint('FlutterSecureStorage : get secured string with a key: $key ');
-    return await flutterSecureStorage.read(key: key) ?? '';
+    return await flutterSecureStorage.read(key: key);
   }
 
   /// remove a value from flutterSecureStorage with given [key].

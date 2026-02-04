@@ -1,4 +1,6 @@
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:explore_egypt/core/services/services_constatnts.dart';
 import 'package:explore_egypt/core/services/shared_pref_helper.dart';
 import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
@@ -7,17 +9,43 @@ import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class ApiService {
-  late Dio dio;
+    static ApiService? _instance;
+
+  late final Dio dio;
+  late final SessionCubit sessionCubit;
+
   bool _isRefreshing = false;
-  ApiService() {
+
+  ApiService._internal();
+
+  factory ApiService({SessionCubit? sessionCubit}) {
+    if (_instance == null) {
+      _instance = ApiService._internal();
+      _instance!._init(sessionCubit);
+    }
+    return _instance!;
+  }
+
+  void _init(SessionCubit? cubit) {
+    if (cubit == null) {
+      throw Exception(
+        'SessionCubit must be provided the first time ApiService is created',
+      );
+    }
+
+    sessionCubit = cubit;
+
     dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
-        connectTimeout: Duration(seconds: 30),
-        receiveTimeout: Duration(seconds: 30),
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
         headers: {'Content-Type': 'application/json'},
       ),
     );
+
+final cookieJar=   CookieJar();
+dio.interceptors.add(CookieManager(cookieJar));
 
     dio.interceptors.add(
       PrettyDioLogger(
@@ -26,7 +54,6 @@ class ApiService {
         responseBody: true,
       ),
     );
-
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -44,7 +71,7 @@ class ApiService {
         onError: (error, handler) async {
           if (error.response?.statusCode == 401) {
             if (error.requestOptions.path == ApiConstants.refreshToken) {
-              await SharedPrefHelper.clearAlldata();
+              await sessionCubit.endSession();
               return handler.next(error);
             }
 
@@ -53,23 +80,11 @@ class ApiService {
               _isRefreshing = true;
               
               try {
-                /// Get old token
-                final oldToken = await SharedPrefHelper.getSecuredString(
-                  ServicesConstants.userToken,
-                );
-                if(oldToken==null){
-                  await SessionCubit().endSession();
-                  _isRefreshing = false;
-                  return handler.next(error);
-                }
+
+
                 // Call refresh token endpoint
-                final refreshResponse = await ApiService().dio.post(
-                  ApiConstants.refreshToken,
-                  options: Options(
-              headers: {
-                      'Authorization': 'Bearer $oldToken',
-                    }
-                ),);
+                final refreshResponse = await dio.post(
+                  ApiConstants.refreshToken);
 
                 if (refreshResponse.statusCode == 200) {
                   // 👇 Get new token from response
@@ -101,12 +116,12 @@ class ApiService {
                 }
 
                 // Refresh failed
-                await SessionCubit().endSession();
+                await sessionCubit.endSession();
                 _isRefreshing = false;
                 return handler.next(error);
               } catch (e) {
                 debugPrint('Token refresh error: $e');
-                await SharedPrefHelper.removeSecureData(ServicesConstants.userToken);
+                await sessionCubit.endSession();
                 _isRefreshing = false;
                 return handler.next(error);
               }

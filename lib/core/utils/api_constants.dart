@@ -9,7 +9,5 @@ class ApiConstants {
   static const String refreshToken = 'refresh';
 
   //chat endpoints //
-  static const String sendMessage = 'api/chats';
-  static const String chat = '';
-  static const String allChats = 'api/chats';
+  static const String chats = 'api/chats';
 }

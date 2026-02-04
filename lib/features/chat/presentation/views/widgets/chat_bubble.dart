@@ -1,15 +1,15 @@
+import 'package:explore_egypt/core/models/message_model.dart';
 import 'package:explore_egypt/core/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class ChatBubble extends StatelessWidget {
-  const ChatBubble({super.key, required this.isBot, required this.message});
-  final bool isBot;
-  final String message;
+  const ChatBubble({super.key, required this.message});
+final MessageModel message;
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: isBot
+      mainAxisAlignment: isBot(message.sender)
           ? MainAxisAlignment.start
           : MainAxisAlignment.end,
       children: [
@@ -35,30 +35,36 @@ class ChatBubble extends StatelessWidget {
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(19),
               topRight: Radius.circular(19),
-              bottomLeft: isBot ? Radius.zero : Radius.circular(19),
-              bottomRight: isBot ? Radius.circular(19) : Radius.zero,
+              bottomLeft: isBot(message.sender) ? Radius.zero : Radius.circular(19),
+              bottomRight: isBot(message.sender) ? Radius.circular(19) : Radius.zero,
             ),
-            color: isBot ? AppConstants.kWhite : AppConstants.kPrimaryColor,
+            color: isBot(message.sender) ? AppConstants.kWhite : AppConstants.kPrimaryColor,
           ),
           child: Text(
-            message,
+            message.content,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
-              color: isBot ? Colors.black : Colors.white,
+              color: isBot(message.sender) ? Colors.black : Colors.white,
               letterSpacing: 0,
             ),
             softWrap: true,
           ),
         ),
-        if (isBot)
+        if (isBot(message.sender))
           IconButton(
             icon: Icon(Icons.copy_rounded, size: 24, color: AppConstants.kGrey),
             onPressed: () {
-              Clipboard.setData(ClipboardData(text: message));
+              Clipboard.setData(ClipboardData(text: message.content));
             },
           ),
       ],
     );
   }
+  bool isBot (String sender) {
+    if (sender == 'bot') {
+      return true;
+    }
+return false;
+}
 }

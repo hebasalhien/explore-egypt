@@ -1,4 +1,3 @@
-import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/core/services/auth_services.dart';
 import 'package:explore_egypt/core/utils/constants.dart';
 import 'package:explore_egypt/core/utils/route_names.dart';
@@ -36,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthCubit(AuthServices(ApiService())),
+      create: (context) => AuthCubit(AuthServices()),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         resizeToAvoidBottomInset: false,

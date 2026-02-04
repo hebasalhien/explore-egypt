@@ -27,7 +27,6 @@ class SessionCubit extends Cubit<SessionState> {
       await SharedPrefHelper.clearAlldata();
       debugPrint('token deleted');
       emit(SessionUnauthenticated());
-      return 'user logged out successfully';
     } catch (e) {
       throw ('An unexpected error occurred $e');
     }
