@@ -1,4 +1,4 @@
-import 'package:explore_egypt/core/utils/constants.dart';
+import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
@@ -13,7 +13,7 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppConstants.kPrimaryColor,
+          backgroundColor: AppColors.kPrimaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(12),
           ),

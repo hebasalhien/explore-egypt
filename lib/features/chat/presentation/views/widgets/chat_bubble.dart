@@ -1,5 +1,5 @@
 import 'package:explore_egypt/core/models/message_model.dart';
-import 'package:explore_egypt/core/utils/constants.dart';
+import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -38,7 +38,7 @@ final MessageModel message;
               bottomLeft: isBot(message.sender) ? Radius.zero : Radius.circular(19),
               bottomRight: isBot(message.sender) ? Radius.circular(19) : Radius.zero,
             ),
-            color: isBot(message.sender) ? AppConstants.kWhite : AppConstants.kPrimaryColor,
+            color: isBot(message.sender) ? AppColors.kWhite : AppColors.kPrimaryColor,
           ),
           child: Text(
             message.content,
@@ -53,7 +53,7 @@ final MessageModel message;
         ),
         if (isBot(message.sender))
           IconButton(
-            icon: Icon(Icons.copy_rounded, size: 24, color: AppConstants.kGrey),
+            icon: Icon(Icons.copy_rounded, size: 24, color: AppColors.kGrey),
             onPressed: () {
               Clipboard.setData(ClipboardData(text: message.content));
             },

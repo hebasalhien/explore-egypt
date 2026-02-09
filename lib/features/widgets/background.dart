@@ -1,4 +1,5 @@
-import 'package:explore_egypt/core/utils/constants.dart';
+import 'package:explore_egypt/core/constants/app_constants.dart';
+import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class BackGround extends StatelessWidget {
@@ -10,9 +11,9 @@ class BackGround extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppConstants.kPrimaryColor,
-            AppConstants.kPrimaryVariant,
-            AppConstants.kSecondary,
+            AppColors.kPrimaryColor,
+            AppColors.kPrimaryVariant,
+            AppColors.kSecondary,
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,

@@ -1,4 +1,5 @@
-import 'package:explore_egypt/core/utils/constants.dart';
+import 'package:explore_egypt/core/constants/app_constants.dart';
+import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/chat/presentation/views/chat_page.dart';
 import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
 import 'package:explore_egypt/features/main/presentation/views/widgets/custom_navigation_destination.dart';
@@ -26,12 +27,12 @@ class _MainPageState extends State<MainPage> {
                 ? const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: AppConstants.kPrimaryColor,
+                    color: AppColors.kPrimaryColor,
                   )
                 : const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: AppConstants.kBlack,
+                    color: AppColors.kBlack,
                   ),
           ),
         ),

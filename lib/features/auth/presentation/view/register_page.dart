@@ -1,4 +1,4 @@
-import 'package:explore_egypt/core/utils/constants.dart';
+import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/core/utils/validators.dart';
 import 'package:explore_egypt/features/auth/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:explore_egypt/features/widgets/background.dart';
@@ -71,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             'Sign Up',
                             style: TextStyle(
                               fontSize: 30,
-                              color: AppConstants.kPrimaryColor,
+                              color: AppColors.kPrimaryColor,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -121,7 +121,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 child: Text(
                                   'Login',
                                   style: TextStyle(
-                                    color: AppConstants.kPrimaryColor,
+                                    color: AppColors.kPrimaryColor,
                                   ),
                                 ),
                               ),

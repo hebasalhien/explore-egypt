@@ -1,5 +1,5 @@
 import 'package:explore_egypt/core/models/message_model.dart';
-import 'package:explore_egypt/core/utils/constants.dart';
+import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/chat/presentation/cubit/chat_cubit/chat_cubit.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/chat_bubble.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_row.dart';
@@ -33,7 +33,7 @@ class _ChatPageState extends State<ChatPage> {
           ),
           body: Column(
             children: [
-              Divider(color: AppConstants.kGrey, thickness: 1),
+              Divider(color: AppColors.kGrey, thickness: 1),
               Expanded(
                 child: BlocConsumer<ChatCubit, ChatState>(
                   listener: (context, state) {

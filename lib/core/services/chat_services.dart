@@ -1,5 +1,5 @@
 import 'package:explore_egypt/core/services/api_service.dart';
-import 'package:explore_egypt/core/utils/api_constants.dart';
+import 'package:explore_egypt/core/constants/api_constants.dart';
 
 class ChatServices {
 

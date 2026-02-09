@@ -1,15 +1,15 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:explore_egypt/core/services/services_constatnts.dart';
+import 'package:explore_egypt/core/constants/storage_constatnts.dart';
 import 'package:explore_egypt/core/services/shared_pref_helper.dart';
 import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
-import 'package:explore_egypt/core/utils/api_constants.dart';
+import 'package:explore_egypt/core/constants/api_constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class ApiService {
-    static ApiService? _instance;
+  static ApiService? _instance;
 
   late final Dio dio;
   late final SessionCubit sessionCubit;
@@ -44,8 +44,8 @@ class ApiService {
       ),
     );
 
-final cookieJar=   CookieJar();
-dio.interceptors.add(CookieManager(cookieJar));
+    final cookieJar = CookieJar();
+    dio.interceptors.add(CookieManager(cookieJar));
 
     dio.interceptors.add(
       PrettyDioLogger(
@@ -58,7 +58,7 @@ dio.interceptors.add(CookieManager(cookieJar));
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           final token = await SharedPrefHelper.getSecuredString(
-            ServicesConstants.userToken,
+            StorageConstants.userToken,
           );
 
           if (token != null) {
@@ -78,22 +78,24 @@ dio.interceptors.add(CookieManager(cookieJar));
             // Only one thread should refresh at a time
             if (!_isRefreshing) {
               _isRefreshing = true;
-              
+
               try {
-
-
                 // Call refresh token endpoint
                 final refreshResponse = await dio.post(
-                  ApiConstants.refreshToken);
+                  ApiConstants.refreshToken,
+                );
 
                 if (refreshResponse.statusCode == 200) {
                   // 👇 Get new token from response
                   final newToken =
-                      refreshResponse.data[ServicesConstants.userToken];
+                      refreshResponse.data[StorageConstants.userToken];
 
                   if (newToken != null) {
                     // Save new token
-                    await SharedPrefHelper.setSecureString(ServicesConstants.userToken,newToken);
+                    await SharedPrefHelper.setSecureString(
+                      StorageConstants.userToken,
+                      newToken,
+                    );
 
                     // Update header for retry
                     error.requestOptions.headers['Authorization'] =

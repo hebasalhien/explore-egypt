@@ -1,4 +1,4 @@
-import 'package:explore_egypt/core/utils/constants.dart';
+import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -16,7 +16,7 @@ final String icon ;
       selectedIcon: SvgPicture.asset(
         icon,
         colorFilter: ColorFilter.mode(
-          AppConstants.kPrimaryColor,
+          AppColors.kPrimaryColor,
           BlendMode.srcIn,
         ),
         height:24,

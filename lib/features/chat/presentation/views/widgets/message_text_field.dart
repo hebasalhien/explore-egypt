@@ -1,4 +1,4 @@
-import 'package:explore_egypt/core/utils/constants.dart';
+import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class MessageTextField extends StatelessWidget {
@@ -18,13 +18,13 @@ class MessageTextField extends StatelessWidget {
               blurRadius: 64,
               spreadRadius: -4,
               offset: Offset(0, 14),
-              color: AppConstants.kShadowColor.withAlpha(31),
+              color: AppColors.kShadowColor.withAlpha(31),
             ),
             BoxShadow(
               blurRadius: 22,
               spreadRadius: -6,
               offset: Offset(0, 8),
-              color: AppConstants.kShadowColor.withAlpha(31),
+              color: AppColors.kShadowColor.withAlpha(31),
             ),
           ],
         ),
@@ -34,14 +34,14 @@ class MessageTextField extends StatelessWidget {
           keyboardType: TextInputType.multiline,
           maxLines: 5,
           minLines: 1,
-          cursorColor: AppConstants.kPrimaryColor,
+          cursorColor: AppColors.kPrimaryColor,
           decoration: InputDecoration(
             hint: Text(
               'Generate a name of ...',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: AppConstants.kGrey,
+                color: AppColors.kGrey,
               ),
             ),
 

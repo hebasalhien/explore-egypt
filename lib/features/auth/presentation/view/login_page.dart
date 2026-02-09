@@ -1,6 +1,6 @@
 import 'package:explore_egypt/core/services/auth_services.dart';
-import 'package:explore_egypt/core/utils/constants.dart';
-import 'package:explore_egypt/core/utils/route_names.dart';
+import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/routes/app_routes.dart';
 import 'package:explore_egypt/core/utils/validators.dart';
 import 'package:explore_egypt/features/widgets/background.dart';
 import 'package:explore_egypt/features/auth/presentation/cubit/auth_cubit/auth_cubit.dart';
@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.data['message'])));
-              Navigator.pushReplacementNamed(context, RouteNames.mainPage);
+              Navigator.pushReplacementNamed(context, AppRoutes.mainPage);
             } else if (state is AuthError) {
               ScaffoldMessenger.of(
                 context,
@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                               'Login',
                               style: TextStyle(
                                 fontSize: 30,
-                                color: AppConstants.kPrimaryColor,
+                                color: AppColors.kPrimaryColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -122,13 +122,13 @@ class _LoginPageState extends State<LoginPage> {
                                   onPressed: () {
                                     Navigator.pushNamed(
                                       context,
-                                      RouteNames.registerPage,
+                                      AppRoutes.registerPage,
                                     );
                                   },
                                   child: Text(
                                     'Sign up',
                                     style: TextStyle(
-                                      color: AppConstants.kPrimaryColor,
+                                      color: AppColors.kPrimaryColor,
                                     ),
                                   ),
                                 ),

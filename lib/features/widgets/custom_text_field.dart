@@ -1,4 +1,4 @@
-import 'package:explore_egypt/core/utils/constants.dart';
+import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -27,16 +27,16 @@ class CustomTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: AppConstants.kPrimaryVariant, width: 0),
+          borderSide: BorderSide(color: AppColors.kPrimaryVariant, width: 0),
           
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: AppConstants.kErrorColor, width: 2),
+          borderSide: BorderSide(color: AppColors.kErrorColor, width: 2),
         ),
         hint: Text(label, style: TextStyle(fontSize: 16)),
         suffixIcon: sufixIcon,
-        fillColor: AppConstants.kWhite,
+        fillColor: AppColors.kWhite,
         filled: true,
       ),
       validator: validator,

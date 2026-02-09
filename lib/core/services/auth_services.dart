@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:explore_egypt/core/services/api_service.dart';
-import 'package:explore_egypt/core/services/services_constatnts.dart';
+import 'package:explore_egypt/core/constants/storage_constatnts.dart';
 import 'package:explore_egypt/core/services/shared_pref_helper.dart';
-import 'package:explore_egypt/core/utils/api_constants.dart';
+import 'package:explore_egypt/core/constants/api_constants.dart';
 import 'package:flutter/widgets.dart';
 
 class AuthServices {
@@ -51,8 +51,8 @@ class AuthServices {
       Map<String, dynamic> data = response.data;
       debugPrint('login function');
       await SharedPrefHelper.setSecureString(
-        ServicesConstants.userToken,
-        data[ServicesConstants.userToken],
+        StorageConstants.userToken,
+        data[StorageConstants.userToken],
       );
       return response.data;
     } on DioException catch (e) {
@@ -74,7 +74,4 @@ class AuthServices {
       throw Exception('An unexpected error occurred:$e');
     }
   }
-
-
-
 }

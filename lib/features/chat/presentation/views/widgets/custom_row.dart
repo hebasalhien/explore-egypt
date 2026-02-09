@@ -1,4 +1,5 @@
-import 'package:explore_egypt/core/utils/constants.dart';
+import 'package:explore_egypt/core/constants/app_constants.dart';
+import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/message_text_field.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,7 @@ class CustomRow extends StatelessWidget {
         ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppConstants.kPrimaryColor,
+            backgroundColor: AppColors.kPrimaryColor,
             shape: CircleBorder(eccentricity: 0),
             fixedSize: Size(54, 54),
             padding: EdgeInsets.all(0),
