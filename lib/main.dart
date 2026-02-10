@@ -7,13 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   final sessionCubit = SessionCubit();
-
   final apiService = ApiService(sessionCubit: sessionCubit);
-  runApp(BlocProvider(
-    create: (context) =>sessionCubit..restoreSession(),
-    child: MyApp(),
-  ));
+  runApp(
+    BlocProvider(
+      create: (context) => sessionCubit..restoreSession(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -27,28 +29,24 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: AppRoutes.onGenerateRoute,
       home: BlocConsumer<SessionCubit, SessionState>(
         listener: (context, state) {
-          if(state is SessionUnauthenticated){
+          if (state is SessionUnauthenticated) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Session expired. Please log in again.'),
-              ),
+              SnackBar(content: Text('Session expired. Please log in again.')),
             );
           }
         },
         builder: (context, state) {
-                         if (state is SessionAuthenticated) {
-                return MainPage();
-              } else if (state is SessionUnauthenticated) {
-                return const LoginPage();
-              } else {
-                return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
-                );
-              }
+          if (state is SessionAuthenticated) {
+            return MainPage();
+          } else if (state is SessionUnauthenticated) {
+            return const LoginPage();
+          } else {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
         },
       ),
     );
   }
-
-
 }

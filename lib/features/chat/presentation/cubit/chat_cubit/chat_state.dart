@@ -15,13 +15,15 @@ final class ChatError extends ChatState {
   ChatError({required this.errorMessage});
 }
 
-final class MessageSending extends ChatState {}
-final class MessageSent extends ChatState {
+final class MessageSending extends ChatState 
+{
   final List<MessageModel> messages;
-  MessageSent({required this.messages});
-}
-final class MessageSendError extends ChatState {
-  final String errorMessage;
 
-  MessageSendError({required this.errorMessage});
+  MessageSending({required this.messages});
+}
+
+final class MessageLoaded extends ChatState {
+  final List<MessageModel> messages;
+  final String? conversationId;
+  MessageLoaded({this.conversationId,required this.messages});
 }

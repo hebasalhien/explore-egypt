@@ -18,7 +18,7 @@ class ChatServices {
 
 
 
-  Future<dynamic> sendMessage(
+  static Future<dynamic> sendMessage(
     String? conversationId , {
     required String message,
   }) async {
@@ -27,7 +27,7 @@ class ChatServices {
         ApiConstants.chats,
         data: {
           'message': message,
-          'ConversationId': conversationId,
+          'conversationId': conversationId,
         },
       );
       return response.data;
