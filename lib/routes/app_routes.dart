@@ -1,3 +1,4 @@
+import 'package:explore_egypt/features/chat/presentation/views/chat_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:explore_egypt/features/auth/presentation/view/login_page.dart';
 import 'package:explore_egypt/features/auth/presentation/view/register_page.dart';
@@ -13,6 +14,7 @@ class AppRoutes{
   static const String profilePage = 'ProfilePage';
   static const String mainPage = 'MainPage';
   static const String homePage = 'HomePage';
+  static const String chatListPage = 'ChatListPage';
 
     static Route<dynamic> onGenerateRoute(settings) {
     switch (settings.name) {
@@ -33,6 +35,9 @@ class AppRoutes{
 
       case homePage:
         return MaterialPageRoute(builder: (_) => HomePage());
+
+      case chatListPage:
+        return MaterialPageRoute(builder: (_) => const ChatListPage());  
 
       default:
         return MaterialPageRoute(builder: (_) => const LoginPage());

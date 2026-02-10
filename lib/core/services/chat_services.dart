@@ -4,11 +4,11 @@ import 'package:explore_egypt/core/constants/api_constants.dart';
 class ChatServices {
 
 
-  Future<dynamic> getConversation(String? conversationID ) async {
+  static Future<dynamic> getConversation({String? conversationID} ) async {
     try {
       final response = await ApiService().dio.get(
-        ApiConstants.chats,
-        queryParameters: {'conversationId': conversationID},
+        ApiConstants.chats+(conversationID != null ? '/$conversationID' : ''),
+        
       );
       return response.data;
     } catch (e) {

@@ -8,6 +8,6 @@ class AppConstants {
   static const String profileIcon = 'assets/icons/profile.svg';
   static const String sendIcon = 'assets/icons/send.svg';
   static const String sendIcon2 = 'assets/icons/send.png';
+  static const String chatbubbleIcon = 'assets/icons/chatbubble.svg';
 
-  
 }
