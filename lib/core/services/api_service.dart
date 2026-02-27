@@ -16,7 +16,11 @@ class ApiService {
   late final SessionCubit sessionCubit;
 
   bool _isRefreshing = false;
-
+static const _skipRefreshEndpoints = [
+    ApiConstants.login,
+    ApiConstants.register,
+    ApiConstants.refreshToken,
+  ];
   ApiService._internal();
 
   factory ApiService({SessionCubit? sessionCubit}) {
@@ -84,9 +88,8 @@ class ApiService {
     debugPrint('Request error: ${error.message}');
     if (error.response?.statusCode == 401) {
       debugPrint('Unauthorized error, attempting token refresh');
-      if (error.requestOptions.path == ApiConstants.refreshToken) {
-        debugPrint('Refresh token request failed, ending session');
-        await sessionCubit.endSession();
+      if (_skipRefreshEndpoints.contains(error.requestOptions.path)) {
+        debugPrint('Skipping token refresh for endpoint: ${error.requestOptions.path}');
         return handler.next(error);
       }
       if (!_isRefreshing) {

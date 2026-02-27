@@ -23,11 +23,13 @@ class _MessageListState extends State<MessageList> {
       );
     }
   }
+
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -37,7 +39,9 @@ class _MessageListState extends State<MessageList> {
 
           if (state is MessageLoaded || state is MessageSending) {
             messages = (state as dynamic).messages;
-            WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => _scrollToBottom(),
+            );
           }
           if (state is ChatError) {
             return Center(child: Text(state.errorMessage));

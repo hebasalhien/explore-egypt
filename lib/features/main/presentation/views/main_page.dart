@@ -15,11 +15,20 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int selectedIndex = 0;
+  final List<bool> _initialized = [true, false, false]; // Home is shown first
   final List<Widget> _pages = const [HomePage(), ChatPage(), ProfilePage()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: selectedIndex, children: _pages),
+      body: IndexedStack(
+        index: selectedIndex,
+        children: List.generate(_pages.length, (index) {
+          if (!_initialized[index]) {
+            return const SizedBox.shrink(); // Placeholder for uninitialized pages
+          }
+          return _pages[index];
+        }),
+      ),
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
           labelTextStyle: WidgetStateTextStyle.resolveWith(
@@ -38,25 +47,32 @@ class _MainPageState extends State<MainPage> {
         ),
         child: NavigationBar(
           destinations: [
-            CustomNavigationDestination(label: 'Home', icon: AppConstants.homeIcon,),
-            CustomNavigationDestination(label: 'Chatbot', icon: AppConstants.chatIcon,),
-            CustomNavigationDestination(label: 'Profile', icon: AppConstants.profileIcon,),
+            CustomNavigationDestination(
+              label: 'Home',
+              icon: AppConstants.homeIcon,
+            ),
+            CustomNavigationDestination(
+              label: 'Chatbot',
+              icon: AppConstants.chatIcon,
+            ),
+            CustomNavigationDestination(
+              label: 'Profile',
+              icon: AppConstants.profileIcon,
+            ),
           ],
           selectedIndex: selectedIndex,
           onDestinationSelected: (index) {
             setState(() {
               selectedIndex = index;
+              _initialized[index] = true; // mark as initialized on first visit
             });
           },
-          
+
           backgroundColor: Colors.white,
           indicatorColor: Colors.transparent,
           overlayColor: WidgetStateColor.transparent,
-          
         ),
       ),
     );
   }
 }
-
-

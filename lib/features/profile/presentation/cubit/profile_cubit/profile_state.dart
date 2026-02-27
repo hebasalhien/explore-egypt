@@ -8,11 +8,11 @@ final class ProfileInitial extends ProfileState {}
 final class ProfileLoading extends ProfileState {}
 
 final class ProfileLoaded extends ProfileState {
-  UserModel user;
+  final UserModel user;
   ProfileLoaded({required this.user});
 }
 
 final class ProfileLoadedFaild extends ProfileState {
-  String errorMessage;
+  final String errorMessage;
   ProfileLoadedFaild(this.errorMessage);
 }

@@ -1,5 +1,6 @@
 import 'package:explore_egypt/core/models/user_model.dart';
 import 'package:explore_egypt/core/services/profile_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -11,6 +12,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileInitial());
 
   Future<dynamic> getUserProfile() async {
+
     emit(ProfileLoading());
     try {
       final  userData = await profileService.getUserProfile();

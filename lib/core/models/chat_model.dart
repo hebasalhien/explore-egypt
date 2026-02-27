@@ -1,15 +1,21 @@
 import 'package:explore_egypt/core/models/message_model.dart';
 
 class ChatModel {
- final List<MessageModel> messages;
- final String conversationId;
-  ChatModel({required this.messages,required this.conversationId});
-  factory ChatModel.fromJson(Map<String , dynamic> json) {
+  final List<MessageModel> messages;
+  final String conversationId;
+  final String title;
+  ChatModel({
+    required this.messages,
+    required this.conversationId,
+    required this.title,
+  });
+  factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
-conversationId: json['conversationId'],
-messages: (json['messages'] as List<dynamic>)
-            .map((messageJson) => MessageModel.fromJson(messageJson))
-            .toList(),
+      title: json['title'],
+      conversationId: json['conversationId'],
+      messages: (json['messages'] as List<dynamic>)
+          .map((messageJson) => MessageModel.fromJson(messageJson))
+          .toList(),
     );
   }
 }
