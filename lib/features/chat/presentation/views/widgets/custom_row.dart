@@ -15,6 +15,7 @@ class CustomRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       spacing: 8,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         MessageTextField(controller: controller),
         ElevatedButton(
