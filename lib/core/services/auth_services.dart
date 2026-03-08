@@ -74,4 +74,30 @@ class AuthServices {
       throw Exception('An unexpected error occurred:$e');
     }
   }
+
+  Future<dynamic> sendResetPasswordEmail({required String email}) async {
+    try {
+       await ApiService().dio.post(
+        ApiConstants.forgetPassword,
+        data: {'email': email},
+      );
+    } catch (e) {
+      throw Exception('An unexpected error occurred:$e');
+    }
+  }
+
+  Future<dynamic> resetPassword({
+    required String email,
+    required String otp,
+    required String newPassword,
+  }) async {
+    try {
+     await ApiService().dio.post(
+        ApiConstants.resetPassword,
+        data: {'email': email, 'otp': otp, 'newPassword': newPassword},
+      );
+    } catch (e) {
+      throw Exception('An unexpected error occurred:$e');
+    }
+  }
 }

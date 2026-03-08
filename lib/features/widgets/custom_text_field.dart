@@ -9,12 +9,14 @@ class CustomTextField extends StatelessWidget {
     required this.validator,
     required this.label,
     this.sufixIcon,
+    this.keyboardType = TextInputType.text,
   });
   final TextEditingController controller;
   final bool isObscure;
   final String? Function(String?)? validator;
   final String label;
   final Widget? sufixIcon;
+  final TextInputType keyboardType;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -40,6 +42,7 @@ class CustomTextField extends StatelessWidget {
         filled: true,
       ),
       validator: validator,
+      keyboardType: keyboardType,
     );
   }
 }

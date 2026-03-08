@@ -1,3 +1,4 @@
+import 'package:explore_egypt/features/auth/presentation/view/forget_pass_page.dart';
 import 'package:flutter/material.dart';
 import 'package:explore_egypt/features/auth/presentation/view/login_page.dart';
 import 'package:explore_egypt/features/auth/presentation/view/register_page.dart';
@@ -9,6 +10,7 @@ import 'package:explore_egypt/features/profile/presentation/views/profile_page.d
 class AppRoutes {
   static const String loginPage = 'LoginPage';
   static const String registerPage = 'RegisterPage';
+  static const String forgotPassPage='ForgotPassPage';
   static const String chatPage = 'ChatPage';
   static const String profilePage = 'ProfilePage';
   static const String mainPage = 'MainPage';
@@ -21,6 +23,9 @@ class AppRoutes {
 
       case registerPage:
         return MaterialPageRoute(builder: (_) => const RegisterPage());
+
+      case forgotPassPage:
+        return MaterialPageRoute(builder: (_) => const ForgetPassPage());
 
       case chatPage:
         return MaterialPageRoute(builder: (_) => ChatPage());

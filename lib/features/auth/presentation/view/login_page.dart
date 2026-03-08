@@ -92,7 +92,12 @@ class _LoginPageState extends State<LoginPage> {
 
                               children: [
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      AppRoutes.forgotPassPage,
+                                    );
+                                  },
                                   child: Text(
                                     'Forget Password?',
                                     style: TextStyle(

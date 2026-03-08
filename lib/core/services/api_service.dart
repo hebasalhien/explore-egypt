@@ -20,6 +20,8 @@ static const _skipRefreshEndpoints = [
     ApiConstants.login,
     ApiConstants.register,
     ApiConstants.refreshToken,
+    ApiConstants.forgetPassword,
+    ApiConstants.resetPassword,
   ];
   ApiService._internal();
 
