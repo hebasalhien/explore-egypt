@@ -1,5 +1,5 @@
 class ApiConstants {
-  static const String baseUrl = 'http://192.168.1.3:8083/';
+  static const String baseUrl = 'https://grad-backend-api-d2atfnd0d6fwdrdb.switzerlandnorth-01.azurewebsites.net/';
   //auth endpoints //
   static const String auth = 'api/auth/';
   static const String login = 'login';
