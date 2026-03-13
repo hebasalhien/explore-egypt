@@ -1,19 +1,24 @@
 import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
+import 'package:explore_egypt/features/auth/model/data_sources/auth_remote_data_source.dart';
+import 'package:explore_egypt/features/auth/model/repos/auth_repository.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
 import 'package:explore_egypt/features/auth/presentation/view/login_page.dart';
 import 'package:explore_egypt/features/main/presentation/views/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   final sessionCubit = SessionCubit();
-  final apiService = ApiService(sessionCubit: sessionCubit);
+  await ApiService.create(sessionCubit: sessionCubit);
   runApp(
-    BlocProvider(
-      create: (context) => sessionCubit..restoreSession(),
-      child: MyApp(),
+    RepositoryProvider(
+      create: (_) => AuthRepository(AuthRemoteDataSource()),
+      child: BlocProvider(
+        create: (context) => sessionCubit..restoreSession(),
+        child: MyApp(),
+      ),
     ),
   );
 }
@@ -25,6 +30,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.transparent,
+        
+      ),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: AppRoutes.onGenerateRoute,
       home: BlocConsumer<SessionCubit, SessionState>(

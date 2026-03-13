@@ -6,11 +6,14 @@ class CustomPasswordTextField extends StatefulWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
   final String label;
+  final TextInputAction textInputAction;
   const CustomPasswordTextField({
     super.key,
     required this.controller,
     this.validator = Validators.passwordValidatore,
-    this.label = 'Password'});
+    this.textInputAction = TextInputAction.next,
+    this.label = 'Password',
+  });
 
   @override
   State<CustomPasswordTextField> createState() =>
@@ -22,20 +25,23 @@ class _CustomPasswordTextFieldState extends State<CustomPasswordTextField> {
   @override
   Widget build(BuildContext context) {
     return CustomTextField(
+      textInputAction: widget.textInputAction,
       controller: widget.controller,
       validator: widget.validator,
       label: widget.label,
       isObscure: _isObscure,
-      sufixIcon: IconButton(
-        onPressed: () {
-          setState(() {
-            _isObscure = !_isObscure;
-          });
-        },
-        icon: Icon(
-          _isObscure
-              ? Icons.visibility_off_outlined
-              : Icons.visibility_outlined,
+      sufixIcon: ExcludeFocus(
+        child: IconButton(
+          onPressed: () {
+            setState(() {
+              _isObscure = !_isObscure;
+            });
+          },
+          icon: Icon(
+            _isObscure
+                ? Icons.visibility_off_outlined
+                : Icons.visibility_outlined,
+          ),
         ),
       ),
     );

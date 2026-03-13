@@ -1,14 +1,12 @@
-import 'package:explore_egypt/core/services/auth_services.dart';
-import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/core/theme/app_text_style.dart';
+import 'package:explore_egypt/features/auth/model/repos/auth_repository.dart';
+import 'package:explore_egypt/features/auth/presentation/view/widget/main_background.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
 import 'package:explore_egypt/core/utils/validators.dart';
-import 'package:explore_egypt/features/widgets/background.dart';
 import 'package:explore_egypt/features/auth/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:explore_egypt/features/widgets/custom_button.dart';
 import 'package:explore_egypt/features/widgets/custom_password_text_field.dart';
 import 'package:explore_egypt/features/widgets/custom_text_field.dart';
-import 'package:explore_egypt/features/widgets/custom_wave_shape.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -35,16 +33,15 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthCubit(AuthServices()),
+      create: (context) => AuthCubit(context.read<AuthRepository>()),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
         resizeToAvoidBottomInset: false,
         body: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthSuccess) {
               ScaffoldMessenger.of(
                 context,
-              ).showSnackBar(SnackBar(content: Text(state.data['message'])));
+              ).showSnackBar(SnackBar(content: Text(state.data)));
               Navigator.pushReplacementNamed(context, AppRoutes.mainPage);
             } else if (state is AuthError) {
               ScaffoldMessenger.of(
@@ -53,99 +50,80 @@ class _LoginPageState extends State<LoginPage> {
             }
           },
           builder: (context, state) {
-            return Stack(
-              clipBehavior: Clip.none,
-              children: [
-                BackGround(),
-
-                CustomWaveShape(),
-                SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Form(
-                      key: formKey,
-                      child: SizedBox(
-                        height: MediaQuery.sizeOf(context).height,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          spacing: 20,
-                          children: [
-                            Text(
-                              'Login',
-                              style: TextStyle(
-                                fontSize: 30,
-                                color: AppColors.kPrimaryColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            CustomTextField(
-                              controller: emailController,
-                              validator: Validators.generalValidator,
-                              label: 'Email',
-                            ),
-                            CustomPasswordTextField(
-                              controller: passController,
-                              validator: Validators.generalValidator,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-
-                              children: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      AppRoutes.forgotPassPage,
-                                    );
-                                  },
-                                  child: Text(
-                                    'Forget Password?',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            CustomButton(
-                              onPressed: () async {
-                                if (formKey.currentState!.validate()) {
-                                  await context.read<AuthCubit>().login(
-                                    email: emailController.text,
-                                    password: passController.text,
-                                  );
-                                }
-                              },
-                              label: 'Login',
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('Don\'t have account?'),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      AppRoutes.registerPage,
-                                    );
-                                  },
-                                  child: Text(
-                                    'Sign up',
-                                    style: TextStyle(
-                                      color: AppColors.kPrimaryColor,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+            return MainBackground(
+              child: Form(
+                key: formKey,
+                child: SizedBox(
+                  height: MediaQuery.sizeOf(context).height,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 20,
+                    children: [
+                      Text(
+                        'Login',
+                        style: AppTextStyle.heading1,
                       ),
-                    ),
+                      CustomTextField(
+                        controller: emailController,
+                        validator: Validators.generalValidator,
+                        label: 'Email',
+                      ),
+                      CustomPasswordTextField(
+                        controller: passController,
+                        validator: Validators.generalValidator,
+                        textInputAction: TextInputAction.done,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.forgotPassPage,
+                              );
+                            },
+                            child: Text(
+                              'Forget Password?',
+                              style: AppTextStyle.hint,
+                            ),
+                          ),
+                        ],
+                      ),
+                      CustomButton(
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            await context.read<AuthCubit>().login(
+                              email: emailController.text,
+                              password: passController.text,
+                            );
+                          }
+                        },
+                        label: 'Login',
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Don\'t have account?'),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.registerPage,
+                              );
+                            },
+                            child: Text(
+                              'Sign up',
+                              style: AppTextStyle.caption,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             );
           },
         ),

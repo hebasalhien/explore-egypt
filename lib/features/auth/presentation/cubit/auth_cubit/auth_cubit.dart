@@ -1,11 +1,12 @@
+import 'package:explore_egypt/core/errors/exception.dart';
+import 'package:explore_egypt/features/auth/model/repos/auth_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:explore_egypt/core/services/auth_services.dart';
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  final AuthServices _authServices;
-  AuthCubit(this._authServices) : super(AuthInitial());
+  final AuthRepository _repo;
+  AuthCubit(this._repo) : super(AuthInitial());
 
   Future<dynamic> login({
     required String email,
@@ -13,11 +14,10 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(AuthLoading());
     try {
-      final data = await _authServices.login(email: email, password: password);
+      final data = await _repo.login(email: email, password: password);
       emit(AuthSuccess(data));
-    } on Exception catch (e) {
-      String errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(AuthError(errorMessage));
+    } on ServerException catch (e) {
+      emit(AuthError(e.message));
     } catch (e) {
       emit(AuthError('An unexpected error occurred:$e'));
     }
@@ -30,16 +30,14 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(AuthLoading());
     try {
-      final data = await _authServices.createUser(
+      final data = await _repo.createUser(
         email: email,
         password: password,
         username: username,
       );
-
       emit(AuthRegisterSuccess(data));
-    } on Exception catch (e) {
-      String errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(AuthError(errorMessage));
+    } on ServerException catch (e) {
+      emit(AuthError(e.message));
     } catch (e) {
       emit(AuthError('An un expected error occured'));
     }

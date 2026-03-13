@@ -56,4 +56,10 @@ class Validators {
     }
     return null;
   }
+    static String? otpValidator(String? value){
+     if (value == null || value.isEmpty) {
+      return '';
+    }
+    return null;
+  }
 }
