@@ -14,6 +14,8 @@ class ApiService {
 
   late final Dio dio;
   late final SessionCubit sessionCubit;
+  late final PersistCookieJar cookieJar;
+
 
   bool _isRefreshing = false;
 static const _skipRefreshEndpoints = [
@@ -25,21 +27,21 @@ static const _skipRefreshEndpoints = [
   ];
   ApiService._internal();
 
-  factory ApiService({SessionCubit? sessionCubit}) {
+  static ApiService get instance {
     if (_instance == null) {
-      _instance = ApiService._internal();
-      _instance!._init(sessionCubit);
+      throw Exception('ApiService not initialized. Call ApiService.create() first.');
     }
     return _instance!;
   }
+static Future<ApiService> create({required SessionCubit sessionCubit}) async {
+  if (_instance == null) {
+    _instance = ApiService._internal();
+    await _instance!._init(sessionCubit);
+  }
+  return _instance!;
+}
 
-  void _init(SessionCubit? cubit) async {
-    if (cubit == null) {
-      throw Exception(
-        'SessionCubit must be provided the first time ApiService is created',
-      );
-    }
-
+  Future<void> _init(SessionCubit cubit) async {
     sessionCubit = cubit;
 
     dio = Dio(
@@ -52,7 +54,7 @@ static const _skipRefreshEndpoints = [
     );
 
     final appDocDir = await getApplicationDocumentsDirectory();
-    final cookieJar = PersistCookieJar(
+     cookieJar = PersistCookieJar(
       storage: FileStorage('${appDocDir.path}/.cookies/'),
     );
     dio.interceptors.add(CookieManager(cookieJar));
@@ -68,6 +70,7 @@ static const _skipRefreshEndpoints = [
       InterceptorsWrapper(onRequest: onRequest, onError: onError),
     );
   }
+
 
   Future<void> onRequest(
     RequestOptions options,
