@@ -4,11 +4,10 @@ import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/core/services/shared_pref_helper.dart';
 
 class ProfileService {
-   final ApiService _apiService = ApiService();
    ProfileService();
   Future<dynamic> getUserProfile() async {
     try {
-      final response = await _apiService.dio.get('profile');
+      final response = await ApiService.instance.dio.get('profile');
 
       final userModel = UserModel.fromjson(response.data);
       await SharedPrefHelper.setObject('user', userModel.toJson());

@@ -6,7 +6,7 @@ class ChatServices {
 
   static Future<dynamic> getConversation({String? conversationID} ) async {
     try {
-      final response = await ApiService().dio.get(
+      final response = await ApiService.instance.dio.get(
         ApiConstants.chats+(conversationID != null ? '/$conversationID' : ''),
         
       );
@@ -23,7 +23,7 @@ class ChatServices {
     required String message,
   }) async {
     try {
-      final response = await ApiService().dio.post(
+      final response = await ApiService.instance.dio.post(
         ApiConstants.chats,
         data: {
           'message': message,

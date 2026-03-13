@@ -51,7 +51,7 @@ class CustomDrawer extends StatelessWidget {
                       itemBuilder: (context, index) {
                         return ListTile(
                           title: Text(
-                            state.conversations[index].title,
+                            state.conversations[index].conversationId,
                             maxLines: 1,
                           ),
                           onTap: () {

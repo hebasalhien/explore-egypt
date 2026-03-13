@@ -55,6 +55,18 @@ class MessageTextField extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Colors.white),
             ),
+            suffixIcon: IconButton(
+              onPressed: () {
+
+              },
+              icon: Icon(Icons.mic_none, color: AppColors.kPrimaryColor),
+            ),
+            prefixIcon: IconButton(
+              onPressed: () {
+
+              },
+              icon: Icon(Icons.attach_file, color: AppColors.kPrimaryColor),
+            ),
           ),
         ),
       ),
