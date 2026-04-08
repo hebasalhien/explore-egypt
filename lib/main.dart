@@ -1,5 +1,6 @@
 import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
+import 'package:explore_egypt/core/theme/app_theme.dart';
 import 'package:explore_egypt/features/auth/model/data_sources/auth_remote_data_source.dart';
 import 'package:explore_egypt/features/auth/model/repos/auth_repository.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
@@ -8,7 +9,7 @@ import 'package:explore_egypt/features/main/presentation/views/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final sessionCubit = SessionCubit();
   await ApiService.create(sessionCubit: sessionCubit);
@@ -30,10 +31,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.transparent,
-        
-      ),
+      theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: AppRoutes.onGenerateRoute,
       home: BlocConsumer<SessionCubit, SessionState>(
