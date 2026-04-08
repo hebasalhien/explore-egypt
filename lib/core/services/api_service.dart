@@ -1,7 +1,7 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:explore_egypt/core/constants/storage_constatnts.dart';
+import 'package:explore_egypt/core/constants/storage_constants.dart';
 import 'package:explore_egypt/core/services/shared_pref_helper.dart';
 import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
 import 'package:explore_egypt/core/constants/api_constants.dart';

@@ -1,11 +1,13 @@
-import 'package:explore_egypt/core/models/message_model.dart';
-import 'package:explore_egypt/core/services/chat_services.dart';
+import 'package:explore_egypt/core/errors/exception.dart';
+import 'package:explore_egypt/features/chat/model/entities/message_model.dart';
+import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 part 'chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
-  ChatCubit() : super(ChatInitial());
+  final ChatRepository _chatRepository;
+  ChatCubit(this._chatRepository) : super(ChatInitial());
   List<MessageModel> _messages = [];
   String? _currentConversationId;
 
@@ -27,15 +29,15 @@ class ChatCubit extends Cubit<ChatState> {
       ),
     );
     try {
-      final response = await ChatServices.sendMessage(
+      final data = await _chatRepository.sendMessage(
         conversationId,
         message: message,
       );
-      debugPrint('Message sent successfully: $response');
-      if (conversationId == null && response['conversationId'] != null) {
-        _currentConversationId = response['conversationId'];
+      debugPrint('Message sent successfully: $data');
+      if (conversationId == null && data['conversationId'] != null) {
+        _currentConversationId = data['conversationId'];
       }
-      _messages = (response['messages'] as List)
+      _messages = (data['messages'] as List)
           .map((msg) => MessageModel.fromJson(msg))
           .toList();
       emit(
@@ -44,6 +46,9 @@ class ChatCubit extends Cubit<ChatState> {
           conversationId: _currentConversationId,
         ),
       );
+    } on ServerException catch (e) {
+      debugPrint('Error sending message: $e');
+      emit(ChatError(errorMessage: e.toString()));
     } catch (e) {
       debugPrint('Error sending message: $e');
       emit(ChatError(errorMessage: e.toString()));
@@ -58,11 +63,11 @@ class ChatCubit extends Cubit<ChatState> {
     emit(MessageSending(messages: List.from(_messages)));
 
     try {
-      final response = await ChatServices.getConversation(
+      final data = await _chatRepository.getConversation(
         conversationID: conversationId,
       );
-      debugPrint('Conversation fetched successfully: $response');
-      _messages = (response['messages'] as List)
+      debugPrint('Conversation fetched successfully: $data');
+      _messages = (data['messages'] as List)
           .map((msg) => MessageModel.fromJson(msg))
           .toList();
       _currentConversationId = conversationId;
@@ -72,6 +77,9 @@ class ChatCubit extends Cubit<ChatState> {
           conversationId: _currentConversationId,
         ),
       );
+    } on ServerException catch (e) {
+      debugPrint('Error fetching conversation: $e');
+      emit(ChatError(errorMessage: e.toString()));
     } catch (e) {
       debugPrint('Error fetching conversation: $e');
       emit(ChatError(errorMessage: e.toString()));

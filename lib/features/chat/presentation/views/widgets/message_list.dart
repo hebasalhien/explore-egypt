@@ -1,4 +1,4 @@
-import 'package:explore_egypt/core/models/message_model.dart';
+import 'package:explore_egypt/features/chat/model/entities/message_model.dart';
 import 'package:explore_egypt/features/chat/presentation/cubit/chat_cubit/chat_cubit.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/chat_bubble.dart';
 import 'package:flutter/material.dart';

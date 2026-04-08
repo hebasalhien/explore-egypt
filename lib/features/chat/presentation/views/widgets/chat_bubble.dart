@@ -1,4 +1,4 @@
-import 'package:explore_egypt/core/models/message_model.dart';
+import 'package:explore_egypt/features/chat/model/entities/message_model.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

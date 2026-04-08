@@ -4,7 +4,7 @@ import 'package:explore_egypt/core/utils/validators.dart';
 import 'package:explore_egypt/features/auth/presentation/cubit/forgot_password_cubit/forgot_password_cubit.dart';
 import 'package:explore_egypt/features/auth/presentation/view/widget/main_background.dart';
 import 'package:explore_egypt/features/widgets/custom_button.dart';
-import 'package:explore_egypt/features/widgets/custom_text_field.dart';
+import 'package:explore_egypt/features/auth/presentation/view/widget/custom_text_field.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

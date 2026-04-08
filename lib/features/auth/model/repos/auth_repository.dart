@@ -1,14 +1,16 @@
 import 'package:dio/dio.dart';
-import 'package:explore_egypt/core/constants/storage_constatnts.dart';
+import 'package:explore_egypt/core/constants/storage_constants.dart';
+import 'package:explore_egypt/core/errors/exception.dart';
+import 'package:explore_egypt/core/errors/exception_handle_helper.dart';
 import 'package:explore_egypt/core/errors/failure.dart';
 import 'package:explore_egypt/core/services/shared_pref_helper.dart';
 import 'package:explore_egypt/features/auth/model/data_sources/auth_remote_data_source.dart';
 
-class AuthRepository{
+class AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
 
   AuthRepository(this._remoteDataSource);
-  
+
   Future<String> createUser({
     required String email,
     required String password,
@@ -21,24 +23,30 @@ class AuthRepository{
         username: username,
       );
     } on DioException catch (e) {
-      throw ServerFailure(_handleDioException(e));
+      throw ServerFailure(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
       throw ServerFailure('An unexpected error occurred');
     }
   }
 
-  Future<String>login ({required String email, required String password})async{
+  Future<String> login({
+    required String email,
+    required String password,
+  }) async {
     try {
-      final data = await _remoteDataSource.login(email: email, password: password);
-        await SharedPrefHelper.setSecureString(
+      final data = await _remoteDataSource.login(
+        email: email,
+        password: password,
+      );
+      await SharedPrefHelper.setSecureString(
         StorageConstants.userToken,
         data[StorageConstants.userToken],
       );
       return data['message'];
     } on DioException catch (e) {
-      throw ServerFailure(_handleDioException(e));
+      throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerFailure('An unexpected error occurred');
+      throw ServerException('An unexpected error occurred');
     }
   }
 
@@ -47,7 +55,7 @@ class AuthRepository{
       await _remoteDataSource.sendOtp(email: email);
       return 'Reset email sent successfully';
     } on DioException catch (e) {
-      throw ServerFailure(_handleDioException(e));
+      throw ServerFailure(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
       throw ServerFailure('An unexpected error occurred');
     }
@@ -66,28 +74,12 @@ class AuthRepository{
       );
       return 'Password reset successfully';
     } on DioException catch (e) {
-      throw ServerFailure(_handleDioException(e));
+      throw ServerFailure(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
       throw ServerFailure('An unexpected error occurred');
     }
   }
-  
-  String _handleDioException(DioException e) {
-  if (e.response?.data != null) {
-    final data = e.response!.data;
-    if (data is Map<String, dynamic> && data.containsKey('error')) {
-      return data['error'].toString();
-    }
-  }
-  if (e.type == DioExceptionType.connectionTimeout ||
-      e.type == DioExceptionType.receiveTimeout) {
-    return 'Connection timeout. Please try again.';
-  }
-  if (e.type == DioExceptionType.connectionError) {
-    return 'No internet connection. Please check your network.';
-  }
-  return 'Registration failed';
-    }
 
-  
+
+
 }

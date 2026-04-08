@@ -1,5 +1,5 @@
 import 'package:explore_egypt/core/utils/validators.dart';
-import 'package:explore_egypt/features/widgets/custom_text_field.dart';
+import 'package:explore_egypt/features/auth/presentation/view/widget/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
 class OtpTextField extends StatelessWidget {

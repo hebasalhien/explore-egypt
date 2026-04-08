@@ -1,11 +1,12 @@
-import 'package:explore_egypt/core/models/chat_model.dart';
-import 'package:explore_egypt/core/services/chat_services.dart';
+import 'package:explore_egypt/features/chat/model/entities/chat_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
+import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 part 'conversation_state.dart';
 
 class ConversationCubit extends Cubit<ConversationState> {
-  ConversationCubit() : super(ConversationInitial());
+  final ChatRepository _repository;
+  ConversationCubit(this._repository) : super(ConversationInitial());
   List<ChatModel> _conversations = [];
 
 
@@ -13,7 +14,7 @@ class ConversationCubit extends Cubit<ConversationState> {
   Future<void> fetchAllConversations() async {
     emit(ConversationLoading());
     try {
-      final response = await ChatServices.getConversation();
+      final response = await _repository.getConversation();
       debugPrint('all Conversation fetched successfully: $response');
       _conversations = (response as List)
           .map((conversationJson) => ChatModel.fromJson(conversationJson))
