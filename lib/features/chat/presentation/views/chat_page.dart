@@ -1,5 +1,6 @@
 import 'package:explore_egypt/core/constants/app_constants.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:explore_egypt/features/chat/presentation/cubit/chat_cubit/chat_cubit.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_drawer.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_row.dart';
@@ -20,35 +21,34 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ChatCubit(),
+      create: (context) => ChatCubit(context.read<ChatRepository>()),
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: Text(
-            'ChatBot AI',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-          scrolledUnderElevation: 0,
-          surfaceTintColor: Colors.transparent,
-          backgroundColor: Colors.transparent,
+          title: const Text('ChatBot AI'),
+
           actions: [
             Builder(
               builder: (context) {
                 return IconButton(
                   onPressed: () {
-                    Scaffold.of(context).openDrawer();
+                    Scaffold.of(context).openEndDrawer();
                   },
-                  icon: SvgPicture.asset(AppConstants.chatbubbleIcon),
+                  icon: SvgPicture.asset(
+                    AppConstants.chatbubbleIcon,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.kWhite,
+                      BlendMode.srcIn,
+                    ),
+                  ),
                 );
               },
             ),
           ],
         ),
-        drawer: CustomDrawer(),
+        endDrawer: CustomDrawer(),
         body: Column(
           children: [
-            Divider(color: AppColors.kGrey, thickness: 1),
             MessageList(),
             Padding(
               padding: EdgeInsets.all(8.0),
