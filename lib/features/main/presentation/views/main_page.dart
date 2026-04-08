@@ -1,10 +1,13 @@
 import 'package:explore_egypt/core/constants/app_constants.dart';
-import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/features/chat/model/data_sources/chat_remote_data_source.dart';
+import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:explore_egypt/features/chat/presentation/views/chat_page.dart';
 import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
 import 'package:explore_egypt/features/main/presentation/views/widgets/custom_navigation_destination.dart';
-import 'package:explore_egypt/features/profile/presentation/views/profile_page.dart';
+import 'package:explore_egypt/features/map/presentation/views/map_page.dart';
+import 'package:explore_egypt/features/users/presentation/views/profile_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -15,8 +18,21 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int selectedIndex = 0;
-  final List<bool> _initialized = [true, false, false]; // Home is shown first
-  final List<Widget> _pages = const [HomePage(), ChatPage(), ProfilePage()];
+  final List<bool> _initialized = [
+    true,
+    false,
+    false,
+    false,
+  ]; // Home is shown first
+  final List<Widget> _pages = [
+    HomePage(),
+    RepositoryProvider(
+      create: (context) => ChatRepository(ChatRemoteDataSource()),
+      child: ChatPage(),
+    ),
+    MapPage(),
+    ProfilePage(),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,49 +45,29 @@ class _MainPageState extends State<MainPage> {
           return _pages[index];
         }),
       ),
-      bottomNavigationBar: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          labelTextStyle: WidgetStateTextStyle.resolveWith(
-            (states) => states.contains(WidgetState.selected)
-                ? const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.kPrimaryColor,
-                  )
-                : const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.kBlack,
-                  ),
+      bottomNavigationBar: NavigationBar(
+        destinations: [
+          CustomNavigationDestination(
+            label: 'Home',
+            icon: AppConstants.homeIcon,
           ),
-        ),
-        child: NavigationBar(
-          destinations: [
-            CustomNavigationDestination(
-              label: 'Home',
-              icon: AppConstants.homeIcon,
-            ),
-            CustomNavigationDestination(
-              label: 'Chatbot',
-              icon: AppConstants.chatIcon,
-            ),
-            CustomNavigationDestination(
-              label: 'Profile',
-              icon: AppConstants.profileIcon,
-            ),
-          ],
-          selectedIndex: selectedIndex,
-          onDestinationSelected: (index) {
-            setState(() {
-              selectedIndex = index;
-              _initialized[index] = true; // mark as initialized on first visit
-            });
-          },
-
-          backgroundColor: Colors.white,
-          indicatorColor: Colors.transparent,
-          overlayColor: WidgetStateColor.transparent,
-        ),
+          CustomNavigationDestination(
+            label: 'Chatbot',
+            icon: AppConstants.chatIcon,
+          ),
+          CustomNavigationDestination(label: 'Map', icon: AppConstants.mapIcon),
+          CustomNavigationDestination(
+            label: 'Profile',
+            icon: AppConstants.profileIcon,
+          ),
+        ],
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            selectedIndex = index;
+            _initialized[index] = true; // mark as initialized on first visit
+          });
+        },
       ),
     );
   }

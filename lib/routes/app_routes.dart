@@ -10,7 +10,7 @@ import 'package:explore_egypt/features/auth/presentation/view/register_page.dart
 import 'package:explore_egypt/features/chat/presentation/views/chat_page.dart';
 import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
 import 'package:explore_egypt/features/main/presentation/views/main_page.dart';
-import 'package:explore_egypt/features/profile/presentation/views/profile_page.dart';
+import 'package:explore_egypt/features/users/presentation/views/profile_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AppRoutes {
