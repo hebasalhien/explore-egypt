@@ -1,10 +1,11 @@
+import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/users/presentation/cubit/profile_cubit/profile_cubit.dart';
-import 'package:explore_egypt/features/widgets/welcome.dart';
+import 'package:explore_egypt/features/users/presentation/views/widget/profile_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key, });
+  const ProfilePage({super.key});
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
@@ -15,17 +16,17 @@ class _ProfilePageState extends State<ProfilePage> {
     return BlocProvider(
       create: (context) => ProfileCubit()..getUserProfile(),
       child: Scaffold(
+        backgroundColor: AppColors.kBGColor,
         body: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) {
             if (state is ProfileLoading) {
               return CircularProgressIndicator();
             } else if (state is ProfileLoaded) {
-              return Welcome(user: state.user,);
+              return ProfileWidget();
             } else if (state is ProfileLoadedFaild) {
               return Center(child: Text(state.errorMessage));
             }
-              return Center(child: Text('welcome'));
-            
+            return Center(child: Text('welcome'));
           },
         ),
       ),

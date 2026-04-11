@@ -35,5 +35,22 @@ class AppTheme {
         color: AppColors.kWhite,
       ),
     ),
+    textTheme: TextTheme(
+      bodySmall: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: AppColors.kSmallText,
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        color: AppColors.kBlack,
+      ),
+      headlineMedium: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        color: AppColors.kBlack,
+      ),
+    )
   );
 }
