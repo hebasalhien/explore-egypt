@@ -5,6 +5,7 @@ import 'package:explore_egypt/features/chat/presentation/cubit/chat_cubit/chat_c
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_drawer.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_row.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/message_list.dart';
+import 'package:explore_egypt/features/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -26,7 +27,6 @@ class _ChatPageState extends State<ChatPage> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: const Text('ChatBot AI'),
-
           actions: [
             Builder(
               builder: (context) {
@@ -47,27 +47,32 @@ class _ChatPageState extends State<ChatPage> {
           ],
         ),
         endDrawer: CustomDrawer(),
-        body: Column(
+        body: Stack(
           children: [
-            MessageList(),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Builder(
-                builder: (context) {
-                  return CustomRow(
-                    controller: messageController,
-                    onPressed: () {
-                      context.read<ChatCubit>().sendMessage(
-                        message: messageController.text,
-                        conversationId: context
-                            .read<ChatCubit>()
-                            .currentConversationId,
+            Positioned.fill(child: BackGround()),
+            Column(
+              children: [
+                MessageList(),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Builder(
+                    builder: (context) {
+                      return CustomRow(
+                        controller: messageController,
+                        onPressed: () {
+                          context.read<ChatCubit>().sendMessage(
+                            message: messageController.text,
+                            conversationId: context
+                                .read<ChatCubit>()
+                                .currentConversationId,
+                          );
+                          messageController.clear();
+                        },
                       );
-                      messageController.clear();
                     },
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -20,14 +20,29 @@ class CustomDrawer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 35),
-            Text(
-              'History',
-              style: TextStyle(
-                color: AppColors.kBlack,
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'liber baskerville',
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'History',
+                  style: TextStyle(
+                    color: AppColors.kBlack,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'liber baskerville',
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.arrow_forward,
+                    color: AppColors.kBlack,
+                    size: 30
+                  ),
+                ),
+              ],
             ),
 
             Expanded(

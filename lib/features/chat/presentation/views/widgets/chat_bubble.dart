@@ -5,13 +5,14 @@ import 'package:flutter/services.dart';
 
 class ChatBubble extends StatelessWidget {
   const ChatBubble({super.key, required this.message});
-final MessageModel message;
+  final MessageModel message;
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: isBot(message.sender)
           ? MainAxisAlignment.start
           : MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           width: MediaQuery.of(context).size.width * 0.8,
@@ -35,10 +36,16 @@ final MessageModel message;
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(19),
               topRight: Radius.circular(19),
-              bottomLeft: isBot(message.sender) ? Radius.zero : Radius.circular(19),
-              bottomRight: isBot(message.sender) ? Radius.circular(19) : Radius.zero,
+              bottomLeft: isBot(message.sender)
+                  ? Radius.zero
+                  : Radius.circular(19),
+              bottomRight: isBot(message.sender)
+                  ? Radius.circular(19)
+                  : Radius.zero,
             ),
-            color: isBot(message.sender) ? AppColors.kWhite : AppColors.kPrimaryColor,
+            color: isBot(message.sender)
+                ? AppColors.kWhite
+                : AppColors.kPrimaryColor,
           ),
           child: Text(
             message.content,
@@ -53,7 +60,7 @@ final MessageModel message;
         ),
         if (isBot(message.sender))
           IconButton(
-            icon: Icon(Icons.copy_rounded, size: 24, color: AppColors.kGrey),
+            icon: Icon(Icons.copy_rounded, size: 24, color: AppColors.kWhite),
             onPressed: () {
               Clipboard.setData(ClipboardData(text: message.content));
             },
@@ -61,10 +68,11 @@ final MessageModel message;
       ],
     );
   }
-  bool isBot (String sender) {
+
+  bool isBot(String sender) {
     if (sender == 'bot') {
       return true;
     }
-return false;
-}
+    return false;
+  }
 }
