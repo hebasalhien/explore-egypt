@@ -12,13 +12,9 @@ class CustomButton extends StatelessWidget {
       width: MediaQuery.of(context).size.width ,
       child: ElevatedButton(
         onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.kPrimaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(12),
-          ),
-        ),
-        child: Text(label, style: TextStyle(color: Colors.white, fontSize: 18)),
+        style: Theme.of(context).elevatedButtonTheme.style,
+        child: Text(label,style: Theme.of(context).textTheme.labelSmall,),
+        
       ),
     );
   }

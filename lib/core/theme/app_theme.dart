@@ -51,6 +51,26 @@ class AppTheme {
         fontWeight: FontWeight.w700,
         color: AppColors.kBlack,
       ),
-    )
+      labelSmall: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+        color: AppColors.kWhite
+      ),
+      labelLarge: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: AppColors.kWhite
+      )
+    ),
+   
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.kPrimaryColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(12),
+        ),
+        
+      ),
+    ),
   );
 }
