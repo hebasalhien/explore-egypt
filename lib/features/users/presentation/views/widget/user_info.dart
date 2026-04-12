@@ -1,10 +1,11 @@
+import 'package:explore_egypt/core/constants/app_constants.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class UserInfo extends StatelessWidget {
   final String name;
-  final String imageURL;
-  final String level;
+  final String? imageURL;
+  final int level;
   const UserInfo({
     super.key,
     required this.name,
@@ -27,11 +28,11 @@ class UserInfo extends StatelessWidget {
             child: CircleAvatar(
               radius: 50,
               backgroundColor: Colors.transparent,
-              backgroundImage: NetworkImage(imageURL),
+              backgroundImage: imageURL != null? NetworkImage(imageURL!) :AssetImage(AppConstants.userImage),
             ),
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 20),
         Text(name, style: Theme.of(context).textTheme.headlineMedium),
         Text(
           'ADVENTURER LEVEL $level',

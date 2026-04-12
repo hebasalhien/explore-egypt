@@ -5,20 +5,14 @@ import 'package:flutter/material.dart';
 
 class UserCustomContainer extends StatelessWidget {
   final String bio;
-  final String text1;
-  final String number1;
-  final String text2;
-  final String number2;
-  final String text3;
-  final String number3;
+  final int number1;
+  final int number2;
+  final int number3;
   const UserCustomContainer({
     super.key,
     required this.bio,
-    required this.text1,
     required this.number1,
-    required this.text2,
     required this.number2,
-    required this.text3,
     required this.number3,
   });
 
@@ -46,11 +40,11 @@ class UserCustomContainer extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CustomColumn(number: number1, text: text1),
+                CustomColumn(number: number1, text: 'PLANS MADE'),
                 CustomVerticalDivider(),
-                CustomColumn(number: number2, text: text2),
+                CustomColumn(number: number2, text: 'SITES VISITED'),
                 CustomVerticalDivider(),
-                CustomColumn(number: number3, text: text3),
+                CustomColumn(number: number3, text: 'NIGHTS BOOKED'),
               ],
             ),
           ),
@@ -59,4 +53,3 @@ class UserCustomContainer extends StatelessWidget {
     );
   }
 }
-

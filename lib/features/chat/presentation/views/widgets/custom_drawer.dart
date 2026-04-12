@@ -39,7 +39,7 @@ class CustomDrawer extends StatelessWidget {
                   icon: Icon(
                     Icons.arrow_forward,
                     color: AppColors.kBlack,
-                    size: 30
+                    size: 30,
                   ),
                 ),
               ],
@@ -92,10 +92,9 @@ class CustomDrawer extends StatelessWidget {
                     context.read<ChatCubit>().startNewConversation();
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.kSecondary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(12),
+                  style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+                    backgroundColor: WidgetStatePropertyAll(
+                      AppColors.kSecondary,
                     ),
                   ),
                   child: Row(
@@ -104,8 +103,8 @@ class CustomDrawer extends StatelessWidget {
                     children: [
                       Icon(Icons.add, color: AppColors.kWhite),
                       Text(
-                        'New Expedition',
-                        style: TextStyle(color: AppColors.kWhite, fontSize: 16),
+                        'New Chat',
+                        style: Theme.of(context).textTheme.labelSmall,
                       ),
                     ],
                   ),

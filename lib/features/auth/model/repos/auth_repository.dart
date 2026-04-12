@@ -23,9 +23,9 @@ class AuthRepository {
         username: username,
       );
     } on DioException catch (e) {
-      throw ServerFailure(ExceptionHandleHelper.handleDioException(e));
+      throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerFailure('An unexpected error occurred');
+      throw ServerException('An unexpected error occurred');
     }
   }
 
