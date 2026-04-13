@@ -1,10 +1,16 @@
 import 'package:explore_egypt/core/constants/app_constants.dart';
 import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
+import 'package:explore_egypt/features/home/presentation/views/widgets/custom_app_bar.dart';
+import 'package:explore_egypt/features/home/presentation/views/widgets/custom_row.dart';
+import 'package:explore_egypt/features/home/presentation/views/widgets/home_card_widget.dart';
+import 'package:explore_egypt/features/home/presentation/views/widgets/landmark_card.dart';
 import 'package:explore_egypt/features/widgets/custom_app_bar_background.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
 import 'package:explore_egypt/features/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -14,10 +20,84 @@ class HomePage extends StatelessWidget {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double headerHeight = MediaQuery.of(context).size.height * .41;
+    final List<LandmarkModel> landmarks = [
+      LandmarkModel(
+        title: 'The Pyramids',
+        subtitle: 'Giza Plateau',
+        image: 'assets/images/pyramid.png',
+      ),
+      LandmarkModel(
+        title: 'The Pyramids',
+        subtitle: 'Giza Plateau',
+        image: 'assets/images/pyramid.png',
+      ),
+      LandmarkModel(
+        title: 'The Pyramids',
+        subtitle: 'Giza Plateau',
+        image: 'assets/images/pyramid.png',
+      ),
+      LandmarkModel(
+        title: 'The Pyramids',
+        subtitle: 'Giza Plateau',
+        image: 'assets/images/pyramid.png',
+      ),
+    ];
     return Scaffold(
       backgroundColor: AppColors.kHBGColor,
       body: Stack(
         children: [
+          Padding(
+            padding: EdgeInsets.only(top: headerHeight, left: 20, right: 20),
+            child: SingleChildScrollView(
+              child: Column(
+                spacing: 20,
+                children: [
+                  CustomRow(
+                    onPressed: () {},
+                    header: 'Trending Expeditions',
+                    label: 'view all',
+                  ),
+                  SizedBox(
+                    height: screenHeight * .25,
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        return LandmarkCard(
+                          title: landmarks[index].title,
+                          subtitle: landmarks[index].subtitle,
+                          image: landmarks[index].image,
+                          screenHeight: screenHeight,
+                          screenWidth: screenWidth,
+                        );
+                      },
+                      itemCount: landmarks.length,
+                      scrollDirection: Axis.horizontal,
+                    ),
+                  ),
+                  CustomRow(
+                    onPressed: () {},
+                    header: 'Suggested Plans',
+                    label: 'view all',
+                  ),
+                  SizedBox(
+                    height: screenHeight * .25,
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        return LandmarkCard(
+                          title: landmarks[index].title,
+                          subtitle: landmarks[index].subtitle,
+                          image: landmarks[index].image,
+                          screenHeight: screenHeight,
+                          screenWidth: screenWidth,
+                        );
+                      },
+                      itemCount: landmarks.length,
+                      scrollDirection: Axis.horizontal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Positioned(
             top: 0,
             left: 0,
@@ -43,115 +123,15 @@ class HomePage extends StatelessWidget {
                     right: 0,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Container(
-                        width: screenWidth * .8,
-                        height: screenHeight * .2,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          spacing: 10,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text(
-                                  'Where to, Explorer?',
-                                  style: TextStyle(
-                                    fontFamily: 'Noto Serif',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                Icon(Icons.mic_none, color: Color(0xFF9F411E)),
-                              ],
-                            ),
-                            Divider(color: AppColors.kGrey, thickness: .5),
-                            CustomGradientButton(screenWidth: screenWidth),
-                          ],
-                        ),
+                      child: HomeCardWidget(
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CustomGradientButton extends StatelessWidget {
-  const CustomGradientButton({super.key, required this.screenWidth});
-
-  final double screenWidth;
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-      ),
-      child: Ink(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppColors.kSecondary, AppColors.kPrimaryColor],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: Container(
-          width: screenWidth * .75,
-          height: 60,
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 5,
-            children: [
-              Icon(Icons.auto_awesome, color: AppColors.kWhite),
-              Text('Ask AI', style: Theme.of(context).textTheme.labelLarge),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class CustomAppBar extends StatelessWidget {
-  const CustomAppBar({super.key, required this.pl});
-  final double pl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
-        spacing: 10,
-        children: [
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: AppColors.kWhite,
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.transparent,
-              backgroundImage: NetworkImage(
-                'https://as1.ftcdn.net/jpg/03/23/70/30/1000_F_323703039_3cWWw6oi1HfcBbH7XynKIHUTwhRuMLkF.webp',
-              ),
-            ),
-          ),
-          Text('Welcome back, test!'),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.notifications_none),
-            padding: EdgeInsets.only(left: pl, right: 0),
           ),
         ],
       ),

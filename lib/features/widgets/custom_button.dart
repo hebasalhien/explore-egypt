@@ -1,4 +1,3 @@
-import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
