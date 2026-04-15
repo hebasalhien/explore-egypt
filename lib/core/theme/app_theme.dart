@@ -1,4 +1,5 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/features/map/presentation/views/widgets/custom_tab_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -24,17 +25,13 @@ class AppTheme {
               ),
       ),
     ),
-    appBarTheme: const AppBarTheme(
-      scrolledUnderElevation: 0,
-      backgroundColor: AppColors.kPrimaryColor,
-      surfaceTintColor: Colors.transparent,
-      elevation: 0,
-      centerTitle: true,
-      titleTextStyle: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: AppColors.kWhite,
-      ),
+
+    tabBarTheme: TabBarThemeData(
+      indicator: CustomTabIndicator(),
+      unselectedLabelColor: AppColors.kPlanPageBgColor,
+      dividerColor: Colors.transparent,
+      indicatorSize: TabBarIndicatorSize.tab,
+      indicatorColor: AppColors.kPlanPageBgColor,
     ),
     textTheme: TextTheme(
       bodySmall: TextStyle(
@@ -51,6 +48,11 @@ class AppTheme {
         fontSize: 24,
         fontWeight: FontWeight.w700,
         color: AppColors.kBlack,
+      ),
+      headlineSmall: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        color: AppColors.kPrimaryColor,
       ),
       labelSmall: TextStyle(
         fontSize: 14,
@@ -87,3 +89,4 @@ class AppTheme {
     ),
   );
 }
+

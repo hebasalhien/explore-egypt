@@ -18,7 +18,7 @@ class ConversationCubit extends Cubit<ConversationState> {
       debugPrint('all Conversation fetched successfully: $response');
       _conversations = (response as List)
           .map((conversationJson) => ChatModel.fromJson(conversationJson))
-          .toList();
+          .toList().reversed.toList();
       emit(ConversationLoaded(conversations: _conversations));
     } catch (e) {
       debugPrint('Error fetching conversation: $e');
