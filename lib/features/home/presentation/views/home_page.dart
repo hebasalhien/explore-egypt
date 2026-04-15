@@ -6,9 +6,9 @@ import 'package:explore_egypt/features/home/presentation/views/widgets/custom_ap
 import 'package:explore_egypt/features/home/presentation/views/widgets/custom_row.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/home_card_widget.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/landmark_card.dart';
-import 'package:explore_egypt/features/widgets/custom_app_bar_background.dart';
+import 'package:explore_egypt/core/widgets/custom_app_bar_background.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
-import 'package:explore_egypt/features/widgets/custom_button.dart';
+import 'package:explore_egypt/core/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

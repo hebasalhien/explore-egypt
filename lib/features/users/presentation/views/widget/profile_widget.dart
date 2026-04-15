@@ -1,7 +1,7 @@
 import 'package:explore_egypt/core/constants/app_constants.dart';
 import 'package:explore_egypt/features/users/model/entities/user_model.dart';
 import 'package:explore_egypt/features/users/presentation/views/widget/custom_app_bar.dart';
-import 'package:explore_egypt/features/widgets/custom_app_bar_background.dart';
+import 'package:explore_egypt/core/widgets/custom_app_bar_background.dart';
 import 'package:explore_egypt/features/users/presentation/views/widget/custom_list_tile.dart';
 import 'package:explore_egypt/features/users/presentation/views/widget/user_custom_container.dart';
 import 'package:explore_egypt/features/users/presentation/views/widget/user_info.dart';

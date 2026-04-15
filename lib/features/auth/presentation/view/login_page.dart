@@ -4,7 +4,7 @@ import 'package:explore_egypt/features/auth/presentation/view/widget/main_backgr
 import 'package:explore_egypt/routes/app_routes.dart';
 import 'package:explore_egypt/core/utils/validators.dart';
 import 'package:explore_egypt/features/auth/presentation/cubit/auth_cubit/auth_cubit.dart';
-import 'package:explore_egypt/features/widgets/custom_button.dart';
+import 'package:explore_egypt/core/widgets/custom_button.dart';
 import 'package:explore_egypt/features/auth/presentation/view/widget/custom_password_text_field.dart';
 import 'package:explore_egypt/features/auth/presentation/view/widget/custom_text_field.dart';
 import 'package:flutter/material.dart';

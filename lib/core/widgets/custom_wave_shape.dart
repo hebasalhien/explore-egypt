@@ -1,5 +1,5 @@
-import 'package:explore_egypt/features/widgets/helpers/wave_clipper.dart';
-import 'package:explore_egypt/features/widgets/helpers/custom_wave_border.dart';
+import 'package:explore_egypt/core/widgets/helpers/wave_clipper.dart';
+import 'package:explore_egypt/core/widgets/helpers/custom_wave_border.dart';
 import 'package:flutter/material.dart';
 
 class CustomWaveShape extends StatelessWidget {
