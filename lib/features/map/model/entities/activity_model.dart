@@ -1,11 +1,11 @@
-class PlanStepModel {
+class ActivityModel {
   final String cost;
   final String time;
   final String landmarkName;
   final String description;
   final String image;
 
-  PlanStepModel({
+  ActivityModel({
     required this.cost,
     required this.time,
     required this.landmarkName,
@@ -13,8 +13,8 @@ class PlanStepModel {
     required this.image,
   });
 
-  factory PlanStepModel.fromjson(json) {
-    return PlanStepModel(
+  factory ActivityModel.fromjson(json) {
+    return ActivityModel(
       cost: json['cost'],
       time: json['time'],
       landmarkName: json['title'],

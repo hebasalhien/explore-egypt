@@ -4,7 +4,7 @@ import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:explore_egypt/features/chat/presentation/views/chat_page.dart';
 import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
 import 'package:explore_egypt/features/main/presentation/views/widgets/custom_navigation_destination.dart';
-import 'package:explore_egypt/features/map/presentation/views/map_page.dart';
+import 'package:explore_egypt/features/map/presentation/views/main_map_page.dart';
 import 'package:explore_egypt/features/users/model/data_sources/user_remote_data_source.dart';
 import 'package:explore_egypt/features/users/model/repos/user_repository.dart';
 import 'package:explore_egypt/features/users/presentation/views/profile_page.dart';
@@ -32,7 +32,7 @@ class _MainPageState extends State<MainPage> {
       create: (context) => ChatRepository(ChatRemoteDataSource()),
       child: ChatPage(),
     ),
-    MapPage(),
+    MainMapPage(),
     RepositoryProvider(
       create: (context) => UserRepository(UserRemoteDataSource()),
       child: ProfilePage(),
