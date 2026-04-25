@@ -11,6 +11,8 @@ class CustomTextField extends StatelessWidget {
     this.sufixIcon,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
+    this.onFieldSubmitted,
+    this.onChanged,
   });
   final TextEditingController controller;
   final bool isObscure;
@@ -19,39 +21,24 @@ class CustomTextField extends StatelessWidget {
   final Widget? sufixIcon;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
+  final void Function(String)? onFieldSubmitted;
+  final void Function(String)? onChanged;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       obscureText: isObscure,
       decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.transparent, width: 0),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: AppColors.kPrimaryVariant, width: 0),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: AppColors.kErrorColor),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: AppColors.kErrorColor),
-        ),
-        hint: Text(
-          label,
-          style: TextStyle(fontSize: 16, color: AppColors.kGrey),
-        ),
+        hintText: label,
         suffixIcon: sufixIcon,
-        fillColor: AppColors.kWhite,
-        filled: true,
+        contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 14),
       ),
       validator: validator,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
+      onFieldSubmitted: onFieldSubmitted,
+      cursorColor: AppColors.kPrimaryColor,
+      onChanged: onChanged,
     );
   }
 }

@@ -87,6 +87,34 @@ class AppTheme {
         ),
       ),
     ),
+
+    inputDecorationTheme: InputDecorationTheme(
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.transparent, width: 0),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: AppColors.kPrimaryVariant, width: 0),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: AppColors.kErrorColor),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: AppColors.kErrorColor),
+      ),
+      hintStyle: TextStyle(
+        fontSize: 16,
+        color: AppColors.kGrey,
+        fontWeight: FontWeight.w500,
+      ),
+      suffixIconColor: AppColors.kPrimaryColor,
+      prefixIconColor: AppColors.kPrimaryColor,
+      fillColor: AppColors.kWhite,
+      filled: true,
+      hintMaxLines: 1,
+    ),
   );
 }
-

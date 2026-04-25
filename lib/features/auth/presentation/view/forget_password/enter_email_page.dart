@@ -2,7 +2,7 @@ import 'package:explore_egypt/core/constants/app_constants.dart';
 import 'package:explore_egypt/core/theme/app_text_style.dart';
 import 'package:explore_egypt/core/utils/validators.dart';
 import 'package:explore_egypt/features/auth/presentation/cubit/forgot_password_cubit/forgot_password_cubit.dart';
-import 'package:explore_egypt/features/auth/presentation/view/widget/main_background.dart';
+import 'package:explore_egypt/features/auth/presentation/view/widget/auth_form.dart';
 import 'package:explore_egypt/core/widgets/custom_button.dart';
 import 'package:explore_egypt/features/auth/presentation/view/widget/custom_text_field.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
@@ -41,42 +41,35 @@ class _EnterEmailPageState extends State<EnterEmailPage> {
             );
           }
         },
-        child: MainBackground(
-          child: Form(
-            key: formKey,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height,
+        child: AuthForm(
+          formKey: formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 20,
+            children: [
+              Text('Forget Password', style: AppTextStyle.heading1),
+              SvgPicture.asset(
+                AppConstants.forgetPasswordImage,
+                height: 200,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 20,
-                children: [
-                  Text('Forget Password', style: AppTextStyle.heading1),
-                  SvgPicture.asset(
-                    AppConstants.forgetPasswordImage,
-                    height: 200,
-                  ),
-
-                  CustomTextField(
-                    controller: _emailController,
-                    label: 'Email',
-                    validator: Validators.generalValidator,
-                    textInputAction: TextInputAction.done,
-                  ),
-                  CustomButton(
-                    label: 'Send OTP',
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        context.read<ForgotPasswordCubit>().sendOtp(
-                          email: _emailController.text,
-                        );
-                      }
-                    },
-                  ),
-                ],
+          
+              CustomTextField(
+                controller: _emailController,
+                label: 'Email',
+                validator: Validators.generalValidator,
+                textInputAction: TextInputAction.done,
               ),
-            ),
+              CustomButton(
+                label: 'Send OTP',
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    context.read<ForgotPasswordCubit>().sendOtp(
+                      email: _emailController.text,
+                    );
+                  }
+                },
+              ),
+            ],
           ),
         ),
       ),

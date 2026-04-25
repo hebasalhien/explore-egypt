@@ -2,7 +2,7 @@ import 'package:explore_egypt/core/constants/app_constants.dart';
 import 'package:explore_egypt/core/theme/app_text_style.dart';
 import 'package:explore_egypt/core/utils/validators.dart';
 import 'package:explore_egypt/features/auth/presentation/cubit/forgot_password_cubit/forgot_password_cubit.dart';
-import 'package:explore_egypt/features/auth/presentation/view/widget/main_background.dart';
+import 'package:explore_egypt/features/auth/presentation/view/widget/auth_form.dart';
 import 'package:explore_egypt/core/widgets/custom_button.dart';
 import 'package:explore_egypt/features/auth/presentation/view/widget/custom_password_text_field.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
@@ -44,50 +44,43 @@ class _ResetPassPageState extends State<ResetPassPage> {
             ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
-        child: MainBackground(
-          child: Form(
-            key: formKey,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height,
+        child: AuthForm(
+          formKey: formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 20,
+            children: [
+              Text('Reset Password', style: AppTextStyle.heading1),
+              SvgPicture.asset(
+                AppConstants.resetPasswordImage,
+                height: 200,
+                width: 243,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 20,
-                children: [
-                  Text('Reset Password', style: AppTextStyle.heading1),
-                  SvgPicture.asset(
-                    AppConstants.resetPasswordImage,
-                    height: 200,
-                    width: 243,
-                  ),
-                  CustomPasswordTextField(
-                    controller: _passController,
-                    label: 'New Password',
-                    textInputAction: TextInputAction.next,
-                  ),
-                  CustomPasswordTextField(
-                    controller: _confirmPassController,
-                    validator: (value) => Validators.validatePassConfirm(
-                      value,
-                      _passController.text,
-                    ),
-                    label: 'Confirm Password',
-                    textInputAction: TextInputAction.done,
-                  ),
-                  CustomButton(
-                    label: 'Send Reset Link',
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        context.read<ForgotPasswordCubit>().resetPassword(
-                          newPassword: _passController.text,
-                        );
-                      }
-                    },
-                  ),
-                ],
+              CustomPasswordTextField(
+                controller: _passController,
+                label: 'New Password',
+                textInputAction: TextInputAction.next,
               ),
-            ),
+              CustomPasswordTextField(
+                controller: _confirmPassController,
+                validator: (value) => Validators.validatePassConfirm(
+                  value,
+                  _passController.text,
+                ),
+                label: 'Confirm Password',
+                textInputAction: TextInputAction.done,
+              ),
+              CustomButton(
+                label: 'Reset Password',
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    context.read<ForgotPasswordCubit>().resetPassword(
+                      newPassword: _passController.text,
+                    );
+                  }
+                },
+              ),
+            ],
           ),
         ),
       ),
