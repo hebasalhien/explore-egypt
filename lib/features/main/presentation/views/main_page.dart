@@ -3,6 +3,7 @@ import 'package:explore_egypt/features/chat/model/data_sources/chat_remote_data_
 import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:explore_egypt/features/chat/presentation/views/chat_page.dart';
 import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
+import 'package:explore_egypt/features/main/presentation/cubit/navigation_cubit.dart';
 import 'package:explore_egypt/features/main/presentation/views/widgets/custom_navigation_destination.dart';
 import 'package:explore_egypt/features/map/presentation/views/main_map_page.dart';
 import 'package:explore_egypt/features/users/model/data_sources/user_remote_data_source.dart';
@@ -19,7 +20,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int selectedIndex = 0;
   final List<bool> _initialized = [
     true,
     false,
@@ -40,38 +40,50 @@ class _MainPageState extends State<MainPage> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: selectedIndex,
-        children: List.generate(_pages.length, (index) {
-          if (!_initialized[index]) {
-            return const SizedBox.shrink(); // Placeholder for uninitialized pages
-          }
-          return _pages[index];
-        }),
-      ),
-      bottomNavigationBar: NavigationBar(
-        destinations: [
-          CustomNavigationDestination(
-            label: 'Home',
-            icon: AppConstants.homeIcon,
-          ),
-          CustomNavigationDestination(
-            label: 'Chatbot',
-            icon: AppConstants.chatIcon,
-          ),
-          CustomNavigationDestination(label: 'Map', icon: AppConstants.mapIcon),
-          CustomNavigationDestination(
-            label: 'Profile',
-            icon: AppConstants.profileIcon,
-          ),
-        ],
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (index) {
+    return BlocProvider(
+      create: (_) => NavigationCubit(),
+      child: BlocConsumer<NavigationCubit, int>(
+        listener: (context, selectedIndex) {
           setState(() {
-            selectedIndex = index;
-            _initialized[index] = true; // mark as initialized on first visit
+            _initialized[selectedIndex] = true;
           });
+        },
+        builder: (context, selectedIndex) {
+          return Scaffold(
+            body: IndexedStack(
+              index: selectedIndex,
+              children: List.generate(_pages.length, (index) {
+                if (!_initialized[index]) {
+                  return const SizedBox.shrink();
+                }
+                return _pages[index];
+              }),
+            ),
+            bottomNavigationBar: NavigationBar(
+              destinations: [
+                CustomNavigationDestination(
+                  label: 'Home',
+                  icon: AppConstants.homeIcon,
+                ),
+                CustomNavigationDestination(
+                  label: 'Chatbot',
+                  icon: AppConstants.chatIcon,
+                ),
+                CustomNavigationDestination(
+                  label: 'Map',
+                  icon: AppConstants.mapIcon,
+                ),
+                CustomNavigationDestination(
+                  label: 'Profile',
+                  icon: AppConstants.profileIcon,
+                ),
+              ],
+              selectedIndex: selectedIndex,
+              onDestinationSelected: (index) {
+                context.read<NavigationCubit>().switchTab(index);
+              },
+            ),
+          );
         },
       ),
     );

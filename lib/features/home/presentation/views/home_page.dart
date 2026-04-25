@@ -1,4 +1,3 @@
-import 'package:explore_egypt/core/constants/app_constants.dart';
 import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
@@ -10,7 +9,7 @@ import 'package:explore_egypt/core/widgets/custom_app_bar_background.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
 import 'package:explore_egypt/core/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -44,104 +43,110 @@ class HomePage extends StatelessWidget {
     ];
     return Scaffold(
       backgroundColor: AppColors.kHBGColor,
-      body: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: headerHeight, left: 20, right: 20),
-            child: SingleChildScrollView(
-              child: Column(
-                spacing: 20,
-                children: [
-                  CustomRow(
-                    onPressed: () {},
-                    header: 'Trending Expeditions',
-                    label: 'view all',
-                  ),
-                  SizedBox(
-                    height: screenHeight * .25,
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return LandmarkCard(
-                          title: landmarks[index].title,
-                          subtitle: landmarks[index].subtitle,
-                          image: landmarks[index].image,
-                          screenHeight: screenHeight,
-                          screenWidth: screenWidth,
-                        );
-                      },
-                      itemCount: landmarks.length,
-                      scrollDirection: Axis.horizontal,
+      body: BlocProvider(
+        create: (context) => SessionCubit(),
+        child: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: headerHeight, left: 20, right: 20),
+              child: SingleChildScrollView(
+                child: Column(
+                  spacing: 20,
+                  children: [
+                    CustomRow(
+                      onPressed: () {},
+                      header: 'Trending Expeditions',
+                      label: 'view all',
                     ),
-                  ),
-                  CustomRow(
-                    onPressed: () {},
-                    header: 'Suggested Plans',
-                    label: 'view all',
-                  ),
-                  SizedBox(
-                    height: screenHeight * .25,
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return LandmarkCard(
-                          title: landmarks[index].title,
-                          subtitle: landmarks[index].subtitle,
-                          image: landmarks[index].image,
-                          screenHeight: screenHeight,
-                          screenWidth: screenWidth,
-                        );
-                      },
-                      itemCount: landmarks.length,
-                      scrollDirection: Axis.horizontal,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: SizedBox(
-              height: headerHeight,
-              child: Stack(
-                children: [
-                  Positioned(
-                    child: AppBarBackground(
-                      colors: [AppColors.kPrimaryColor, AppColors.kSecondary],
-                      r1: 0,
-                    ),
-                  ),
-                  Positioned(
-                    width: screenWidth,
-                    top: screenHeight * 0.05,
-                    child: CustomAppBar(pl: screenWidth * .25),
-                  ),
-                  Positioned(
-                    top: screenHeight * .17,
-                    left: 0,
-                    right: 0,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: HomeCardWidget(
-                        screenWidth: screenWidth,
-                        screenHeight: screenHeight,
+                    SizedBox(
+                      height: screenHeight * .25,
+                      child: ListView.builder(
+                        itemBuilder: (context, index) {
+                          return LandmarkCard(
+                            title: landmarks[index].title,
+                            subtitle: landmarks[index].subtitle,
+                            image: landmarks[index].image,
+                            screenHeight: screenHeight,
+                            screenWidth: screenWidth,
+                          );
+                        },
+                        itemCount: landmarks.length,
+                        scrollDirection: Axis.horizontal,
                       ),
                     ),
-                  ),
-                ],
+                    CustomRow(
+                      onPressed: () {},
+                      header: 'Suggested Plans',
+                      label: 'view all',
+                    ),
+                    SizedBox(
+                      height: screenHeight * .25,
+                      child: ListView.builder(
+                        itemBuilder: (context, index) {
+                          return LandmarkCard(
+                            title: landmarks[index].title,
+                            subtitle: landmarks[index].subtitle,
+                            image: landmarks[index].image,
+                            screenHeight: screenHeight,
+                            screenWidth: screenWidth,
+                          );
+                        },
+                        itemCount: landmarks.length,
+                        scrollDirection: Axis.horizontal,
+                      ),
+                    ),
+                    CustomButton(
+                      onPressed: () {
+                        context.read<SessionCubit>().endSession();
+                        Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.loginPage,
+                        );
+                      },
+                      label: 'logout',
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SizedBox(
+                height: headerHeight,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      child: AppBarBackground(
+                        colors: [AppColors.kPrimaryColor, AppColors.kSecondary],
+                        r1: 0,
+                      ),
+                    ),
+                    Positioned(
+                      width: screenWidth,
+                      top: screenHeight * 0.05,
+                      child: CustomAppBar(pl: screenWidth * .25),
+                    ),
+                    Positioned(
+                      top: screenHeight * .17,
+                      left: 0,
+                      right: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: HomeCardWidget(
+                          screenWidth: screenWidth,
+                          screenHeight: screenHeight,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-          // CustomButton(
-          //   onPressed: () {
-          //     context.read<SessionCubit>().endSession();
-          //     Navigator.pushReplacementNamed(context, AppRoutes.loginPage);
-          //   },
-          //   label: 'logout',
-          // ),

@@ -3,10 +3,11 @@ import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/core/widgets/gradient_app_bar.dart';
 import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:explore_egypt/features/chat/presentation/cubit/chat_cubit/chat_cubit.dart';
+import 'package:explore_egypt/features/chat/presentation/views/widgets/chat_background.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_drawer.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_row.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/message_list.dart';
-import 'package:explore_egypt/core/widgets/background.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -49,7 +50,7 @@ class _ChatPageState extends State<ChatPage> {
         endDrawer: CustomDrawer(),
         body: Stack(
           children: [
-            Positioned.fill(child: BackGround()),
+            ChatBackground(),
             Column(
               children: [
                 MessageList(),

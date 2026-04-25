@@ -1,6 +1,7 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
-import 'package:explore_egypt/routes/app_routes.dart';
+import 'package:explore_egypt/features/main/presentation/cubit/navigation_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomGradientButton extends StatelessWidget {
   const CustomGradientButton({super.key, required this.screenWidth});
@@ -11,11 +12,13 @@ class CustomGradientButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        Navigator.pushNamed(context, AppRoutes.chatPage);
+        context.read<NavigationCubit>().switchTab(1);
       },
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
       ),
       child: Ink(
         decoration: BoxDecoration(
@@ -43,4 +46,3 @@ class CustomGradientButton extends StatelessWidget {
     );
   }
 }
-

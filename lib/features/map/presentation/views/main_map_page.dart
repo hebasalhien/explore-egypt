@@ -22,8 +22,6 @@ class MainMapPage extends StatelessWidget {
           children: [
             PlanPage(screenHeight: screenHeight,screenWidth: screenWidth,),
             MapPage()
-
-            // Container(),
           ],
         ),
       ),

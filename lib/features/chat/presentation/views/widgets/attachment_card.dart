@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:explore_egypt/core/theme/app_colors.dart';
@@ -39,14 +38,14 @@ class AttachmentCard extends StatelessWidget {
               ),
             ),
             Positioned(
-              right: 6,
-              top: -9,
+              right: 0,
+              top: -2,
               child: SizedBox(
                 height: 20,
                 width: 20,
-                child: IconButton(
-                  onPressed: onPressed,
-                  icon: Icon(
+                child: GestureDetector(
+                  onTap: onPressed,
+                  child: Icon(
                     Icons.cancel_outlined,
                     color: AppColors.kPrimaryVariant,
                     size: 20,
