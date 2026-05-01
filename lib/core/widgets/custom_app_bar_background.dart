@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class AppBarBackground extends StatelessWidget {
   final List<Color>? colors;
   final double? r1;
-  const AppBarBackground({super.key, this.colors,this.r1,});
+  const AppBarBackground({super.key, this.colors, this.r1});
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +16,11 @@ class AppBarBackground extends StatelessWidget {
               : colors!,
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
+          stops: [0, 1.0],
         ),
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(r1 == null ? 93 :r1! ),
-          bottomRight: Radius.circular(r1 == null ? 93 :r1!),
+          bottomLeft: Radius.circular(r1 == null ? 93 : r1!),
+          bottomRight: Radius.circular(r1 == null ? 93 : r1!),
         ),
       ),
       height: MediaQuery.of(context).size.height * .25,

@@ -16,16 +16,15 @@ class CustomGradientButton extends StatelessWidget {
       },
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
       ),
       child: Ink(
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [AppColors.kSecondary, AppColors.kPrimaryColor],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0, 1.0],
           ),
           borderRadius: BorderRadius.circular(50),
         ),

@@ -5,19 +5,21 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
   final PreferredSizeWidget? bottom;
   final List<Widget>? actions;
-  const GradientAppBar({super.key, this.title = '', this.bottom,this.actions});
+  const GradientAppBar({super.key, this.title = '', this.bottom, this.actions});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: Colors.transparent,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [AppColors.kSecondaryVariant, AppColors.kPrimaryColor],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0, 1.0],
           ),
         ),
       ),

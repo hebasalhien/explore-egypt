@@ -28,11 +28,12 @@ class CustomAppBar extends StatelessWidget {
             'Welcome back, test!',
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               fontFamily: GoogleFonts.notoSerif().fontFamily,
+              color: AppColors.kWhite,
             ),
           ),
           IconButton(
             onPressed: () {},
-            icon: Icon(Icons.notifications_none),
+            icon: Icon(Icons.notifications_none, color: AppColors.kWhite),
             padding: EdgeInsets.only(left: pl, right: 0),
           ),
         ],
