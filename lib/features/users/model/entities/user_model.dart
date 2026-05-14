@@ -9,22 +9,22 @@ class UserModel {
   const UserModel({
     required this.name,
     this.imageURL,
-    this.level = 3,
-    this.bio,
-    this.plans = 0,
-    this.sites = 0,
-    this.nights = 0,
+    required this.level,
+    required this.bio,
+    required this.plans,
+    required this.sites,
+    required this.nights,
   });
 
   factory UserModel.fromjson(json) {
     return UserModel(
       name: json['username'],
-      // imageURL: json['image'],
-      // level: json['level'],
-      // bio: json['bio'],
-      // nights: json['nights'],
-      // plans: json['plans'],
-      // sites: json['sites']
+      imageURL: json['userImage'],
+      level: int.tryParse(json['adventureLevel'].toString()) ?? 0,
+      bio: json['bio'],
+      nights: json['nightsBooked'],
+      plans: json['plansMade'],
+      sites: json['sitesVisited']
     );
   }
 }

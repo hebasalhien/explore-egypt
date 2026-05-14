@@ -13,4 +13,7 @@ class ApiConstants {
 
   //chat endpoints //
   static const String chats = 'api/chats';
+
+  /// home endpoints
+  static const String home = 'api/home';
 }
