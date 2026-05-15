@@ -15,6 +15,7 @@ class ChatCubit extends Cubit<ChatState> {
   Future<void> sendMessage({
     required String message,
     String? conversationId,
+    List<String>? filePath,
   }) async {
     debugPrint('Sending message: $message to conversationId: $conversationId');
     final newMessage = MessageModel(
@@ -32,6 +33,7 @@ class ChatCubit extends Cubit<ChatState> {
       final data = await _chatRepository.sendMessage(
         conversationId,
         message: message,
+        filePath: filePath,
       );
       debugPrint('Message sent successfully: $data');
       if (conversationId == null && data['conversationId'] != null) {

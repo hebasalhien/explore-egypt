@@ -4,17 +4,17 @@ import 'package:explore_egypt/features/chat/presentation/views/widgets/attachmen
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-class MessageTextField extends StatefulWidget {
-  const MessageTextField({super.key, required this.controller});
+class MessageTextField extends StatelessWidget {
+  const MessageTextField({
+    super.key,
+    required this.controller,
+    required this.files,
+    required this.onFilesChanged,
+  });
 
   final TextEditingController controller;
-
-  @override
-  State<MessageTextField> createState() => _MessageTextFieldState();
-}
-
-class _MessageTextFieldState extends State<MessageTextField> {
-  List<PlatformFile> files = [];
+  final List<PlatformFile> files;
+  final ValueChanged<List<PlatformFile>> onFilesChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +50,8 @@ class _MessageTextFieldState extends State<MessageTextField> {
                     final file = files[index];
                     return AttachmentCard(
                       onPressed: () {
-                        setState(() {
-                          files.removeAt(index);
-                        });
+                        final updatedFiles = List<PlatformFile>.from(files)..removeAt(index);
+                        onFilesChanged(updatedFiles);
                       },
                       filePath: file.path.toString(),
                       fileExtension: file.extension,
@@ -61,7 +60,7 @@ class _MessageTextFieldState extends State<MessageTextField> {
                 ),
               ),
             TextField(
-              controller: widget.controller,
+              controller: controller,
               textInputAction: TextInputAction.newline,
               keyboardType: TextInputType.multiline,
               maxLines: 5,
@@ -87,21 +86,24 @@ class _MessageTextFieldState extends State<MessageTextField> {
                   onPressed: () {},
                   icon: Icon(Icons.mic_none),
                 ),
-                prefixIcon: IconButton(
-                  onPressed: () async {
-                    try {
-                      final pickedFiles = await FilePickerServices.pickFiles();
-                      if (pickedFiles != null) {
-                        setState(() {
-                          files.addAll(pickedFiles);
-                        });
-                      } else {}
-                    } on Exception catch (e) {
-                      debugPrint("exception was cought: ${e.toString()}");
-                    }
-                  },
-                  icon: Icon(Icons.attach_file),
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.only(bottom:10.0,left: 10),
+                  child: IconButton(
+                    onPressed: () async {
+                      try {
+                        final pickedFiles = await FilePickerServices.pickFiles();
+                        if (pickedFiles != null) {
+                          final updatedFiles = List<PlatformFile>.from(files)..addAll(pickedFiles);
+                          onFilesChanged(updatedFiles);
+                        } 
+                      } on Exception catch (e) {
+                        debugPrint("exception was cought: ${e.toString()}");
+                      }
+                    },
+                    icon: Icon(Icons.attach_file),
+                  ),
                 ),
+                
               ),
             ),
           ],

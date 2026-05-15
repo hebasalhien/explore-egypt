@@ -2,6 +2,7 @@ import 'package:explore_egypt/features/chat/model/entities/message_model.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ChatBubble extends StatelessWidget {
   const ChatBubble({super.key, required this.message});
@@ -47,16 +48,29 @@ class ChatBubble extends StatelessWidget {
                 ? AppColors.kWhite
                 : AppColors.kPrimaryColor,
           ),
-          child: Text(
-            message.content,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: isBot(message.sender) ? Colors.black : Colors.white,
-              letterSpacing: 0,
-            ),
-            softWrap: true,
-          ),
+          child: isBot(message.sender)
+              ? MarkdownBody(
+                  data: message.content,
+                  shrinkWrap: true,
+                  styleSheet: MarkdownStyleSheet(
+                    p: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                )
+              : Text(
+                  message.content,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: isBot(message.sender) ? Colors.black : Colors.white,
+                    letterSpacing: 0,
+                  ),
+                  softWrap: true,
+                ),
         ),
         if (isBot(message.sender))
           IconButton(

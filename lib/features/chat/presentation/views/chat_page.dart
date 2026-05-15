@@ -11,6 +11,7 @@ import 'package:explore_egypt/features/chat/presentation/views/widgets/message_l
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:file_picker/file_picker.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -21,6 +22,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final messageController = TextEditingController();
+  List<PlatformFile> selectedFiles = [];
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -60,14 +62,29 @@ class _ChatPageState extends State<ChatPage> {
                     builder: (context) {
                       return CustomRow(
                         controller: messageController,
-                        onPressed: () {
+                        files: selectedFiles,
+                        onFilesChanged: (files) {
+                          setState(() {
+                            selectedFiles = files;
+                          });
+                        },
+                        onPressed: (files) {
+                          List<String>? filePaths;
+                          if (files.isNotEmpty) {
+                            filePaths = files.map((e) => e.path!).toList();
+                          }
+                          
                           context.read<ChatCubit>().sendMessage(
                             message: messageController.text,
                             conversationId: context
                                 .read<ChatCubit>()
                                 .currentConversationId,
+                            filePath: filePaths,
                           );
                           messageController.clear();
+                          setState(() {
+                            selectedFiles.clear();
+                          });
                         },
                       );
                     },

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:explore_egypt/core/constants/api_constants.dart';
 import 'package:explore_egypt/core/services/api_service.dart';
 
@@ -12,10 +13,31 @@ class ChatRemoteDataSource {
   Future<dynamic> sendMessage(
     String? conversationId, {
     required String message,
+     List<String>? filePath,
+
   }) async {
+      List<MultipartFile> files = [];
+
+  if (filePath != null && filePath.isNotEmpty) {
+  for (String path in filePath) {
+    files.add(
+      await MultipartFile.fromFile(
+        path,
+        filename: path.split('/').last,
+      ),
+    );
+  }
+}
+
+    FormData formData = FormData.fromMap({
+      "message": message,
+      if (conversationId != null) "conversationId": conversationId,
+      if (files.isNotEmpty) "files": files,
+    });
+
     final response = await ApiService.instance.dio.post(
       ApiConstants.chats,
-      data: {'message': message, 'conversationId': conversationId},
+      data: formData,
     );
     return response.data;
   }

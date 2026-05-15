@@ -9,8 +9,7 @@ class ConversationCubit extends Cubit<ConversationState> {
   ConversationCubit(this._repository) : super(ConversationInitial());
   List<ChatModel> _conversations = [];
 
-
-/// fetches all conversations from the server and updates the state accordingly
+  /// fetches all conversations from the server and updates the state accordingly
   Future<void> fetchAllConversations() async {
     emit(ConversationLoading());
     try {
@@ -18,12 +17,13 @@ class ConversationCubit extends Cubit<ConversationState> {
       debugPrint('all Conversation fetched successfully: $response');
       _conversations = (response as List)
           .map((conversationJson) => ChatModel.fromJson(conversationJson))
-          .toList().reversed.toList();
+          .toList()
+          .reversed
+          .toList();
       emit(ConversationLoaded(conversations: _conversations));
     } catch (e) {
       debugPrint('Error fetching conversation: $e');
       emit(ConversationError(errorMessage: e.toString()));
     }
   }
-  
 }

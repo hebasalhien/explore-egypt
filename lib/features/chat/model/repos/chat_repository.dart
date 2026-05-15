@@ -22,9 +22,14 @@ class ChatRepository {
    Future<dynamic> sendMessage(
     String? conversationId , {
     required String message,
+    List<String>? filePath,
   }) async {
     try {
-      final data = _dataSource.sendMessage(conversationId, message: message);
+      final data = await _dataSource.sendMessage(
+        conversationId, 
+        message: message,
+        filePath: filePath,
+      );
       return data;
     } on DioException catch (e) {
       throw ServerFailure(ExceptionHandleHelper.handleDioException(e));
