@@ -15,16 +15,15 @@ class PhotoInfo extends StatelessWidget {
         Text(
           subtitle.toUpperCase(),
           style: Theme.of(context).textTheme.titleSmall,
-        ),
+softWrap: true,        ),
         Text(
           title,
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
             color: Colors.white,
             fontFamily: GoogleFonts.notoSerif().fontFamily,
           ),
-        ),
+softWrap: true,        ),
       ],
     );
   }
 }
-

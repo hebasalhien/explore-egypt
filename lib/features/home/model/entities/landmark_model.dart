@@ -1,18 +1,24 @@
 class LandmarkModel {
-  final String title;
+  final String name;
   final String subtitle;
-  final String image;
+  final String imageUrl;
+  final double lat;
+  final double lng;
 
   LandmarkModel({
-    required this.title,
+    required this.name,
     required this.subtitle,
-    required this.image,
+    required this.imageUrl,
+    required this.lat,
+    required this.lng
   });
   factory LandmarkModel.fromjson(data) {
     return LandmarkModel(
-      title: data['title'],
+      name: data['name'],
       subtitle: data['subtitle'],
-      image: data['image'],
+      imageUrl: data['imageUrl'],
+      lat: data['lat'],
+      lng: data['lng']
     );
   }
 }

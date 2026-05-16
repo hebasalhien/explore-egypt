@@ -1,11 +1,14 @@
 import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
-import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
+import 'package:explore_egypt/features/home/model/data_sources/home_remote_data_source.dart';
+import 'package:explore_egypt/features/home/model/repos/home_repository.dart';
+import 'package:explore_egypt/features/home/presentation/cubit/home_cubit.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/custom_app_bar.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/custom_row.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/home_card_widget.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/landmark_card.dart';
 import 'package:explore_egypt/core/widgets/custom_app_bar_background.dart';
+import 'package:explore_egypt/features/home/presentation/views/widgets/plan_card.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
 import 'package:explore_egypt/core/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -19,94 +22,79 @@ class HomePage extends StatelessWidget {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double headerHeight = MediaQuery.of(context).size.height * .41;
-    final List<LandmarkModel> landmarks = [
-      LandmarkModel(
-        title: 'The Pyramids',
-        subtitle: 'Giza Plateau',
-        image: 'assets/images/pyramid.png',
-      ),
-      LandmarkModel(
-        title: 'The Pyramids',
-        subtitle: 'Giza Plateau',
-        image: 'assets/images/pyramid.png',
-      ),
-      LandmarkModel(
-        title: 'The Pyramids',
-        subtitle: 'Giza Plateau',
-        image: 'assets/images/pyramid.png',
-      ),
-      LandmarkModel(
-        title: 'The Pyramids',
-        subtitle: 'Giza Plateau',
-        image: 'assets/images/pyramid.png',
-      ),
-    ];
+
     return Scaffold(
       backgroundColor: AppColors.kHBGColor,
       body: BlocProvider(
-        create: (context) => SessionCubit(),
+        create: (context) => HomeCubit(HomeRepository(HomeRemoteDataSource()))..getHome(),
         child: Stack(
           children: [
             Padding(
               padding: EdgeInsets.only(top: headerHeight, left: 20, right: 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  spacing: 20,
-                  children: [
-                    CustomRow(
-                      onPressed: () {},
-                      header: 'Trending Expeditions',
-                      label: 'view all',
-                    ),
-                    SizedBox(
-                      height: screenHeight * .25,
-                      child: ListView.builder(
-                        itemBuilder: (context, index) {
-                          return LandmarkCard(
-                            title: landmarks[index].title,
-                            subtitle: landmarks[index].subtitle,
-                            image: landmarks[index].image,
-                            screenHeight: screenHeight,
-                            screenWidth: screenWidth,
-                          );
-                        },
-                        itemCount: landmarks.length,
-                        scrollDirection: Axis.horizontal,
+              child: BlocBuilder<HomeCubit, HomeState>(
+                builder: (context, state) {
+                  if (state is HomeLoaded) {
+                    return SingleChildScrollView(
+                      child: Column(
+                        spacing: 20,
+                        children: [
+                          CustomRow(
+                            onPressed: () {},
+                            header: 'Trending Expeditions',
+                            label: 'view all',
+                          ),
+                          SizedBox(
+                            height: screenHeight * .25,
+                            child: ListView.builder(
+                              itemBuilder: (context, index) {
+                                return LandmarkCard(
+                                  landmarkModel: state.landmarks[index],
+                                  screenHeight: screenHeight,
+                                  screenWidth: screenWidth,
+                                );
+                              },
+                              itemCount: state.landmarks.length,
+                              scrollDirection: Axis.horizontal,
+                            ),
+                          ),
+                          CustomRow(
+                            onPressed: () {},
+                            header: 'Suggested Plans',
+                            label: 'view all',
+                          ),
+                          SizedBox(
+                            height: screenHeight * .25,
+                            child: ListView.builder(
+                              itemBuilder: (context, index) {
+                                return PlanCard(
+                                  planCardModel: state.planCardModel[index],
+                                  screenHeight: screenHeight,
+                                  screenWidth: screenWidth,
+                                );
+                              },
+                              itemCount: state.planCardModel.length,
+                              scrollDirection: Axis.horizontal,
+                            ),
+                          ),
+                          CustomButton(
+                            onPressed: () {
+                              context.read<SessionCubit>().endSession();
+                              Navigator.pushReplacementNamed(
+                                context,
+                                AppRoutes.loginPage,
+                              );
+                            },
+                            label: 'logout',
+                          ),
+                        ],
                       ),
-                    ),
-                    CustomRow(
-                      onPressed: () {},
-                      header: 'Suggested Plans',
-                      label: 'view all',
-                    ),
-                    SizedBox(
-                      height: screenHeight * .25,
-                      child: ListView.builder(
-                        itemBuilder: (context, index) {
-                          return LandmarkCard(
-                            title: landmarks[index].title,
-                            subtitle: landmarks[index].subtitle,
-                            image: landmarks[index].image,
-                            screenHeight: screenHeight,
-                            screenWidth: screenWidth,
-                          );
-                        },
-                        itemCount: landmarks.length,
-                        scrollDirection: Axis.horizontal,
-                      ),
-                    ),
-                    CustomButton(
-                      onPressed: () {
-                        context.read<SessionCubit>().endSession();
-                        Navigator.pushReplacementNamed(
-                          context,
-                          AppRoutes.loginPage,
-                        );
-                      },
-                      label: 'logout',
-                    ),
-                  ],
-                ),
+                    );
+                  } else if (state is HomeLoading) {
+                    return CircularProgressIndicator();
+                  } else {
+                    return Center(child: Text('Error while loading home page'));
+                  }
+                },
               ),
             ),
             Positioned(

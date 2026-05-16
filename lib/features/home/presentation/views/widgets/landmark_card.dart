@@ -1,3 +1,4 @@
+import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/glass_icon_button.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/photo_info.dart';
 import 'package:flutter/material.dart';
@@ -7,16 +8,12 @@ class LandmarkCard extends StatelessWidget {
     super.key,
     required this.screenHeight,
     required this.screenWidth,
-    required this.title,
-    required this.subtitle,
-    required this.image,
+    required this.landmarkModel,
   });
-  final String title;
-  final String subtitle;
-  final String image;
+
   final double screenHeight;
   final double screenWidth;
-
+  final LandmarkModel landmarkModel;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -27,7 +24,10 @@ class LandmarkCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: Colors.transparent,
-          image: DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
+          image: DecorationImage(
+            image: NetworkImage(landmarkModel.imageUrl),
+            fit: BoxFit.cover,
+          ),
         ),
         child: Stack(
           children: [
@@ -36,7 +36,13 @@ class LandmarkCard extends StatelessWidget {
             Positioned(
               left: 15,
               bottom: 15,
-              child: PhotoInfo(title: title, subtitle: subtitle),
+              child: SizedBox(
+                width: screenWidth * .35,
+                child: PhotoInfo(
+                  title: landmarkModel.name,
+                  subtitle: landmarkModel.subtitle,
+                ),
+              ),
             ),
           ],
         ),
@@ -44,4 +50,3 @@ class LandmarkCard extends StatelessWidget {
     );
   }
 }
-
