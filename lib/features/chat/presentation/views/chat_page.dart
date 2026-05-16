@@ -7,6 +7,7 @@ import 'package:explore_egypt/features/chat/presentation/views/widgets/chat_back
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_drawer.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_row.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/message_list.dart';
+import 'package:explore_egypt/features/chat/presentation/views/widgets/stop_generating.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,6 +57,18 @@ class _ChatPageState extends State<ChatPage> {
             Column(
               children: [
                 MessageList(),
+                BlocBuilder<ChatCubit, ChatState>(
+                  builder: (context, state) {
+                    if (state is MessageSending) {
+                      return StopGenerating(
+                        onTap: () {
+                          context.read<ChatCubit>().cancelGenerating();
+                        },
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Builder(
@@ -73,7 +86,7 @@ class _ChatPageState extends State<ChatPage> {
                           if (files.isNotEmpty) {
                             filePaths = files.map((e) => e.path!).toList();
                           }
-                          
+        
                           context.read<ChatCubit>().sendMessage(
                             message: messageController.text,
                             conversationId: context

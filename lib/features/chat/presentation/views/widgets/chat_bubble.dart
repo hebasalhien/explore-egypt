@@ -66,7 +66,7 @@ class ChatBubble extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
-                    color: isBot(message.sender) ? Colors.black : Colors.white,
+                    color: Colors.white,
                     letterSpacing: 0,
                   ),
                   softWrap: true,

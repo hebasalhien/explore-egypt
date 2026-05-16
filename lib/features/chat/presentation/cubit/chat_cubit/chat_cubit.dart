@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:explore_egypt/core/errors/exception.dart';
+import 'package:explore_egypt/core/errors/failure.dart';
 import 'package:explore_egypt/features/chat/model/entities/message_model.dart';
 import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +12,7 @@ class ChatCubit extends Cubit<ChatState> {
   ChatCubit(this._chatRepository) : super(ChatInitial());
   List<MessageModel> _messages = [];
   String? _currentConversationId;
+  CancelToken? _cancelToken;
 
   /// sends a message to a new or existing conversation and updates the state accordingly
   Future<void> sendMessage({
@@ -23,17 +26,14 @@ class ChatCubit extends Cubit<ChatState> {
       sender: 'user',
       conversationId: _currentConversationId ?? '',
     );
-    emit(
-      MessageLoaded(
-        messages: List.from(_messages..add(newMessage)),
-        conversationId: conversationId ?? _currentConversationId,
-      ),
-    );
+    emit(MessageSending(messages: List.from(_messages..add(newMessage))));
+    _cancelToken = CancelToken();
     try {
       final data = await _chatRepository.sendMessage(
         conversationId,
         message: message,
         filePath: filePath,
+        cancelToken: _cancelToken,
       );
       debugPrint('Message sent successfully: $data');
       if (conversationId == null && data['conversationId'] != null) {
@@ -52,8 +52,26 @@ class ChatCubit extends Cubit<ChatState> {
       debugPrint('Error sending message: $e');
       emit(ChatError(errorMessage: e.toString()));
     } catch (e) {
-      debugPrint('Error sending message: $e');
-      emit(ChatError(errorMessage: e.toString()));
+      if (e is ServerFailure) {
+        debugPrint('Request cancelled by user');
+        if (e.message.contains('Request cancelled')) {
+          emit(
+            MessageLoaded(
+              messages: _messages,
+              conversationId: _currentConversationId,
+            ),
+          );
+        }
+      } else {
+        debugPrint('Error sending message: $e');
+        emit(ChatError(errorMessage: e.toString()));
+      }
+    }
+  }
+
+  void cancelGenerating() {
+    if (_cancelToken != null && !_cancelToken!.isCancelled) {
+      _cancelToken!.cancel('Request cancelled');
     }
   }
 
@@ -87,7 +105,8 @@ class ChatCubit extends Cubit<ChatState> {
       emit(ChatError(errorMessage: e.toString()));
     }
   }
-/// resets the current conversation and messages, allowing the user to start a new conversation
+
+  /// resets the current conversation and messages, allowing the user to start a new conversation
   void startNewConversation() {
     _currentConversationId = null;
     _messages = [];

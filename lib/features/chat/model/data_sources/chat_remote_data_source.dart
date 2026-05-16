@@ -13,31 +13,28 @@ class ChatRemoteDataSource {
   Future<dynamic> sendMessage(
     String? conversationId, {
     required String message,
-     List<String>? filePath,
-
+    List<String>? filePath,
+    CancelToken? cancelToken,
   }) async {
-      List<MultipartFile> files = [];
+    List<MultipartFile> files = [];
 
-  if (filePath != null && filePath.isNotEmpty) {
-  for (String path in filePath) {
-    files.add(
-      await MultipartFile.fromFile(
-        path,
-        filename: path.split('/').last,
-      ),
-    );
-  }
-}
+    if (filePath != null && filePath.isNotEmpty) {
+      for (String path in filePath) {
+        files.add(
+          await MultipartFile.fromFile(path, filename: path.split('/').last),
+        );
+      }
+    }
 
     FormData formData = FormData.fromMap({
       "message": message,
       if (conversationId != null) "conversationId": conversationId,
       if (files.isNotEmpty) "files": files,
     });
-
     final response = await ApiService.instance.dio.post(
       ApiConstants.chats,
       data: formData,
+      cancelToken: cancelToken,
     );
     return response.data;
   }

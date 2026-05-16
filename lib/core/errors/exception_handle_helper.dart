@@ -15,6 +15,9 @@ class ExceptionHandleHelper {
     if (e.type == DioExceptionType.connectionError) {
       return 'No internet connection. Please check your network.';
     }
+    if (e.type == DioExceptionType.cancel) {
+      return 'Request cancelled';
+    }
     return 'Registration failed';
   }
 }
