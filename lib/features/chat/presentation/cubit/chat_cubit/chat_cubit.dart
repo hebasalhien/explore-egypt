@@ -80,7 +80,7 @@ class ChatCubit extends Cubit<ChatState> {
 
   /// fetches a specific conversation by its ID and updates the state accordingly
   Future<void> fetchConversationById({String? conversationId}) async {
-    emit(MessageSending(messages: List.from(_messages)));
+    emit(MessageLoading());
 
     try {
       final data = await _chatRepository.getConversation(

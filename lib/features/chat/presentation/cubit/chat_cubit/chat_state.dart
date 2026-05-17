@@ -10,6 +10,7 @@ final class MessageSending extends ChatState
 
   MessageSending({required this.messages});
 }
+final class MessageLoading extends ChatState {}
 
 final class MessageLoaded extends ChatState {
   final List<MessageModel> messages;
