@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/glass_icon_button.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/photo_info.dart';
@@ -25,7 +26,7 @@ class LandmarkCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           color: Colors.transparent,
           image: DecorationImage(
-            image: NetworkImage(landmarkModel.imageUrl),
+            image: CachedNetworkImageProvider(landmarkModel.imageUrl),
             fit: BoxFit.cover,
           ),
         ),

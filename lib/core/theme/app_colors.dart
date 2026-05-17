@@ -11,6 +11,7 @@ class AppColors {
   static const Color kSecondaryVariant = Color(0xFFA24945);
   static const Color kErrorColor = Color(0xFFB00020);
   static const Color kIconButtonColor = Color(0xff9f411e);
+  static const Color kRowActionColor = Color(0xffB02A3E);
   static const Color kGrey = Color(0xFF9E9E9E);
   static const Color kBlack = Color(0Xff2D2D2D);
   static const Color kWhite = Color(0XFFF8F9F7);

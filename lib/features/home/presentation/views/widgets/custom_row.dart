@@ -26,7 +26,7 @@ class CustomRow extends StatelessWidget {
             label,
             style: Theme.of(context).textTheme.labelSmall!.copyWith(
               fontFamily: GoogleFonts.manrope().fontFamily,
-              color: AppColors.kIconButtonColor,
+              color: label.contains('Live Now')?AppColors.kRowActionColor :  AppColors.kIconButtonColor,
             ),
           ),
         ),

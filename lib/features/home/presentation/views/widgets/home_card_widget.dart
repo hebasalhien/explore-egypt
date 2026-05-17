@@ -16,22 +16,32 @@ class HomeCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: screenWidth * .8,
-      height: screenHeight * .2,
+      width: screenWidth * .9,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 10,
-        children: [
-          ExploreWidget(),
-          Divider(color: AppColors.kGrey, thickness: .5),
-          CustomGradientButton(screenWidth: screenWidth),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.10),
+            blurRadius: 24,
+            spreadRadius: 0,
+            offset: Offset(0, 8),
+          ),
         ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 18),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 10,
+          children: [
+            ExploreWidget(),
+            Divider(color: AppColors.kGrey, thickness: .2,indent: 12,endIndent: 12,),
+            CustomGradientButton(screenWidth: screenWidth),
+          ],
+        ),
       ),
     );
   }
 }
-
