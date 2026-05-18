@@ -13,6 +13,7 @@ class ChatRemoteDataSource {
   Future<dynamic> sendMessage(
     String? conversationId, {
     required String message,
+    String? mode,
     List<String>? filePath,
     CancelToken? cancelToken,
   }) async {
@@ -30,6 +31,7 @@ class ChatRemoteDataSource {
       "message": message,
       if (conversationId != null) "conversationId": conversationId,
       if (files.isNotEmpty) "files": files,
+      if (mode != null) "type": mode,
     });
     final response = await ApiService.instance.dio.post(
       ApiConstants.chats,
@@ -38,4 +40,6 @@ class ChatRemoteDataSource {
     );
     return response.data;
   }
+
+
 }

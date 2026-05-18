@@ -1,6 +1,6 @@
-import 'package:explore_egypt/core/media/file_picker_services.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/attachment_card.dart';
+import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_pop_up_button.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -10,11 +10,13 @@ class MessageTextField extends StatelessWidget {
     required this.controller,
     required this.files,
     required this.onFilesChanged,
+    this.onModeChanged,
   });
 
   final TextEditingController controller;
   final List<PlatformFile> files;
   final ValueChanged<List<PlatformFile>> onFilesChanged;
+  final ValueChanged<String>? onModeChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,8 @@ class MessageTextField extends StatelessWidget {
                     final file = files[index];
                     return AttachmentCard(
                       onPressed: () {
-                        final updatedFiles = List<PlatformFile>.from(files)..removeAt(index);
+                        final updatedFiles = List<PlatformFile>.from(files)
+                          ..removeAt(index);
                         onFilesChanged(updatedFiles);
                       },
                       filePath: file.path.toString(),
@@ -86,23 +89,11 @@ class MessageTextField extends StatelessWidget {
                   onPressed: () {},
                   icon: Icon(Icons.mic_none),
                 ),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(bottom:10.0,left: 10),
-                  child: IconButton(
-                    onPressed: () async {
-                      try {
-                        final pickedFiles = await FilePickerServices.pickFiles();
-                        if (pickedFiles != null) {
-                          final updatedFiles = List<PlatformFile>.from(files)..addAll(pickedFiles);
-                          onFilesChanged(updatedFiles);
-                        } 
-                      } on Exception catch (e) {
-                        debugPrint("exception was cought: ${e.toString()}");
-                      }
-                    },
-                    icon: Icon(Icons.attach_file),
-                  ),
-                ),
+                prefixIcon: CustomPopUpButton(
+                  files: files,
+                  onFilesChanged: onFilesChanged,
+                  onModeChanged: onModeChanged,
+                )
                 
               ),
             ),

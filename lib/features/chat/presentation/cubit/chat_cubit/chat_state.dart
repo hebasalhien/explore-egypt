@@ -12,6 +12,10 @@ final class MessageSending extends ChatState
 }
 final class MessageLoading extends ChatState {}
 
+final class PlanGeneratied extends ChatState {
+  final TripModel trip;
+  PlanGeneratied({required this.trip});
+}
 final class MessageLoaded extends ChatState {
   final List<MessageModel> messages;
   final String? conversationId;

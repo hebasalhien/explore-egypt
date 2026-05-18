@@ -3,6 +3,7 @@ import 'package:explore_egypt/core/errors/exception.dart';
 import 'package:explore_egypt/core/errors/failure.dart';
 import 'package:explore_egypt/features/chat/model/entities/message_model.dart';
 import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
+import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 part 'chat_state.dart';
@@ -19,6 +20,7 @@ class ChatCubit extends Cubit<ChatState> {
     required String message,
     String? conversationId,
     List<String>? filePath,
+    String? mode,
   }) async {
     debugPrint('Sending message: $message to conversationId: $conversationId');
     final newMessage = MessageModel(
@@ -34,10 +36,19 @@ class ChatCubit extends Cubit<ChatState> {
         message: message,
         filePath: filePath,
         cancelToken: _cancelToken,
+        mode: mode,
       );
       debugPrint('Message sent successfully: $data');
       if (conversationId == null && data['conversationId'] != null) {
         _currentConversationId = data['conversationId'];
+      }
+      if (mode == 'plan') {
+        int messageLength = data['messages'].length;
+        final lastMessage = data['messages'][messageLength - 1];
+        if (lastMessage['type'] == 'plan' && lastMessage['data'] != null) {
+          final trip = TripModel.fromJson(lastMessage);
+          emit(PlanGeneratied(trip: trip));
+        }
       }
       _messages = (data['messages'] as List)
           .map((msg) => MessageModel.fromJson(msg))

@@ -24,6 +24,7 @@ class ChatRepository {
     String? conversationId , {
     required String message,
     List<String>? filePath,
+    String? mode,
     CancelToken? cancelToken,
   }) async {
     try {
@@ -31,6 +32,7 @@ class ChatRepository {
         conversationId, 
         message: message,
         filePath: filePath,
+        mode: mode,
         cancelToken: cancelToken,
       );
       return data;

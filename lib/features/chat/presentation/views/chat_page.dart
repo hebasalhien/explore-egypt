@@ -8,6 +8,7 @@ import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_dr
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_row.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/message_list.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/stop_generating.dart';
+import 'package:explore_egypt/features/main/presentation/cubit/navigation_cubit.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +25,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final messageController = TextEditingController();
   List<PlatformFile> selectedFiles = [];
+  String? mode;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -57,7 +59,15 @@ class _ChatPageState extends State<ChatPage> {
             Column(
               children: [
                 MessageList(),
-                BlocBuilder<ChatCubit, ChatState>(
+                BlocConsumer<ChatCubit, ChatState>(
+                  listener: (context, state) {
+                    if (state is PlanGeneratied) {
+                      setState(() {
+                        mode = 'chat'; // Reset mode after generating the plan
+                      });
+                      context.read<NavigationCubit>().switchTab(2, trip: state.trip);
+                    }
+                  },
                   builder: (context, state) {
                     if (state is MessageSending) {
                       return StopGenerating(
@@ -81,6 +91,11 @@ class _ChatPageState extends State<ChatPage> {
                             selectedFiles = files;
                           });
                         },
+                        onModeChanged: (newMode) {
+                          setState(() {
+                            mode = newMode;
+                          });
+                        },
                         onPressed: (files) {
                           List<String>? filePaths;
                           if (files.isNotEmpty) {
@@ -93,6 +108,7 @@ class _ChatPageState extends State<ChatPage> {
                                 .read<ChatCubit>()
                                 .currentConversationId,
                             filePath: filePaths,
+                            mode: mode
                           );
                           messageController.clear();
                           setState(() {
