@@ -18,7 +18,7 @@ class LandmarkModel {
       subtitle: data['subtitle'],
       imageUrl: data['imageUrl'],
       lat: data['lat'],
-      lng: data['lng']
+      lng: data['lng'],
     );
   }
 }

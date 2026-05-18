@@ -20,6 +20,6 @@ class AppConstants {
   static const String moneyIcon = 'assets/icons/money.svg';
   static const String accountIcon = 'assets/icons/account.svg';
   static const String helpIcon = 'assets/icons/help.svg';
-
+  static const String nextDestinationIcon = 'assets/icons/next_dest.svg';
 
 }

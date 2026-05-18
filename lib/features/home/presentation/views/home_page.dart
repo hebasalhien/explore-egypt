@@ -1,7 +1,9 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/home/model/data_sources/home_remote_data_source.dart';
+import 'package:explore_egypt/features/home/model/entities/active_plan_model.dart';
 import 'package:explore_egypt/features/home/model/repos/home_repository.dart';
 import 'package:explore_egypt/features/home/presentation/cubit/home_cubit.dart';
+import 'package:explore_egypt/features/home/presentation/views/widgets/active_plan_widget.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/custom_app_bar.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/custom_row.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/home_card_widget.dart';
@@ -22,8 +24,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
-
-
 
   @override
   void initState() {
@@ -46,11 +46,21 @@ class _HomePageState extends State<HomePage> {
         AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
     final double expandedHeight = screenHeight * .28;
 
-    final double scrollOffset =
-        _scrollController.hasClients ? _scrollController.offset : 0;
-    final double gradientHeight =
-        (expandedHeight - scrollOffset).clamp(appBarHeight, expandedHeight);
+    final double scrollOffset = _scrollController.hasClients
+        ? _scrollController.offset
+        : 0;
+    final double gradientHeight = (expandedHeight - scrollOffset).clamp(
+      appBarHeight,
+      expandedHeight,
+    );
 
+    final ActivePlanModel activePlanModel = ActivePlanModel(
+      planName: 'voyage To Luxor',
+      theCurrentDay: 2,
+      planDays: 5,
+      nextDestination: '14:00 - Karnak Temple',
+    );
+    
     return Scaffold(
       backgroundColor: AppColors.kHBGColor,
       extendBodyBehindAppBar: true,
@@ -78,60 +88,61 @@ class _HomePageState extends State<HomePage> {
               child: SingleChildScrollView(
                 controller: _scrollController,
                 physics: const ClampingScrollPhysics(),
-                  child: BlocBuilder<HomeCubit, HomeState>(
-                    builder: (context, state) {
-                      if (state is HomeLoaded) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Column(
-                            spacing: 20,
-                            children: [
-                              const SizedBox(height: 24),
-                              HomeCardWidget(
+                child: BlocBuilder<HomeCubit, HomeState>(
+                  builder: (context, state) {
+                    if (state is HomeLoaded) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          spacing: 20,
+                          children: [
+                            const SizedBox(height: 24),
+                            HomeCardWidget(
+                              screenHeight: screenHeight,
+                              screenWidth: screenWidth,
+                            ),
+                            CustomRow(
+                              onPressed: () {},
+                              header: 'Your Active Plan ',
+                              label: 'Live Now',
+                            ),
+                            ActivePlanWidget(activePlanModel: activePlanModel),
+                            HorizontalSection(
+                              header: 'Trending Expeditions',
+                              label: 'view all',
+                              itemCount: state.landmarks.length.clamp(0, 5),
+                              itemHeight: screenHeight * .25,
+                              itemBuilder: (context, index) => LandmarkCard(
                                 screenHeight: screenHeight,
                                 screenWidth: screenWidth,
+                                landmarkModel: state.landmarks[index],
                               ),
-                              CustomRow(
-                                onPressed: () {},
-                                header: 'Your Active Plan ',
-                                label: 'Live Now',
+                            ),
+                            HorizontalSection(
+                              header: 'Suggested Plans',
+                              label: 'view all',
+                              itemCount: state.planCardModel.length.clamp(0, 5),
+                              itemHeight: screenHeight * .25,
+                              itemBuilder: (context, index) => PlanCard(
+                                screenHeight: screenHeight,
+                                screenWidth: screenWidth,
+                                planCardModel: state.planCardModel[index],
                               ),
-                              Container(
-                                
-                              ),
-                              HorizontalSection(
-                                header: 'Trending Expeditions',
-                                label: 'view all',
-                                itemCount: state.landmarks.length.clamp(0, 5),
-                                itemHeight: screenHeight * .25,
-                                itemBuilder: (context, index) => LandmarkCard(
-                                  screenHeight: screenHeight,
-                                  screenWidth: screenWidth,
-                                  landmarkModel: state.landmarks[index],
-                                ),
-                              ),
-                              HorizontalSection(
-                                header: 'Suggested Plans',
-                                label: 'view all',
-                                itemCount: state.planCardModel.length.clamp(0, 5),
-                                itemHeight: screenHeight * .25,
-                                itemBuilder: (context, index) => PlanCard(
-                                  screenHeight: screenHeight,
-                                  screenWidth: screenWidth,
-                                  planCardModel: state.planCardModel[index],
-                                ),
-                              ),
-                              SizedBox(height: MediaQuery.of(context).padding.bottom + 20),
-                            ],
-                          ),
-                        );
-                      } else {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                    },
-                  ),
+                            ),
+                            SizedBox(
+                              height:
+                                  MediaQuery.of(context).padding.bottom + 20,
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
                 ),
               ),
+            ),
           ],
         ),
       ),

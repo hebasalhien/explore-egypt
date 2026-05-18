@@ -13,12 +13,14 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> getHome() async {
     emit(HomeInitial());
     try {
-      final data = await _homeRepo.getHome();
+      final Map<String, dynamic> data = await _homeRepo.getHome();
+
       List<LandmarkModel> landmarks = (data['trendingExpeditions'] as List)
-          .map((land) => LandmarkModel.fromjson(land))
+          .map((item) => LandmarkModel.fromjson(item))
           .toList();
+
       List<PlanCardModel> planCards = (data['suggestedPlans'] as List)
-          .map((plan) => PlanCardModel.fromJson(plan))
+            .map((plan) => PlanCardModel.fromJson(plan))
           .toList();
       emit(HomeLoaded(landmarks: landmarks, planCardModel: planCards));
     } on ServerException catch (e) {

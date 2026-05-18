@@ -34,10 +34,15 @@ class HomeCardWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 10,
+          spacing: 16,
           children: [
             ExploreWidget(),
-            Divider(color: AppColors.kGrey, thickness: .2,indent: 12,endIndent: 12,),
+            Divider(
+              color: AppColors.kGrey,
+              thickness: .15,
+              indent: 20,
+              endIndent: 20,
+            ),
             CustomGradientButton(screenWidth: screenWidth),
           ],
         ),
