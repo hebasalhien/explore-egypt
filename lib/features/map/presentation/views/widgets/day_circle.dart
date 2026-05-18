@@ -15,40 +15,47 @@ class DayCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 50,
-        width: 50,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isSelected ? AppColors.kPrimaryColor : AppColors.kWhite,
-          border: Border.all(
-            color: AppColors.kPrimaryVariant,
-            width: isSelected ? 0 : 2,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Color(0xEF8B434D),
-                    offset: Offset(0, 4),
-                    blurRadius: 4,
-                    spreadRadius: -6,
-                  ),
-                  BoxShadow(
-                    color: Color(0xEF8B434D),
-                    offset: Offset(0, 10),
-                    blurRadius: 15,
-                    spreadRadius: -3,
-                  ),
-                ]
-              : null,
-        ),
-        child: Center(
-          child: Text(
-            'D$dayNum',
-            style: Theme.of(context).textTheme.labelSmall!.copyWith(
-              color: isSelected ? AppColors.kWhite : AppColors.kPrimaryColor,
+    return Center(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? AppColors.kPrimaryColor : AppColors.kWhite,
+              border: Border.all(
+                color: AppColors.kPrimaryVariant,
+                width: isSelected ? 0 : 2,
+              ),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: Color(0x4DEF8B43),
+                        offset: Offset(0, 4),
+                        blurRadius: 6,
+                        spreadRadius: -4,
+                      ),
+                      BoxShadow(
+                        color: Color(0x4DEF8B43),
+                        offset: Offset(0, 10),
+                        blurRadius: 15,
+                        spreadRadius: -3,
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Center(
+              child: Text(
+                'D$dayNum',
+                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                  color: isSelected
+                      ? AppColors.kWhite
+                      : AppColors.kPrimaryColor,
+                ),
+              ),
             ),
           ),
         ),

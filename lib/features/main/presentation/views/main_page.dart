@@ -26,38 +26,37 @@ class _MainPageState extends State<MainPage> {
     false,
     false,
   ]; // Home is shown first
-  final List<Widget> _pages = [
-    HomePage(),
-    RepositoryProvider(
-      create: (context) => ChatRepository(ChatRemoteDataSource()),
-      child: ChatPage(),
-    ),
-    MainMapPage(),
-    RepositoryProvider(
-      create: (context) => UserRepository(UserRemoteDataSource()),
-      child: ProfilePage(),
-    ),
-  ];
+  // _pages is removed as we will construct them dynamically in the builder
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => NavigationCubit(),
-      child: BlocConsumer<NavigationCubit, int>(
-        listener: (context, selectedIndex) {
+      child: BlocConsumer<NavigationCubit, NavigationState>(
+        listener: (context, state) {
           setState(() {
-            _initialized[selectedIndex] = true;
+            _initialized[state.index] = true;
           });
         },
-        builder: (context, selectedIndex) {
+        builder: (context, state) {
           return Scaffold(
             body: IndexedStack(
-              index: selectedIndex,
-              children: List.generate(_pages.length, (index) {
-                if (!_initialized[index]) {
-                  return const SizedBox.shrink();
-                }
-                return _pages[index];
-              }),
+              index: state.index,
+              children: [
+                _initialized[0] ? HomePage() : const SizedBox.shrink(),
+                _initialized[1]
+                    ? RepositoryProvider(
+                        create: (context) => ChatRepository(ChatRemoteDataSource()),
+                        child: ChatPage(),
+                      )
+                    : const SizedBox.shrink(),
+                _initialized[2] ? MainMapPage(trip: state.trip) : const SizedBox.shrink(),
+                _initialized[3]
+                    ? RepositoryProvider(
+                        create: (context) => UserRepository(UserRemoteDataSource()),
+                        child: ProfilePage(),
+                      )
+                    : const SizedBox.shrink(),
+              ],
             ),
             bottomNavigationBar: NavigationBar(
               destinations: [
@@ -78,7 +77,7 @@ class _MainPageState extends State<MainPage> {
                   icon: AppConstants.profileIcon,
                 ),
               ],
-              selectedIndex: selectedIndex,
+              selectedIndex: state.index,
               onDestinationSelected: (index) {
                 context.read<NavigationCubit>().switchTab(index);
               },

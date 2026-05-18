@@ -71,7 +71,7 @@ class AppTheme {
         color: AppColors.kTitleMedium,
       ),
       titleSmall: TextStyle(
-        fontFamily: GoogleFonts.manrope().fontFamily,
+        fontFamily: GoogleFonts.manrope(fontWeight: FontWeight.bold).fontFamily,
         fontSize: 12,
         fontWeight: FontWeight.w700,
         letterSpacing: 1,
