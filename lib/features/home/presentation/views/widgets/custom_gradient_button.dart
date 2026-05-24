@@ -18,12 +18,13 @@ class CustomGradientButton extends StatelessWidget {
         padding: EdgeInsets.zero,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
       ),
+
       child: Ink(
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [AppColors.kSecondary, AppColors.kPrimaryColor],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
             stops: [0, 1.0],
           ),
           borderRadius: BorderRadius.circular(50),

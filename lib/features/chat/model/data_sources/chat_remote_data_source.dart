@@ -41,5 +41,10 @@ class ChatRemoteDataSource {
     return response.data;
   }
 
-
+  Future<int> deleteConversation({required String conversationId}) async {
+    final response = await ApiService.instance.dio.delete(
+      ApiConstants.chats + conversationId,
+    );
+    return response.statusCode!;
+  }
 }

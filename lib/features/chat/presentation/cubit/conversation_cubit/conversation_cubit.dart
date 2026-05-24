@@ -14,7 +14,7 @@ class ConversationCubit extends Cubit<ConversationState> {
     emit(ConversationLoading());
     try {
       final response = await _repository.getConversation();
-      debugPrint('all Conversation fetched successfully: $response');
+      debugPrint('all Conversation fetched successfully');
       _conversations = (response as List)
           .map((conversationJson) => ChatModel.fromJson(conversationJson))
           .toList()
