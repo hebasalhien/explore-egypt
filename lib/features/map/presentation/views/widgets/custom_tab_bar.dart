@@ -2,8 +2,8 @@ import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomTabBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomTabBar({super.key});
-
+  const CustomTabBar({super.key, required this.controller});
+  final TabController controller;
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
@@ -15,6 +15,7 @@ class CustomTabBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
         child: TabBar(
+          controller: controller,
           tabs: [Text('Plan'), Text('Map')],
           labelStyle: Theme.of(context).textTheme.headlineSmall,
           labelPadding: EdgeInsets.only(top: 10),
