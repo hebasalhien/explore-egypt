@@ -1,25 +1,26 @@
-import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomSearchBar extends StatelessWidget {
-  const CustomSearchBar({super.key});
+  const CustomSearchBar({super.key, required this.hint, this.radius});
+  final String hint;
+  final double? radius;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       decoration: InputDecoration(
-        prefixIcon: Icon(Icons.search, color: AppColors.kBlack),
-        hintText: 'Search Places',
+        prefixIcon: Icon(Icons.search, color: Color(0xff6B7280)),
+        hintText: hint,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(radius ?? 16),
           borderSide: BorderSide(color: Color(0xffFFF7ED)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(radius ?? 16),
           borderSide: BorderSide(color: Color(0xffFFF7ED)),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(radius ?? 16),
           borderSide: BorderSide(color: Color(0xffFFF7ED)),
         ),
       ),

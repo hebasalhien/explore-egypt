@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 class AppBarBackground extends StatelessWidget {
   final List<Color>? colors;
   final double? r1;
-  const AppBarBackground({super.key, this.colors, this.r1});
+  final Widget? child;
+  const AppBarBackground({super.key, this.colors, this.r1, this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class AppBarBackground extends StatelessWidget {
         ),
       ),
       height: MediaQuery.of(context).size.height * .25,
+      child: child,
     );
   }
 }

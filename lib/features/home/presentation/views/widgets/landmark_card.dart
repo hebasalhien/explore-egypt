@@ -20,7 +20,7 @@ class LandmarkCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: Container(
-        height: screenHeight * .25,
+        height: screenHeight ,
         width: screenWidth * .45,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),

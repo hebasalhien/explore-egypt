@@ -11,6 +11,7 @@ import 'package:explore_egypt/features/home/presentation/views/widgets/horizonta
 import 'package:explore_egypt/features/home/presentation/views/widgets/landmark_card.dart';
 import 'package:explore_egypt/core/widgets/custom_app_bar_background.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/plan_card.dart';
+import 'package:explore_egypt/routes/app_routes.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,7 +61,7 @@ class _HomePageState extends State<HomePage> {
       planDays: 5,
       nextDestination: '14:00 - Karnak Temple',
     );
-    
+
     return Scaffold(
       backgroundColor: AppColors.kHBGColor,
       extendBodyBehindAppBar: true,
@@ -110,10 +111,17 @@ class _HomePageState extends State<HomePage> {
                             HorizontalSection(
                               header: 'Trending Expeditions',
                               label: 'view all',
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.trendingPage,
+                                  arguments: state.landmarks,
+                                );
+                              },
                               itemCount: state.landmarks.length.clamp(0, 5),
                               itemHeight: screenHeight * .25,
                               itemBuilder: (context, index) => LandmarkCard(
-                                screenHeight: screenHeight,
+                                screenHeight: screenHeight*.25,
                                 screenWidth: screenWidth,
                                 landmarkModel: state.landmarks[index],
                               ),

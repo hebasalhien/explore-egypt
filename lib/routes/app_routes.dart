@@ -4,14 +4,17 @@ import 'package:explore_egypt/features/auth/presentation/cubit/forgot_password_c
 import 'package:explore_egypt/features/auth/presentation/view/forget_password/enter_email_page.dart';
 import 'package:explore_egypt/features/auth/presentation/view/forget_password/otp_page.dart';
 import 'package:explore_egypt/features/auth/presentation/view/forget_password/reset_pass_page.dart';
-import 'package:flutter/material.dart';
 import 'package:explore_egypt/features/auth/presentation/view/login_page.dart';
 import 'package:explore_egypt/features/auth/presentation/view/register_page.dart';
 import 'package:explore_egypt/features/chat/presentation/views/chat_page.dart';
+import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
 import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
 import 'package:explore_egypt/features/main/presentation/views/main_page.dart';
+import 'package:explore_egypt/features/trending/presentation/view/trending_page.dart';
 import 'package:explore_egypt/features/users/presentation/views/profile_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
+
 
 class AppRoutes {
   static const String loginPage = 'LoginPage';
@@ -26,6 +29,7 @@ class AppRoutes {
   static const String paymentMethodsPage = 'PaymentMethodsPage';
   static const String accountPage = 'AccountPage';
   static const String helpPage = 'HelpPage';
+  static const String trendingPage = 'TrendingPage';
 
   static Route<dynamic> onGenerateRoute(settings) {
     switch (settings.name) {
@@ -81,6 +85,10 @@ class AppRoutes {
 
       case homePage:
         return MaterialPageRoute(builder: (_) => HomePage());
+
+      case trendingPage:
+        final landmarkModel = settings.arguments as List<LandmarkModel>;
+        return MaterialPageRoute(builder: (_) => TrendingPage(landmarkModel: landmarkModel));
 
       default:
         return MaterialPageRoute(builder: (_) => const LoginPage());

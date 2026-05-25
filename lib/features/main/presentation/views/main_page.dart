@@ -9,6 +9,7 @@ import 'package:explore_egypt/features/map/presentation/views/main_map_page.dart
 import 'package:explore_egypt/features/users/model/data_sources/user_remote_data_source.dart';
 import 'package:explore_egypt/features/users/model/repos/user_repository.dart';
 import 'package:explore_egypt/features/users/presentation/views/profile_page.dart';
+import 'package:explore_egypt/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,13 +21,16 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final List<bool> _initialized = [
-    true,
-    false,
-    false,
-    false,
-  ]; // Home is shown first
-  // _pages is removed as we will construct them dynamically in the builder
+  final List<bool> _initialized = [true, false, false, false];
+
+  // Add navigator keys for each tab
+  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -38,49 +42,86 @@ class _MainPageState extends State<MainPage> {
           });
         },
         builder: (context, state) {
-          return Scaffold(
-            body: IndexedStack(
-              index: state.index,
-              children: [
-                _initialized[0] ? HomePage() : const SizedBox.shrink(),
-                _initialized[1]
-                    ? RepositoryProvider(
-                        create: (context) => ChatRepository(ChatRemoteDataSource()),
-                        child: ChatPage(),
-                      )
-                    : const SizedBox.shrink(),
-                _initialized[2] ? MainMapPage(trip: state.trip) : const SizedBox.shrink(),
-                _initialized[3]
-                    ? RepositoryProvider(
-                        create: (context) => UserRepository(UserRemoteDataSource()),
-                        child: ProfilePage(),
-                      )
-                    : const SizedBox.shrink(),
-              ],
-            ),
-            bottomNavigationBar: NavigationBar(
-              destinations: [
-                CustomNavigationDestination(
-                  label: 'Home',
-                  icon: AppConstants.homeIcon,
-                ),
-                CustomNavigationDestination(
-                  label: 'Chatbot',
-                  icon: AppConstants.chatIcon,
-                ),
-                CustomNavigationDestination(
-                  label: 'Map',
-                  icon: AppConstants.mapIcon,
-                ),
-                CustomNavigationDestination(
-                  label: 'Profile',
-                  icon: AppConstants.profileIcon,
-                ),
-              ],
-              selectedIndex: state.index,
-              onDestinationSelected: (index) {
-                context.read<NavigationCubit>().switchTab(index);
-              },
+          return PopScope(
+            // Handle back button: pop within tab instead of exiting
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) {
+              final navState = _navigatorKeys[state.index].currentState;
+              if (navState != null && navState.canPop()) {
+                navState.pop();
+              }
+            },
+            child: Scaffold(
+              body: IndexedStack(
+                index: state.index,
+                children: [
+                  // Tab 0 - Home
+                  Navigator(
+                    key: _navigatorKeys[0],
+                    onGenerateRoute: (settings) {
+                      // Initial route: always show HomePage
+                      if (settings.name == Navigator.defaultRouteName) {
+                        return MaterialPageRoute(
+                          builder: (_) => _initialized[0]
+                              ? const HomePage()
+                              : const SizedBox.shrink(),
+                        );
+                      }
+                      // Any other named route (e.g. trendingPage) → AppRoutes
+                      // This keeps the bottom nav bar visible
+                      return AppRoutes.onGenerateRoute(settings);
+                    },
+                  ),
+
+                  // Tab 1 - Chat
+                  Navigator(
+                    key: _navigatorKeys[1],
+                    onGenerateRoute: (_) => MaterialPageRoute(
+                      builder: (_) => _initialized[1]
+                          ? RepositoryProvider(
+                              create: (context) => ChatRepository(ChatRemoteDataSource()),
+                              child: ChatPage(),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
+                  ),
+
+                  // Tab 2 - Map
+                  Navigator(
+                    key: _navigatorKeys[2],
+                    onGenerateRoute: (_) => MaterialPageRoute(
+                      builder: (_) => _initialized[2]
+                          ? MainMapPage(trip: state.trip)
+                          : const SizedBox.shrink(),
+                    ),
+                  ),
+
+                  // Tab 3 - Profile
+                  Navigator(
+                    key: _navigatorKeys[3],
+                    onGenerateRoute: (_) => MaterialPageRoute(
+                      builder: (_) => _initialized[3]
+                          ? RepositoryProvider(
+                              create: (context) => UserRepository(UserRemoteDataSource()),
+                              child: ProfilePage(),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
+                  ),
+                ],
+              ),
+              bottomNavigationBar: NavigationBar(
+                destinations: [
+                  CustomNavigationDestination(label: 'Home', icon: AppConstants.homeIcon),
+                  CustomNavigationDestination(label: 'Chatbot', icon: AppConstants.chatIcon),
+                  CustomNavigationDestination(label: 'Map', icon: AppConstants.mapIcon),
+                  CustomNavigationDestination(label: 'Profile', icon: AppConstants.profileIcon),
+                ],
+                selectedIndex: state.index,
+                onDestinationSelected: (index) {
+                  context.read<NavigationCubit>().switchTab(index);
+                },
+              ),
             ),
           );
         },
