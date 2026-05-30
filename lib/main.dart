@@ -8,9 +8,11 @@ import 'package:explore_egypt/features/auth/presentation/view/login_page.dart';
 import 'package:explore_egypt/features/main/presentation/views/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   final sessionCubit = SessionCubit();
   await ApiService.create(sessionCubit: sessionCubit);
   runApp(

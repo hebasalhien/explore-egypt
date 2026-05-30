@@ -1,5 +1,7 @@
+import 'package:explore_egypt/core/config/app_config.dart';
+
 class ApiConstants {
-  static const String baseUrl = 'https://grad-backend-api-d2atfnd0d6fwdrdb.switzerlandnorth-01.azurewebsites.net/';
+  static final baseUrl = AppConfig.backendUrl;
   //auth endpoints //
   static const String auth = 'api/auth/';
   static const String login = 'login';
@@ -8,7 +10,7 @@ class ApiConstants {
   static const String forgetPassword = '$auth/forgot-password';
   static const String resetPassword = '$auth/reset-password';
 
-//user endpoints //
+  //user endpoints //
   static const String profile = 'profile';
 
   //chat endpoints //
