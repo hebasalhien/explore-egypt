@@ -1,0 +1,114 @@
+import 'package:explore_egypt/core/config/app_config.dart';
+import 'package:explore_egypt/core/services/location_services.dart';
+import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
+import 'package:explore_egypt/features/map/presentation/views/map/widgets/map_controllers_buttons.dart';
+import 'package:explore_egypt/features/map/presentation/views/map/widgets/map_marker.dart';
+import 'package:explore_egypt/features/map/presentation/views/map/widgets/user_position_marker.dart';
+import 'package:flutter/material.dart';
+import 'package:maplibre/maplibre.dart';
+
+class MapPage extends StatefulWidget {
+  final List<LandmarkModel>? landmarkModel;
+  const MapPage({super.key, this.landmarkModel});
+
+  @override
+  State<MapPage> createState() => _MapPageState();
+}
+
+class _MapPageState extends State<MapPage> {
+
+  MapController? _controller;
+
+  final _locationService = LocationService();
+
+  List<Marker> _buildMarkers() {
+    final landmarks = widget.landmarkModel;
+    if (landmarks == null || landmarks.isEmpty) return [];
+
+    return landmarks
+        .asMap()
+        .entries
+        .map(
+          (entry) => Marker(
+            point: Geographic(lon: entry.value.lng, lat: entry.value.lat),
+            size: const Size(42, 52),
+            alignment: Alignment.bottomCenter,
+            child: MapMarker(number: entry.key + 1),
+          ),
+        )
+        .toList();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _requestPermission();
+  }
+
+  Future<void> _requestPermission() async {
+    final granted = await _locationService.requestPermission();
+    if (!granted) {
+      debugPrint('Location permission not granted');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          MapLibreMap(
+            onMapCreated: (controller) {
+              _controller = controller;
+              debugPrint(_controller.toString());
+            },
+            options: MapOptions(
+              initCenter: Geographic(
+                lon: LocationService.defaultLng,
+                lat: LocationService.defaultLat,
+              ),
+              initStyle: AppConfig.mapStyle,
+              initZoom: 6,
+              gestures: MapGestures(
+                rotate: true,
+                pan: true,
+                zoom: true,
+                pitch: true,
+              ),
+            ),
+            children: [
+              WidgetLayer(markers: _buildMarkers(), allowInteraction: true),
+              FutureBuilder(
+                future: _locationService.getCurrentPosition(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final pos = snapshot.data!;
+                    return WidgetLayer(
+                      markers: [
+                        Marker(
+                          point: Geographic(
+                            lon: pos.longitude,
+                            lat: pos.latitude,
+                          ),
+                          child: UserPositionMarker(),
+                          size: Size(20, 20),
+                        ),
+                      ],
+                      allowInteraction: false,
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
+          ),
+          Positioned(
+            right: 0,
+            bottom: 10,
+            child: MapControllersButtons(controller: _controller, locationService: _locationService),
+          ),
+        ],
+      ),
+    );
+  }
+}

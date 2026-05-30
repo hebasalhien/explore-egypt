@@ -37,6 +37,7 @@ class _ActivePlanState extends State<ActivePlan> {
                 setState(() {
                   selectedDay = index;
                 });
+                
               },
             ),
             PlanTitle(planTitle: widget.trip!.title),
@@ -57,4 +58,3 @@ class _ActivePlanState extends State<ActivePlan> {
     );
   }
 }
-
