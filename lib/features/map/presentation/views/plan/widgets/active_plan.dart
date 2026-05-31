@@ -11,11 +11,13 @@ class ActivePlan extends StatefulWidget {
     required this.trip,
     required this.screenHeight,
     required this.screenWidth,
+    this.onDayChanged,
   });
 
   final TripModel? trip;
   final double screenHeight;
   final double screenWidth;
+  final ValueChanged<int>? onDayChanged;
 
   @override
   State<ActivePlan> createState() => _ActivePlanState();
@@ -37,7 +39,7 @@ class _ActivePlanState extends State<ActivePlan> {
                 setState(() {
                   selectedDay = index;
                 });
-                
+                widget.onDayChanged?.call(index);
               },
             ),
             PlanTitle(planTitle: widget.trip!.title),

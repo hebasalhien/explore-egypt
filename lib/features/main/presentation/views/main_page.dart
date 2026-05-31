@@ -90,9 +90,13 @@ class _MainPageState extends State<MainPage> {
                   Navigator(
                     key: _navigatorKeys[2],
                     onGenerateRoute: (_) => MaterialPageRoute(
-                      builder: (_) => _initialized[2]
-                          ? MainMapPage(trip: state.trip)
-                          : const SizedBox.shrink(),
+                      builder: (routeContext) => BlocBuilder<NavigationCubit, NavigationState>(
+                        builder: (context, navState) {
+                          return _initialized[2]
+                              ? MainMapPage(trip: navState.trip)
+                              : const SizedBox.shrink();
+                        },
+                      ),
                     ),
                   ),
 

@@ -1,6 +1,7 @@
 import 'package:explore_egypt/core/config/app_config.dart';
 import 'package:explore_egypt/core/services/location_services.dart';
-import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
+import 'package:explore_egypt/features/map/model/entities/activity_model.dart';
+import 'package:explore_egypt/features/map/presentation/views/map/widgets/map_bottom_sheet.dart';
 import 'package:explore_egypt/features/map/presentation/views/map/widgets/map_controllers_buttons.dart';
 import 'package:explore_egypt/features/map/presentation/views/map/widgets/map_marker.dart';
 import 'package:explore_egypt/features/map/presentation/views/map/widgets/user_position_marker.dart';
@@ -8,21 +9,27 @@ import 'package:flutter/material.dart';
 import 'package:maplibre/maplibre.dart';
 
 class MapPage extends StatefulWidget {
-  final List<LandmarkModel>? landmarkModel;
-  const MapPage({super.key, this.landmarkModel});
+  final List<ActivityModel>? activityModel;
+  final int dayNumber;
+  final String planTitle;
+  const MapPage({
+    super.key,
+    this.activityModel,
+    required this.dayNumber,
+    required this.planTitle,
+  });
 
   @override
   State<MapPage> createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> {
-
   MapController? _controller;
 
   final _locationService = LocationService();
 
   List<Marker> _buildMarkers() {
-    final landmarks = widget.landmarkModel;
+    final landmarks = widget.activityModel;
     if (landmarks == null || landmarks.isEmpty) return [];
 
     return landmarks
@@ -104,9 +111,19 @@ class _MapPageState extends State<MapPage> {
           ),
           Positioned(
             right: 0,
-            bottom: 10,
-            child: MapControllersButtons(controller: _controller, locationService: _locationService),
+            bottom: 240,
+            child: MapControllersButtons(
+              controller: _controller,
+              locationService: _locationService,
+            ),
           ),
+          
+              MapBottomSheet(
+                dayNumber: widget.dayNumber,
+                planTitle: widget.planTitle,
+                activityModel: widget.activityModel!,
+              ),
+            
         ],
       ),
     );

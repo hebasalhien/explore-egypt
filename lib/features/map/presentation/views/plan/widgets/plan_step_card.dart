@@ -66,6 +66,7 @@ class PlanStepCard extends StatelessWidget {
                   context,
                 ).textTheme.titleSmall!.copyWith(color: Color(0xff64748B)),
                 maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               trailing: Container(
                 width: screenWidth * .16,
