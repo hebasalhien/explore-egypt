@@ -1,4 +1,3 @@
-
 class AppConstants {
   AppConstants._();
 
@@ -8,6 +7,7 @@ class AppConstants {
   static const String forgetPasswordImage = 'assets/images/forget password.svg';
   static const String resetPasswordImage = 'assets/images/reset password.svg';
   static const String userImage = 'assets/images/user.png';
+  static const String noPlaceAddedImage = 'assets/images/no_place_added.png';
 
   /// icons
   static const String homeIcon = 'assets/icons/home.svg';
@@ -21,5 +21,4 @@ class AppConstants {
   static const String accountIcon = 'assets/icons/account.svg';
   static const String helpIcon = 'assets/icons/help.svg';
   static const String nextDestinationIcon = 'assets/icons/next_dest.svg';
-
 }

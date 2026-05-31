@@ -77,6 +77,12 @@ class AppTheme {
         letterSpacing: 1,
         color: AppColors.subtitleColor,
       ),
+      headlineLarge: TextStyle(
+        fontFamily: GoogleFonts.playfair().fontFamily,
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: Color(0xff111827),
+      ),
     ),
 
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -85,6 +91,11 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(12),
         ),
+        textStyle: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: AppColors.kPlanPageBgColor,
+      )
       ),
     ),
 

@@ -25,12 +25,14 @@ class DayStepper extends StatelessWidget {
           ListView.builder(
             itemBuilder: (_, index) {
               if (index == totalDays) {
-                return AddDayCircle(onTap: () {});
+                return Center(child: AddDayCircle(onTap: () {}));
               }
-              return DayCircle(
-                isSelected: index == selectedDay,
-                dayNum: index + 1,
-                onTap: () => onDaySelected(index),
+              return Center(
+                child: DayCircle(
+                  isSelected: index == selectedDay,
+                  dayNum: index + 1,
+                  onTap: () => onDaySelected(index),
+                ),
               );
             },
             itemCount: totalDays + 1,
