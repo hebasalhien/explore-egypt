@@ -13,7 +13,7 @@ class AppBarBackground extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: colors == null
-              ? [AppColors.kSecondaryVariant, AppColors.kPrimaryColor]
+              ? [Color(0xFFB96561), AppColors.kPrimaryColor]
               : colors!,
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,

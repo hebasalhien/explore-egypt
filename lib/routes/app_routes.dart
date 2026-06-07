@@ -8,8 +8,10 @@ import 'package:explore_egypt/features/auth/presentation/view/login_page.dart';
 import 'package:explore_egypt/features/auth/presentation/view/register_page.dart';
 import 'package:explore_egypt/features/chat/presentation/views/chat_page.dart';
 import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
+import 'package:explore_egypt/features/home/model/entities/plan_card_model.dart';
 import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
 import 'package:explore_egypt/features/main/presentation/views/main_page.dart';
+import 'package:explore_egypt/features/plans/presentation/view/suggested_plans_page.dart';
 import 'package:explore_egypt/features/trending/presentation/view/trending_page.dart';
 import 'package:explore_egypt/features/users/presentation/views/profile_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,6 +32,7 @@ class AppRoutes {
   static const String accountPage = 'AccountPage';
   static const String helpPage = 'HelpPage';
   static const String trendingPage = 'TrendingPage';
+  static const String suggestedPlansPage = 'SuggestedPlansPage';
 
   static Route<dynamic> onGenerateRoute(settings) {
     switch (settings.name) {
@@ -89,7 +92,10 @@ class AppRoutes {
       case trendingPage:
         final landmarkModel = settings.arguments as List<LandmarkModel>;
         return MaterialPageRoute(builder: (_) => TrendingPage(landmarkModel: landmarkModel));
-
+      
+        case suggestedPlansPage:
+        final suggestedPlansModel = settings.arguments as List<PlanCardModel>;
+        return MaterialPageRoute(builder: (_) => SuggestedPlansPage(planCardModel: suggestedPlansModel));
       default:
         return MaterialPageRoute(builder: (_) => const LoginPage());
     }

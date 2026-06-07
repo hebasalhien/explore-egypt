@@ -9,43 +9,55 @@ class LandmarkCard extends StatelessWidget {
     super.key,
     required this.screenHeight,
     required this.screenWidth,
-    required this.landmarkModel,
+    required this.landmark
   });
 
   final double screenHeight;
   final double screenWidth;
-  final LandmarkModel landmarkModel;
+  final LandmarkModel landmark;
+
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
-      child: Container(
-        height: screenHeight ,
-        width: screenWidth * .45,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.transparent,
-          image: DecorationImage(
-            image: CachedNetworkImageProvider(landmarkModel.imageUrl),
-            fit: BoxFit.cover,
+      child: CachedNetworkImage(
+        imageUrl:  landmark.imageUrl,
+        imageBuilder: (context, imageProvider) => Container(
+          height: screenHeight,
+          width: screenWidth * .45,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.transparent,
+            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
           ),
-        ),
-        child: Stack(
-          children: [
-            Positioned(right: 8, top: 8, child: GlassIconButton()),
+          child: Stack(
+            children: [
+              Positioned(right: 8, top: 8, child: GlassIconButton()),
 
-            Positioned(
-              left: 15,
-              bottom: 15,
-              child: SizedBox(
-                width: screenWidth * .35,
-                child: PhotoInfo(
-                  title: landmarkModel.name,
-                  subtitle: landmarkModel.subtitle,
+              Positioned(
+                left: 15,
+                bottom: 15,
+                child: SizedBox(
+                  width: screenWidth * .35,
+                  child: PhotoInfo(
+                    title: landmark.name,
+                    subtitle: landmark.subtitle,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
+        ),
+        placeholder: (context, url) => SizedBox(
+          height: screenHeight,
+          width: screenWidth * .45,
+          child: Center(child: CircularProgressIndicator()),
+        ),
+        errorWidget: (context, url, error) => SizedBox(
+          height: screenHeight,
+          width: screenWidth * .45,
+          child: Icon(Icons.error),
         ),
       ),
     );

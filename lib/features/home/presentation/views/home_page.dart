@@ -121,14 +121,21 @@ class _HomePageState extends State<HomePage> {
                               itemCount: state.landmarks.length.clamp(0, 5),
                               itemHeight: screenHeight * .25,
                               itemBuilder: (context, index) => LandmarkCard(
-                                screenHeight: screenHeight*.25,
+                                screenHeight: screenHeight * .25,
                                 screenWidth: screenWidth,
-                                landmarkModel: state.landmarks[index],
+                                landmark: state.landmarks[index],
                               ),
                             ),
                             HorizontalSection(
                               header: 'Suggested Plans',
                               label: 'view all',
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.suggestedPlansPage,
+                                  arguments: state.planCardModel,
+                                );
+                              },
                               itemCount: state.planCardModel.length.clamp(0, 5),
                               itemHeight: screenHeight * .25,
                               itemBuilder: (context, index) => PlanCard(
