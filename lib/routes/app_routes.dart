@@ -13,10 +13,12 @@ import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
 import 'package:explore_egypt/features/main/presentation/views/main_page.dart';
 import 'package:explore_egypt/features/plans/presentation/view/suggested_plans_page.dart';
 import 'package:explore_egypt/features/trending/presentation/view/trending_page.dart';
+import 'package:explore_egypt/features/users/model/entities/user_model.dart';
+import 'package:explore_egypt/features/users/presentation/cubit/profile_cubit/profile_cubit.dart';
+import 'package:explore_egypt/features/users/presentation/views/edit_profile_page.dart';
 import 'package:explore_egypt/features/users/presentation/views/profile_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-
 
 class AppRoutes {
   static const String loginPage = 'LoginPage';
@@ -28,11 +30,11 @@ class AppRoutes {
   static const String profilePage = 'ProfilePage';
   static const String mainPage = 'MainPage';
   static const String homePage = 'HomePage';
-  static const String paymentMethodsPage = 'PaymentMethodsPage';
-  static const String accountPage = 'AccountPage';
+  //static const String paymentMethodsPage = 'PaymentMethodsPage';
   static const String helpPage = 'HelpPage';
   static const String trendingPage = 'TrendingPage';
   static const String suggestedPlansPage = 'SuggestedPlansPage';
+  static const String editProfilePage = 'EditProfilePage';
 
   static Route<dynamic> onGenerateRoute(settings) {
     switch (settings.name) {
@@ -50,9 +52,8 @@ class AppRoutes {
       case forgotPassPage:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: (context) => ForgotPasswordCubit(
-              context.read<AuthRepository>(),
-            ),
+            create: (context) =>
+                ForgotPasswordCubit(context.read<AuthRepository>()),
             child: const EnterEmailPage(),
           ),
         );
@@ -61,27 +62,31 @@ class AppRoutes {
         // cubit is passed as argument from the previous screen
         final cubit = settings.arguments as ForgotPasswordCubit;
         return MaterialPageRoute(
-          builder: (_) => BlocProvider.value(
-            value: cubit,
-            child: const OtpPage(),
-          ),
+          builder: (_) =>
+              BlocProvider.value(value: cubit, child: const OtpPage()),
         );
 
       case resetPassPage:
         final cubit = settings.arguments as ForgotPasswordCubit;
         return MaterialPageRoute(
-          builder: (_) => BlocProvider.value(
-            value: cubit,
-            child: const ResetPassPage(),
-          ),
+          builder: (_) =>
+              BlocProvider.value(value: cubit, child: const ResetPassPage()),
         );
-
 
       case chatPage:
         return MaterialPageRoute(builder: (_) => ChatPage());
 
       case profilePage:
         return MaterialPageRoute(builder: (_) => ProfilePage());
+
+      case editProfilePage:
+        final userModel = settings.arguments as UserModel;
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: context.read<ProfileCubit>(),
+            child: EditProfilePage(userModel: userModel),
+          ),
+        );
 
       case mainPage:
         return MaterialPageRoute(builder: (_) => MainPage());
@@ -91,11 +96,16 @@ class AppRoutes {
 
       case trendingPage:
         final landmarkModel = settings.arguments as List<LandmarkModel>;
-        return MaterialPageRoute(builder: (_) => TrendingPage(landmarkModel: landmarkModel));
-      
-        case suggestedPlansPage:
+        return MaterialPageRoute(
+          builder: (_) => TrendingPage(landmarkModel: landmarkModel),
+        );
+
+      case suggestedPlansPage:
         final suggestedPlansModel = settings.arguments as List<PlanCardModel>;
-        return MaterialPageRoute(builder: (_) => SuggestedPlansPage(planCardModel: suggestedPlansModel));
+        return MaterialPageRoute(
+          builder: (_) =>
+              SuggestedPlansPage(planCardModel: suggestedPlansModel),
+        );
       default:
         return MaterialPageRoute(builder: (_) => const LoginPage());
     }

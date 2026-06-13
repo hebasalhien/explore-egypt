@@ -11,7 +11,7 @@ class ChatModel {
   });
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
-     title: json['title'],
+     title: json['title'] ?? 'Has No Title',
       conversationId: json['conversationId'],
       messages: (json['messages'] as List<dynamic>)
           .map((messageJson) => MessageModel.fromJson(messageJson))

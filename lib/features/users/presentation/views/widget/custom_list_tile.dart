@@ -5,12 +5,12 @@ import 'package:flutter_svg/svg.dart';
 class CustomListTile extends StatelessWidget {
   final String title;
   final String icon;
-  final String route;
+  final VoidCallback onTap;
   const CustomListTile({
     super.key,
     required this.title,
     required this.icon,
-    required this.route,
+    required this.onTap,
   });
 
   @override
@@ -30,9 +30,7 @@ class CustomListTile extends StatelessWidget {
           color: AppColors.kPrimaryColor,
           size: 16,
         ),
-        onTap: () {
-          Navigator.pushNamed(context, route);
-        },
+        onTap: onTap,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         tileColor: Colors.white,
       ),

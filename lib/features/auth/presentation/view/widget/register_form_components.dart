@@ -55,9 +55,9 @@ class RegisterFormComponents extends StatelessWidget {
           onPressed: () async {
             if (formKey.currentState!.validate()) {
               await context.read<AuthCubit>().register(
-                email: emailController.text,
-                username: nameController.text,
-                password: passController.text,
+                email: emailController.text.trim(),
+                username: nameController.text.trim(),
+                password: passController.text.trim(),
               );
             }
           },

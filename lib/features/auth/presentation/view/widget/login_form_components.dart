@@ -23,8 +23,8 @@ class LoginFormComponents extends StatelessWidget {
   void _performLogin(BuildContext context) {
     if (formKey.currentState!.validate()) {
       context.read<AuthCubit>().login(
-        email: emailController.text,
-        password: passController.text,
+        email: emailController.text.trim(),
+        password: passController.text.trim(),
       );
     }
   }

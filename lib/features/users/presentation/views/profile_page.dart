@@ -14,23 +14,19 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          ProfileCubit(context.read<UserRepository>())..getUserData(),
-      child: Scaffold(
-        backgroundColor: AppColors.kBGColor,
-        body: BlocBuilder<ProfileCubit, ProfileState>(
-          builder: (context, state) {
-            if (state is ProfileLoading) {
-              return CircularProgressIndicator();
-            } else if (state is ProfileLoaded) {
-              return ProfileWidget(userModel: state.user);
-            } else if (state is ProfileLoadedFaild) {
-              return Center(child: Text(state.errorMessage));
-            }
-            return Center(child: Text('welcome'));
-          },
-        ),
+    return Scaffold(
+      backgroundColor: AppColors.kBGColor,
+      body: BlocBuilder<ProfileCubit, ProfileState>(
+        builder: (context, state) {
+          if (state is ProfileLoading) {
+            return CircularProgressIndicator();
+          } else if (state is ProfileLoaded  ) {
+            return ProfileWidget(userModel: state.user);
+          } else if (state is ProfileLoadedFaild) {
+            return Center(child: Text(state.errorMessage));
+          }
+          return Center(child: Text('welcome'));
+        },
       ),
     );
   }

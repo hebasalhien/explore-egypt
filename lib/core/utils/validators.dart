@@ -52,7 +52,7 @@ class Validators {
   }
   static String? generalValidator(String? value){
      if (value == null || value.isEmpty) {
-      return 'This field is required';
+      return 'This field can\'t be empty!';
     }
     return null;
   }

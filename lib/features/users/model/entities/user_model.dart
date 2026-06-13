@@ -1,6 +1,7 @@
 class UserModel {
   final String name;
   final String? imageURL;
+  final String email;
   final int level;
   final String? bio;
   final int plans;
@@ -14,6 +15,7 @@ class UserModel {
     required this.plans,
     required this.sites,
     required this.nights,
+    required this.email
   });
 
   factory UserModel.fromjson(json) {
@@ -24,7 +26,8 @@ class UserModel {
       bio: json['bio'],
       nights: json['nightsBooked'],
       plans: json['plansMade'],
-      sites: json['sitesVisited']
+      sites: json['sitesVisited'],
+      email: json['email']
     );
   }
 }

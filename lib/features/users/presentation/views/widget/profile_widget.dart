@@ -28,25 +28,25 @@ class ProfileWidget extends StatelessWidget {
                 spacing: 10,
                 children: [
                   UserCustomContainer(
-                    bio: userModel.bio == null? 'Bio' : userModel.bio!,
+                    bio: userModel.bio == null ? 'Bio' : userModel.bio!,
                     number1: userModel.plans,
                     number2: userModel.sites,
                     number3: userModel.nights,
                   ),
-                  CustomListTile(
-                    title: 'Payment Methods',
-                    icon: AppConstants.moneyIcon,
-                    route: AppRoutes.paymentMethodsPage,
-                  ),
+                  // CustomListTile(
+                  //   title: 'Payment Methods',
+                  //   icon: AppConstants.moneyIcon,
+                  //   route: AppRoutes.paymentMethodsPage,
+                  // ),
                   CustomListTile(
                     title: 'Account Settings',
                     icon: AppConstants.accountIcon,
-                    route: AppRoutes.accountPage,
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.editProfilePage,arguments: userModel),
                   ),
                   CustomListTile(
                     title: 'Help Center',
                     icon: AppConstants.helpIcon,
-                    route: AppRoutes.helpPage,
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.helpPage),
                   ),
                 ],
               ),
@@ -72,7 +72,7 @@ class ProfileWidget extends StatelessWidget {
                     right: 0,
                     child: UserInfo(
                       name: userModel.name,
-                      imageURL:userModel.imageURL,
+                      imageURL: userModel.imageURL,
                       level: userModel.level,
                     ),
                   ),
