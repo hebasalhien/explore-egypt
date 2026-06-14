@@ -41,13 +41,19 @@ class ProfileWidget extends StatelessWidget {
                   CustomListTile(
                     title: 'Account Settings',
                     icon: AppConstants.accountIcon,
-                    onTap: () => Navigator.pushNamed(context, AppRoutes.editProfilePage,arguments: userModel),
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      AppRoutes.editProfilePage,
+                      arguments: userModel,
+                    ),
                   ),
                   CustomListTile(
                     title: 'Help Center',
                     icon: AppConstants.helpIcon,
-                    onTap: () => Navigator.pushNamed(context, AppRoutes.helpPage),
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.helpCenterPage),
                   ),
+                  CustomListTile(title: 'Logout', onTap: () {}, icon: ''),
                 ],
               ),
             ),

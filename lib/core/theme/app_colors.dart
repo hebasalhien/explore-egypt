@@ -22,4 +22,5 @@ class AppColors {
   static const Color kSmallText = Color(0xff221810);
   static const Color kTitleMedium = Color(0xff221A0F);
   static const Color kIconColor = Color(0XFF4A4A4A);
+  static const Color textCaption = Color(0xff6B7280);
 }

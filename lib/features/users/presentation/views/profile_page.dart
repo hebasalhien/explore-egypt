@@ -1,5 +1,4 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
-import 'package:explore_egypt/features/users/model/repos/user_repository.dart';
 import 'package:explore_egypt/features/users/presentation/cubit/profile_cubit/profile_cubit.dart';
 import 'package:explore_egypt/features/users/presentation/views/widget/profile_widget.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
           if (state is ProfileLoading) {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           } else if (state is ProfileLoaded  ) {
             return ProfileWidget(userModel: state.user);
           } else if (state is ProfileLoadedFaild) {

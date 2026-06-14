@@ -83,6 +83,12 @@ class AppTheme {
         fontWeight: FontWeight.w600,
         color: Color(0xff111827),
       ),
+      displaySmall: TextStyle(
+        fontSize: 12,
+        fontFamily: GoogleFonts.notoSansArabic().fontFamily,
+        fontWeight: FontWeight.w400,
+        color: AppColors.textCaption,
+      ),
     ),
 
     elevatedButtonTheme: ElevatedButtonThemeData(

@@ -45,7 +45,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     bioController.text = widget.userModel.bio ?? 'No Bio';
 
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
 
     final double appBarHeight =
         AppBar().preferredSize.height + MediaQuery.of(context).padding.top;

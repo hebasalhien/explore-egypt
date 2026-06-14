@@ -43,7 +43,11 @@ class HomeCardWidget extends StatelessWidget {
               indent: 20,
               endIndent: 20,
             ),
-            CustomGradientButton(screenWidth: screenWidth),
+            CustomGradientButton(
+              screenWidth: screenWidth * .75,
+              title: "Ask AI",
+              icon: Icons.auto_awesome,
+            ),
           ],
         ),
       ),

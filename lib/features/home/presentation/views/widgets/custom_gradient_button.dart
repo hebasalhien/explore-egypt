@@ -4,10 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomGradientButton extends StatelessWidget {
-  const CustomGradientButton({super.key, required this.screenWidth});
+  const CustomGradientButton({
+    super.key,
+    required this.screenWidth,
+    this.hasIcon = true,
+    this.icon,
+    required this.title,
+    this.topToBottom = true,
+  });
 
   final double screenWidth;
-
+  final bool hasIcon;
+  final IconData? icon;
+  final String title;
+  final bool topToBottom;
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -21,24 +31,33 @@ class CustomGradientButton extends StatelessWidget {
 
       child: Ink(
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppColors.kSecondary, AppColors.kPrimaryColor],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            stops: [0, 1.0],
-          ),
-          borderRadius: BorderRadius.circular(50),
+          gradient: topToBottom
+              ? const LinearGradient(
+                  colors: [AppColors.kSecondary, AppColors.kPrimaryColor],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  stops: [0, 1.0],
+                )
+              : const LinearGradient(
+                  colors: [Color(0xffC1514C), Color(0xffE7944F)],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: [0, 1.0],
+                ),
+          borderRadius: BorderRadius.circular(hasIcon ? 50 : 16),
         ),
         child: Container(
-          width: screenWidth * .75,
+          width: screenWidth ,
           height: 60,
           alignment: Alignment.center,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 5,
             children: [
-              Icon(Icons.auto_awesome, color: AppColors.kWhite),
-              Text('Ask AI', style: Theme.of(context).textTheme.labelLarge),
+              hasIcon == true
+                  ? Icon(icon, color: AppColors.kWhite)
+                  : SizedBox.shrink(),
+              Text(title, style: Theme.of(context).textTheme.labelLarge),
             ],
           ),
         ),

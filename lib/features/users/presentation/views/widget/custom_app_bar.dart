@@ -8,13 +8,9 @@ class CustomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      spacing: 50,
       children: [
-        IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.kWhite),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        SizedBox(width: 30),
         Text(
           'Profile',
           style: TextStyle(
@@ -22,6 +18,7 @@ class CustomAppBar extends StatelessWidget {
             fontWeight: FontWeight.bold,
             color: AppColors.kWhite,
           ),
+          textAlign: TextAlign.center,
         ),
         IconButton(
           onPressed: () {},
@@ -31,4 +28,3 @@ class CustomAppBar extends StatelessWidget {
     );
   }
 }
-

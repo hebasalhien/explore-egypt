@@ -7,6 +7,7 @@ import 'package:explore_egypt/features/auth/presentation/view/forget_password/re
 import 'package:explore_egypt/features/auth/presentation/view/login_page.dart';
 import 'package:explore_egypt/features/auth/presentation/view/register_page.dart';
 import 'package:explore_egypt/features/chat/presentation/views/chat_page.dart';
+import 'package:explore_egypt/features/help_center/presentation/view/help_center.dart';
 import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
 import 'package:explore_egypt/features/home/model/entities/plan_card_model.dart';
 import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
@@ -31,7 +32,7 @@ class AppRoutes {
   static const String mainPage = 'MainPage';
   static const String homePage = 'HomePage';
   //static const String paymentMethodsPage = 'PaymentMethodsPage';
-  static const String helpPage = 'HelpPage';
+  static const String helpCenterPage = 'HelpCenterPage';
   static const String trendingPage = 'TrendingPage';
   static const String suggestedPlansPage = 'SuggestedPlansPage';
   static const String editProfilePage = 'EditProfilePage';
@@ -87,7 +88,8 @@ class AppRoutes {
             child: EditProfilePage(userModel: userModel),
           ),
         );
-
+      case helpCenterPage:
+        return MaterialPageRoute(builder: (_) => HelpCenterView());
       case mainPage:
         return MaterialPageRoute(builder: (_) => MainPage());
 

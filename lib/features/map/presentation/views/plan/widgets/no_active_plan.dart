@@ -36,7 +36,7 @@ class NoActivePlan extends StatelessWidget {
                   fontSize: 18,
                 ),
               ),
-              CustomGradientButton(screenWidth: screenWidth),
+              CustomGradientButton(screenWidth: screenWidth*.75,title: "Ask AI",icon: Icons.auto_awesome,),
               Divider(
                 thickness: 5,
                 color: Color(0xffE5E7EB),

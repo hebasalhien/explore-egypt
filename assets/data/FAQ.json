@@ -1,0 +1,64 @@
+{
+  "faq": [
+    {
+      "question": "How do I create a travel plan?",
+      "answer": "You can create a plan by choosing your destination, number of days, and preferred places. The app will help you organize everything day by day."
+    },
+    {
+      "question": "Can I create more than one plan?",
+      "answer": "Yes. You can create multiple plans and switch between them from the Plan screen."
+    },
+    {
+      "question": "How do I switch between my plans?",
+      "answer": "Go to the Plan screen, tap the current plan name, then choose another plan from the list."
+    },
+    {
+      "question": "Can I add a new place to my plan?",
+      "answer": "Yes. Tap the plus button, choose \"Add Place\", then search for a place or use AI suggestions."
+    },
+    {
+      "question": "Can I delete a place from my plan?",
+      "answer": "Yes. Tap the plus button, choose \"Delete Place\", then select the places you want to remove."
+    },
+    {
+      "question": "Can the AI help me build a plan?",
+      "answer": "Yes. The AI can suggest places, routes, and daily itineraries based on your trip duration and interests."
+    },
+    {
+      "question": "Can I use the chatbot for travel questions?",
+      "answer": "Yes. You can ask the chatbot about landmarks, routes, best visiting times, costs, and travel tips."
+    },
+    {
+      "question": "What does \"Total Budget\" mean?",
+      "answer": "It shows the estimated total cost of the places and activities added to your current plan."
+    },
+    {
+      "question": "Can I save my favorite landmarks?",
+      "answer": "Yes. Tap the heart icon on any landmark card to save it to your favorites."
+    },
+    {
+      "question": "Can I add a landmark directly to my plan?",
+      "answer": "Yes. Open the landmark details page and tap \"Add to My Plan\" or \"Plan Your Visit\"."
+    },
+    {
+      "question": "What happens if I add a new day?",
+      "answer": "A new empty day will be created. You can then add places manually or generate suggestions with AI."
+    },
+    {
+      "question": "Can I edit my profile information?",
+      "answer": "Yes. Go to Profile, then Account Settings, and update your name, photo, email, phone, or bio."
+    },
+    {
+      "question": "Can I manage my payment methods?",
+      "answer": "Yes. You can add new cards, view saved cards, and choose your default payment method from Payment Methods."
+    },
+    {
+      "question": "How do I contact support?",
+      "answer": "Go to Help Center and choose Live Chat or Contact Support."
+    },
+    {
+      "question": "Can I change the app language?",
+      "answer": "Yes. You can change the language from the Edit Profile or Account Settings screen."
+    }
+  ]
+}
