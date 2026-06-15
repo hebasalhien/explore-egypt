@@ -11,6 +11,7 @@ class CustomGradientButton extends StatelessWidget {
     this.icon,
     required this.title,
     this.topToBottom = true,
+    this.onPressed
   });
 
   final double screenWidth;
@@ -18,10 +19,11 @@ class CustomGradientButton extends StatelessWidget {
   final IconData? icon;
   final String title;
   final bool topToBottom;
+  final VoidCallback? onPressed;
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: onPressed ?? () {
         context.read<NavigationCubit>().switchTab(1);
       },
       style: ElevatedButton.styleFrom(

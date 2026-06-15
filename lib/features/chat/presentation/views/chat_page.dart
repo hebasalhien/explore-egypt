@@ -26,6 +26,45 @@ class _ChatPageState extends State<ChatPage> {
   final messageController = TextEditingController();
   List<PlatformFile> selectedFiles = [];
   String? mode;
+  void _openDrawer(BuildContext context) {
+    final chatCubit = context.read<ChatCubit>();
+    final chatRepository = context.read<ChatRepository>();
+
+    Navigator.of(context, rootNavigator: true).push(
+      PageRouteBuilder(
+        opaque: false,
+        barrierDismissible: true,
+        barrierColor:
+            Colors.black54, // Matches the standard drawer backdrop dim
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return MultiBlocProvider(
+            providers: [
+              RepositoryProvider.value(value: chatRepository),
+              BlocProvider.value(value: chatCubit),
+            ],
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: SizedBox(
+                width:
+                    MediaQuery.of(context).size.width * 0.9, // 80% screen width
+                child: const CustomDrawer(),
+              ),
+            ),
+          );
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
+                .animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                ),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -38,7 +77,7 @@ class _ChatPageState extends State<ChatPage> {
               builder: (context) {
                 return IconButton(
                   onPressed: () {
-                    Scaffold.of(context).openEndDrawer();
+                    _openDrawer(context);
                   },
                   icon: SvgPicture.asset(
                     AppConstants.chatbubbleIcon,
@@ -52,7 +91,6 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ],
         ),
-        endDrawer: CustomDrawer(),
         body: Stack(
           children: [
             ChatBackground(),
@@ -65,7 +103,10 @@ class _ChatPageState extends State<ChatPage> {
                       setState(() {
                         mode = 'chat'; // Reset mode after generating the plan
                       });
-                      context.read<NavigationCubit>().switchTab(2, trip: state.trip);
+                      context.read<NavigationCubit>().switchTab(
+                        2,
+                        trip: state.trip,
+                      );
                     }
                   },
                   builder: (context, state) {
@@ -80,7 +121,12 @@ class _ChatPageState extends State<ChatPage> {
                   },
                 ),
                 Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.only(
+                    top: 8.0,
+                    left: 8.0,
+                    right: 8.0,
+                    bottom: 15,
+                  ),
                   child: Builder(
                     builder: (context) {
                       return CustomRow(
@@ -101,14 +147,14 @@ class _ChatPageState extends State<ChatPage> {
                           if (files.isNotEmpty) {
                             filePaths = files.map((e) => e.path!).toList();
                           }
-        
+
                           context.read<ChatCubit>().sendMessage(
                             message: messageController.text,
                             conversationId: context
                                 .read<ChatCubit>()
                                 .currentConversationId,
                             filePath: filePaths,
-                            mode: mode
+                            mode: mode,
                           );
                           messageController.clear();
                           setState(() {
