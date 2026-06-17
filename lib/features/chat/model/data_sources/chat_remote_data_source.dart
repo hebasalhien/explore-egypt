@@ -3,6 +3,7 @@ import 'package:explore_egypt/core/constants/api_constants.dart';
 import 'package:explore_egypt/core/services/api_service.dart';
 
 class ChatRemoteDataSource {
+
   Future<dynamic> getConversation({String? conversationID}) async {
     final response = await ApiService.instance.dio.get(
       ApiConstants.chats + (conversationID != null ? '/$conversationID' : ''),
@@ -43,8 +44,17 @@ class ChatRemoteDataSource {
 
   Future<int> deleteConversation({required String conversationId}) async {
     final response = await ApiService.instance.dio.delete(
-      ApiConstants.chats + conversationId,
+      '${ApiConstants.chats}/$conversationId',
     );
     return response.statusCode!;
   }
+
+  Future<dynamic> regenerate({required String conversationId}) async {
+    final response = await ApiService.instance.dio.post(
+      '${ApiConstants.chats}/$conversationId${ApiConstants.regenerate}',
+
+    );
+    return response.data;
+  }
+
 }

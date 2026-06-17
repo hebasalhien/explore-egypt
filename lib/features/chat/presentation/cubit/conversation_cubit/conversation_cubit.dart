@@ -26,4 +26,19 @@ class ConversationCubit extends Cubit<ConversationState> {
       emit(ConversationError(errorMessage: e.toString()));
     }
   }
+
+  Future<dynamic> deleteConversation({required String conversationId}) async {
+    emit(ConversationLoading());
+    try {
+      await _repository.deleteConversation(
+        conversationId: conversationId,
+      );
+      _conversations.removeWhere((e) => e.conversationId == conversationId);
+      debugPrint('conversation deleted successfully');
+      emit(ConversationLoaded(conversations: _conversations));
+    } catch (e) {
+      debugPrint('Error deleting conversation: $e');
+      emit(ConversationError(errorMessage: e.toString()));
+    }
+  }
 }

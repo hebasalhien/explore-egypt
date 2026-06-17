@@ -12,7 +12,6 @@ final class ConversationLoaded extends ConversationState {
   final List<ChatModel> conversations;
   ConversationLoaded({required this.conversations});
 }
-
 final class ConversationError extends ConversationState {
   final String errorMessage;
 

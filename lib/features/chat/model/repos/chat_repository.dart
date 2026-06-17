@@ -8,6 +8,7 @@ class ChatRepository {
   final ChatRemoteDataSource _dataSource;
 
   ChatRepository(this._dataSource);
+
     Future<dynamic> getConversation({String? conversationID} ) async {
     try {
       final data = await _dataSource.getConversation(conversationID: conversationID);
@@ -42,4 +43,16 @@ class ChatRepository {
       throw ServerFailure('An unexpected error occurred: $e');
     }
   }
+
+  Future<dynamic> deleteConversation({required String conversationId}) async {
+    try {
+      final data = await _dataSource.deleteConversation(conversationId: conversationId);
+      return data;
+    } on DioException catch (e) {
+      throw ServerFailure(ExceptionHandleHelper.handleDioException(e));
+    } catch (e) {
+      throw ServerFailure('An unexpected error occurred: $e');
+    }
+  }
+
 }

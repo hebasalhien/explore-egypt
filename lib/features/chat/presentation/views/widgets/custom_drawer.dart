@@ -1,5 +1,6 @@
 import 'package:explore_egypt/core/constants/app_constants.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/core/widgets/delete_confirmation_dialog.dart';
 import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:explore_egypt/features/chat/presentation/cubit/chat_cubit/chat_cubit.dart';
 import 'package:explore_egypt/features/chat/presentation/cubit/conversation_cubit/conversation_cubit.dart';
@@ -89,6 +90,15 @@ class CustomDrawer extends StatelessWidget {
                                     state.conversations[index].conversationId,
                               );
                               Navigator.pop(context);
+                            },
+                            onDelete: () {
+                              context
+                                  .read<ConversationCubit>()
+                                  .deleteConversation(
+                                    conversationId: state
+                                        .conversations[index]
+                                        .conversationId,
+                                  );
                             },
                           );
                         },
@@ -190,62 +200,125 @@ class ConversationListTile extends StatelessWidget {
     required this.isSelected,
     required this.title,
     required this.onTap,
+    required this.onDelete,
   });
 
   final bool isSelected;
   final String title;
   final void Function()? onTap;
+  final void Function()? onDelete; // Callback triggered when delete is tapped
 
   @override
   Widget build(BuildContext context) {
+    Offset tapPosition = Offset.zero;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: Container(
-        decoration: isSelected
-            ? BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xffF6CB9E), Color(0xffFFF3E0)],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
+      child: GestureDetector(
+        onTapDown: (details) {
+          tapPosition = details.globalPosition;
+        },
+        child: Container(
+          decoration: isSelected
+              ? BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xffF6CB9E), Color(0xffFFF3E0)],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Color(0xffFFEDD5)),
+                )
+              : BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Color(0xffFFF7ED)),
                 ),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Color(0xffFFEDD5)),
-              )
-            : BoxDecoration(
+          child: ListTile(
+            onLongPress: () async {
+              final RenderBox overlay =
+                  Overlay.of(context).context.findRenderObject() as RenderBox;
+
+              final String? selectedAction = await showMenu<String>(
+                context: context,
+                position: RelativeRect.fromRect(
+                  Rect.fromLTWH(tapPosition.dx, tapPosition.dy, 50, 50),
+                  Offset.zero & overlay.size,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Color(0xffFFF7ED)),
+                elevation: 4,
+                items: [
+                  PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.delete_outline,
+                          color: AppColors.kPrimaryVariant,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Delete',
+                          style: GoogleFonts.inter(
+                            color: AppColors.kPrimaryVariant,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+
+              // If they click 'delete' from the popup menu, display the confirmation dialog
+              if (selectedAction == 'delete' && context.mounted) {
+                showDialog(
+                  context: context,
+                  builder: (dialogContext) => DeleteConfirmationDialog(
+                    onConfirm: () {
+                      if (onDelete != null) onDelete!();
+                    }, title: 'Delete Chat?', content: 'Are you sure you want to delete this conversation?',
+                  ),
+                );
+              }
+            },
+            dense: true,
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            leading: Container(
+              width: 40,
+              height: 40,
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(10),
+                color: Color(0xffFDF1E5),
               ),
-        child: ListTile(
-          dense: true,
-          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          leading: Container(
-            width: 40,
-            height: 40,
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(10),
-              color: Color(0xffFDF1E5),
+              child: SvgPicture.asset(
+                AppConstants.messageIcon,
+                colorFilter: ColorFilter.mode(
+                  Color(0xffAF5D48),
+                  BlendMode.srcIn,
+                ),
+              ),
             ),
-            child: SvgPicture.asset(
-              AppConstants.messageIcon,
-              colorFilter: ColorFilter.mode(Color(0xffAF5D48), BlendMode.srcIn),
+            title: Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Color(0xff43281C),
+              ),
             ),
+            onTap: onTap,
           ),
-          title: Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color(0xff43281C),
-            ),
-          ),
-          onTap: onTap,
         ),
       ),
     );
   }
 }
+
