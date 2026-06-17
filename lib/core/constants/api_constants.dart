@@ -15,7 +15,17 @@ class ApiConstants {
 
   //chat endpoints //
   static const String chats = 'api/chats';
+  static const String regenerate= '/regenerate';
 
   /// home endpoints
   static const String home = 'api/home';
+  static const String categories = '$home/categories';
+  static const String suggestedPlans = '$home/plans';
+
+  /// plan endpoints
+  static const String plan = 'api/plans';
+  static const String savePlan = '$plan/save';
+  static const String activatePlan = '/activate';
+
+  
 }

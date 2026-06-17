@@ -1,33 +1,45 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/features/plans/model/entities/categories_model.dart';
+import 'package:explore_egypt/features/plans/presentation/cubit/suggested_plans_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CategoriesList extends StatelessWidget {
-  const CategoriesList({
-    super.key,
-    required this.isSelected,
-    required this.onTap,
-  });
-  final bool isSelected;
-  final VoidCallback onTap;
+class CategoriesList extends StatefulWidget {
+  const CategoriesList({super.key, required this.categories});
+  final List<CategoriesModel> categories;
+
+  @override
+  State<CategoriesList> createState() => _CategoriesListState();
+}
+
+class _CategoriesListState extends State<CategoriesList> {
+  int isSelected = 0;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 60,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: 5,
+        itemCount: widget.categories.length,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: GestureDetector(
-              onTap: onTap,
+              onTap: () {
+                setState(() {
+                  isSelected = index;
+                });
+                context.read<SuggestedPlansCubit>().getPlansByCategory(
+                  categoryId: widget.categories[index].id,
+                );
+              },
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
                   border: Border.all(color: Color(0xffE5E7EB)),
                   borderRadius: BorderRadius.circular(25),
                   color: AppColors.kWhite,
-                  gradient: isSelected
+                  gradient: isSelected == index
                       ? LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -38,13 +50,15 @@ class CategoriesList extends StatelessWidget {
                         )
                       : null,
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
 
                 child: Center(
                   child: Text(
-                    'Trending',
+                    widget.categories[index].name,
                     style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: isSelected ? AppColors.kWhite : AppColors.kBlack,
+                      color: isSelected == index
+                          ? AppColors.kWhite
+                          : AppColors.kBlack,
                     ),
                   ),
                 ),

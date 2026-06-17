@@ -10,6 +10,16 @@ part 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   final HomeRepository _homeRepo;
   HomeCubit(this._homeRepo) : super(HomeInitial());
+  /// store plan cards 
+  List<PlanCardModel> planCards = [];
+  /// get plan cards from state to use them in suggested plans page
+  List<PlanCardModel> get plans =>
+      state is HomeLoaded ? (state as HomeLoaded).planCardModel : [];
+
+  /// get landmarks from state to use them in trending expeditions page
+  List<LandmarkModel> get landmarks =>
+      state is HomeLoaded ? (state as HomeLoaded).landmarks : [];
+      
   Future<void> getHome() async {
     emit(HomeInitial());
     try {
@@ -19,7 +29,7 @@ class HomeCubit extends Cubit<HomeState> {
           .map((item) => LandmarkModel.fromjson(item))
           .toList();
 
-      List<PlanCardModel> planCards = (data['suggestedPlans'] as List)
+      planCards = (data['suggestedPlans'] as List)
             .map((plan) => PlanCardModel.fromJson(plan))
           .toList();
       emit(HomeLoaded(landmarks: landmarks, planCardModel: planCards));

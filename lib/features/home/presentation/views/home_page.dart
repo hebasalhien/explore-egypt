@@ -130,10 +130,12 @@ class _HomePageState extends State<HomePage> {
                               header: 'Suggested Plans',
                               label: 'view all',
                               onPressed: () {
+                                  final homeCubit = context.read<HomeCubit>();
+
                                 Navigator.pushNamed(
                                   context,
                                   AppRoutes.suggestedPlansPage,
-                                  arguments: state.planCardModel,
+                                  arguments: homeCubit.plans,
                                 );
                               },
                               itemCount: state.planCardModel.length.clamp(0, 5),
