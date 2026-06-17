@@ -21,8 +21,19 @@ final class CreateNewPlanSuccess extends PlanState {
   CreateNewPlanSuccess({required this.trip});
 }
 
+final class GetAllPlansLoading extends PlanState {}
+final class GetAllPlansFailure extends PlanState {
+  final String error;
+  GetAllPlansFailure(this.error);
+}
+final class GetAllPlansSuccess extends PlanState {
+  final List<TripModel> plans;
+  GetAllPlansSuccess({required this.plans});
+}
+
 final class AddNewDayToPlan extends PlanState {}
 
 final class AddNewDaySuccess extends PlanState {}
 
 final class PlanError extends PlanState {}
+

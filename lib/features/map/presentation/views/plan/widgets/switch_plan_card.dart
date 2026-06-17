@@ -1,20 +1,13 @@
+import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:flutter/material.dart';
 
 class SwitchPlan extends StatelessWidget {
   const SwitchPlan({
-    super.key,
-    required this.title,
-    required this.days,
-    required this.stops,
-    required this.imageURL,
-    required this.isPlanActive,
+    super.key, required this.trip,
+
   });
 
-  final String title;
-  final String days;
-  final String stops;
-  final String imageURL;
-  final bool isPlanActive;
+  final TripModel trip;
 
   @override
   Widget build(BuildContext context) {
@@ -23,20 +16,21 @@ class SwitchPlan extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: isPlanActive
+          border: trip.active 
               ? Border.all(color: Color(0x66D38A5D), width: 2)
               : Border.all(color: Color(0xffF3F4F6), width: 2),
         ),
         child: ListTile(
+          
           contentPadding: EdgeInsets.all(8),
           title: Text(
-            title,
+            trip.title,
             style: Theme.of(
               context,
             ).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w600),
           ),
           subtitle: Text(
-            '$days days  • $stops stops',
+            '${trip.days} days  • ${trip.dayModel.length} stops',
             style: TextStyle(
               color: Color(0xff9CA3AF),
               fontSize: 12,
@@ -49,7 +43,7 @@ class SwitchPlan extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               image: DecorationImage(
-                image: AssetImage(imageURL),
+                image: AssetImage('assets/images/pyramid.png'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -59,7 +53,7 @@ class SwitchPlan extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             spacing: 6,
             children: [
-              isPlanActive
+              trip.active
                   ? Container(
                       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                       decoration: BoxDecoration(

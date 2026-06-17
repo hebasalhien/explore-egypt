@@ -42,7 +42,7 @@ class _ActivePlanState extends State<ActivePlan> {
                 widget.onDayChanged?.call(index);
               },
             ),
-            PlanTitle(planTitle: widget.trip!.title),
+            PlanTitle(trip: widget.trip!),
             CostWidget(
               screenHeight: widget.screenHeight,
               cost: widget.trip!.dayModel[selectedDay].totalCost.toString(),

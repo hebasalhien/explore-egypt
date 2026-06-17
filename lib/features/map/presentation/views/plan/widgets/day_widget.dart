@@ -1,11 +1,14 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/core/widgets/delete_confirmation_dialog.dart';
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
+import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/dashed_rounded_button.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/plan_step_card.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/switch_plan_list.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/total_plans_number.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DayWidget extends StatelessWidget {
@@ -63,62 +66,126 @@ class DayWidget extends StatelessWidget {
 }
 
 class PlanTitle extends StatelessWidget {
-  final String planTitle;
-  const PlanTitle({super.key, required this.planTitle});
+  final TripModel trip;
+  const PlanTitle({super.key, required this.trip});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        // Capture cubit to inject it into the bottom sheet's isolated widget tree
+        final planCubit = context.read<PlanCubit>();
+
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
           backgroundColor: Colors.transparent,
-          builder: (context) {
-            return Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.7,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 20,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 12,
-                  children: [
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(
-                        'Switch Plan',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xff4A3728),
-                          fontFamily: GoogleFonts.playfair().fontFamily,
-                        ),
-                      ),
-                      subtitle: Text(
-                        'Choose which itinerary you want to view',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xff6B7280),
-                        ),
+          builder: (sheetContext) {
+            // Bottom sheet has its own widget tree — inject the same cubit instance
+            return BlocProvider.value(
+              value: planCubit,
+              child: Builder(
+                builder: (innerContext) {
+                  return Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(innerContext).size.height * 0.7,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(40),
                       ),
                     ),
-                    SwitchPlanList(),
-                    DashedRoundedButton(
-                      onTap: () {},
-                      label: 'Create New Plan',
-                      color: Color(0xffF3E9D9),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 20,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 12,
+                        children: [
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              'Switch Plan',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xff4A3728),
+                                fontFamily: GoogleFonts.playfair().fontFamily,
+                              ),
+                            ),
+                            subtitle: Text(
+                              'Choose which itinerary you want to view',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xff6B7280),
+                              ),
+                            ),
+                          ),
+                          BlocBuilder<PlanCubit, PlanState>(
+                            builder: (context, state) {
+                              if (state is GetAllPlansLoading) {
+                                return const Expanded(
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              } else if (state is GetAllPlansSuccess) {
+                                return SwitchPlanList(
+                                  plans: state.plans,
+                                  onPlanDismissed: () => {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return BlocProvider.value(
+                                          value: planCubit,
+                                          child:
+                                              BlocBuilder<
+                                                PlanCubit,
+                                                PlanState
+                                              >(
+                                                builder: (context, state) {
+                                                  return DeleteConfirmationDialog(
+                                                    onConfirm: () {
+                                                      context.read<PlanCubit>().deletePlan(tripId: trip.id ?? '');
+                                                      
+                                                    },
+                                                    title: 'Delete plan',
+                                                    content:
+                                                        'Are you sure you want to delete this plan?',
+                                                  );
+                                                },
+                                              ),
+                                        );
+                                      },
+                                    ),
+                                  },
+                                );
+                              } else if (state is GetAllPlansFailure) {
+                                return Expanded(
+                                  child: Center(
+                                    child: Text(
+                                      state.error,
+                                      style: const TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
+                          DashedRoundedButton(
+                            onTap: () {},
+                            label: 'Create New Plan',
+                            color: Color(0xffF3E9D9),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
             );
           },
@@ -153,7 +220,7 @@ class PlanTitle extends StatelessWidget {
               Flexible(
                 fit: FlexFit.loose,
                 child: Text(
-                  planTitle,
+                  trip.title,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: AppColors.kBlack,

@@ -25,30 +25,31 @@ class PlanPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return trip == null
-    //     ? NoActivePlan(screenWidth: screenWidth, screenHeight: screenHeight)
-    //     : ActivePlan(
-    //         trip: trip,
-    //         screenHeight: screenHeight,
-    //         screenWidth: screenWidth,
-    //         onDayChanged: onDayChanged,
-    //       );
-    return Column(
-      children: [
-        DayStepper(
-          selectedDay: selectedDay,
-          totalDays: 1,
-          onDaySelected: (index) {
-            // setState(() {
-            //   selectedDay = index;
-            // });
-            // widget.onDayChanged?.call(index);
-          },
-        ),
-        PlanTitle(planTitle: 'new plan'),
-        CostWidget(screenHeight: screenHeight, cost: '0'),
-        NoPlacesAddedYet(day: 1),
-      ],
-    );
+    return trip == null
+        ? NoActivePlan(screenWidth: screenWidth, screenHeight: screenHeight)
+        : ActivePlan(
+            trip: trip,
+            screenHeight: screenHeight,
+            screenWidth: screenWidth,
+            onDayChanged: onDayChanged,
+          );
+    // return Column(
+    //   children: [
+    //     DayStepper(
+    //       selectedDay: selectedDay,
+    //       totalDays: 1,
+    //       onDaySelected: (index) {
+    //         // setState(() {
+    //         //   selectedDay = index;
+    //         // });
+    //         // widget.onDayChanged?.call(index);
+    //       },
+    //     ),
+    //     PlanTitle(planTitle: 'new plan'),
+    //     CostWidget(screenHeight: screenHeight, cost: '0'),
+    //     NoPlacesAddedYet(day: 1),
+    //   ],
+    // );
+ 
   }
 }
