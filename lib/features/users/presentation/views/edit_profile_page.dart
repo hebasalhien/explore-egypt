@@ -12,7 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class EditProfilePage extends StatefulWidget {
   final UserModel userModel;
-  EditProfilePage({super.key, required this.userModel});
+  const EditProfilePage({super.key, required this.userModel});
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();

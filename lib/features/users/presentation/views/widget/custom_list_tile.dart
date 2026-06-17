@@ -18,7 +18,9 @@ class CustomListTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: ListTile(
-        leading: SvgPicture.asset(icon),
+        leading: icon.isNotEmpty
+            ? SvgPicture.asset(icon)
+            : const Icon(Icons.logout, color: AppColors.kPrimaryVariant),
         title: Text(
           title,
           style: Theme.of(
@@ -37,4 +39,3 @@ class CustomListTile extends StatelessWidget {
     );
   }
 }
-
