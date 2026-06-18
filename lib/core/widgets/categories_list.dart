@@ -4,33 +4,26 @@ import 'package:explore_egypt/features/plans/presentation/cubit/suggested_plans_
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CategoriesList extends StatefulWidget {
-  const CategoriesList({super.key, required this.categories});
+class CategoriesList extends StatelessWidget {
+  const CategoriesList({super.key, required this.categories, required this.selectedCategoryId});
   final List<CategoriesModel> categories;
-
-  @override
-  State<CategoriesList> createState() => _CategoriesListState();
-}
-
-class _CategoriesListState extends State<CategoriesList> {
-  int isSelected = 0;
+  final String selectedCategoryId;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 60,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: widget.categories.length,
+        itemCount: categories.length,
         itemBuilder: (context, index) {
+          final category = categories[index];
+          final bool isCurrentSelected = category.id == selectedCategoryId;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: GestureDetector(
               onTap: () {
-                setState(() {
-                  isSelected = index;
-                });
                 context.read<SuggestedPlansCubit>().getPlansByCategory(
-                  categoryId: widget.categories[index].id,
+                  categoryId: categories[index].id,
                 );
               },
               child: Container(
@@ -39,7 +32,7 @@ class _CategoriesListState extends State<CategoriesList> {
                   border: Border.all(color: Color(0xffE5E7EB)),
                   borderRadius: BorderRadius.circular(25),
                   color: AppColors.kWhite,
-                  gradient: isSelected == index
+                  gradient: isCurrentSelected 
                       ? LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -54,9 +47,9 @@ class _CategoriesListState extends State<CategoriesList> {
 
                 child: Center(
                   child: Text(
-                    widget.categories[index].name,
+                    categories[index].name,
                     style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: isSelected == index
+                      color: isCurrentSelected
                           ? AppColors.kWhite
                           : AppColors.kBlack,
                     ),

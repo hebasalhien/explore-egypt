@@ -7,9 +7,9 @@ class SuggestedPlansRepo {
   final SuggestedPlansRemoteDataSource _dataSource;
   SuggestedPlansRepo(this._dataSource);
 
-  Future<dynamic> getCategories() async {
+  Future<dynamic> getPlansByCategory({required String categoryId}) async {
     try {
-      final data = await _dataSource.getCategories();
+      final data = await _dataSource.getPlansByCategory(categoryId: categoryId);
       return data;
     } on DioException catch (e) {
       throw ServerException(ExceptionHandleHelper.handleDioException(e));
@@ -18,9 +18,9 @@ class SuggestedPlansRepo {
     }
   }
 
-  Future<dynamic> getPlansByCategory({required String categoryId}) async {
+  Future<dynamic> getFavoritePlans() async {
     try {
-      final data = await _dataSource.getPlansByCategory(categoryId: categoryId);
+      final data = await _dataSource.getFavoritePlans();
       return data;
     } on DioException catch (e) {
       throw ServerException(ExceptionHandleHelper.handleDioException(e));

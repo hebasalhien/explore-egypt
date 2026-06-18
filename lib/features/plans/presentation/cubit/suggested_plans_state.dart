@@ -10,8 +10,8 @@ final class SuggestedPlansLoading extends SuggestedPlansState {}
 final class SuggestedPlansLoaded extends SuggestedPlansState {
   final List<CategoriesModel> categories;
   final List<PlanCardModel> plans;
-  final int selectedIndex;
-  SuggestedPlansLoaded({required this.categories, required this.plans,this.selectedIndex = 0});
+  final String selectedCategoryId;
+  SuggestedPlansLoaded({required this.categories, required this.plans,required this.selectedCategoryId});
 }
 
 final class SuggestedPlansError extends SuggestedPlansState {
