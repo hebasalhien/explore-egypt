@@ -17,7 +17,7 @@ void main() async {
   await ApiService.create(sessionCubit: sessionCubit);
   runApp(
     RepositoryProvider(
-      create: (_) => AuthRepository(AuthRemoteDataSource()),
+      create: (_) => AuthRepository(AuthRemoteDataSource(ApiService.instance)),
       child: BlocProvider(
         create: (context) => sessionCubit..restoreSession(),
         child: MyApp(),

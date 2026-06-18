@@ -3,9 +3,12 @@ import 'package:explore_egypt/core/constants/api_constants.dart';
 import 'package:explore_egypt/core/services/api_service.dart';
 
 class ChatRemoteDataSource {
+  final ApiService _apiService;
+
+  ChatRemoteDataSource(this._apiService);
 
   Future<dynamic> getConversation({String? conversationID}) async {
-    final response = await ApiService.instance.dio.get(
+    final response = await _apiService.dio.get(
       ApiConstants.chats + (conversationID != null ? '/$conversationID' : ''),
     );
     return response.data;
@@ -34,7 +37,7 @@ class ChatRemoteDataSource {
       if (files.isNotEmpty) "files": files,
       if (mode != null) "type": mode,
     });
-    final response = await ApiService.instance.dio.post(
+    final response = await _apiService.dio.post(
       ApiConstants.chats,
       data: formData,
       cancelToken: cancelToken,
@@ -43,18 +46,16 @@ class ChatRemoteDataSource {
   }
 
   Future<int> deleteConversation({required String conversationId}) async {
-    final response = await ApiService.instance.dio.delete(
+    final response = await _apiService.dio.delete(
       '${ApiConstants.chats}/$conversationId',
     );
     return response.statusCode!;
   }
 
   Future<dynamic> regenerate({required String conversationId}) async {
-    final response = await ApiService.instance.dio.post(
+    final response = await _apiService.dio.post(
       '${ApiConstants.chats}/$conversationId${ApiConstants.regenerate}',
-
     );
     return response.data;
   }
-
 }

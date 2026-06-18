@@ -1,3 +1,4 @@
+import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/core/widgets/gradient_app_bar.dart';
 import 'package:explore_egypt/features/map/model/data_source/map_remote_data_source.dart';
@@ -33,7 +34,7 @@ class _MainMapPageState extends State<MainMapPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    mapRepository = MapRepository(MapRemoteDataSource());
+    mapRepository = MapRepository(MapRemoteDataSource(ApiService.instance));
   }
 
   @override

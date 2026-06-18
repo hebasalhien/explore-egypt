@@ -1,4 +1,5 @@
 import 'package:explore_egypt/core/constants/app_constants.dart';
+import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/features/chat/model/data_sources/chat_remote_data_source.dart';
 import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:explore_egypt/features/chat/presentation/views/chat_page.dart';
@@ -81,7 +82,7 @@ class _MainPageState extends State<MainPage> {
                       builder: (_) => _initialized[1]
                           ? RepositoryProvider(
                               create: (context) =>
-                                  ChatRepository(ChatRemoteDataSource()),
+                                  ChatRepository(ChatRemoteDataSource(ApiService.instance)),
                               child: ChatPage(),
                             )
                           : const SizedBox.shrink(),
@@ -130,7 +131,7 @@ class _MainPageState extends State<MainPage> {
                   // ),
                   // Tab 3 - Profile
 RepositoryProvider(
-  create: (_) => UserRepository(UserRemoteDataSource()),
+  create: (_) => UserRepository(UserRemoteDataSource(ApiService.instance)),
   child: BlocProvider(
     create: (context) => ProfileCubit(
       context.read<UserRepository>(),
