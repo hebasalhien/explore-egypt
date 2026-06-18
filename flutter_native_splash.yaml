@@ -1,0 +1,13 @@
+flutter_native_splash:
+  # The background color of the splash screen
+  background_image: assets/images/splash screen.png
+  # The path to your splash screen image (PNG format is best)
+  image: assets/images/logo2.png
+  android_gravity: center
+  fullscreen: true
+
+  android_12:
+    image: assets/images/logo2.png # Typically a simpler icon inside a circle
+  # Optional Settings:
+  # android_12: true              # Enables Android 12+ Splash Screen API support
+  # fullscreen: true              # Hides the status bar during splash
