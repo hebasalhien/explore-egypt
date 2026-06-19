@@ -12,9 +12,9 @@ class MapBottomSheetHeader extends StatelessWidget {
   final int dayNumber;
   final String planTitle;
   final int locationsNumber;
-
   @override
   Widget build(BuildContext context) {
+    final shortTitle = planTitle.split(' ').take(2).join(' ');
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -49,10 +49,12 @@ class MapBottomSheetHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Day $dayNumber Plan: $planTitle',
+                  'Day $dayNumber Plan: $shortTitle ...',
                   style: Theme.of(
                     context,
                   ).textTheme.headlineMedium!.copyWith(fontSize: 20),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 LocationsNumberContainer(locationsNumber: locationsNumber),
               ],
@@ -63,4 +65,3 @@ class MapBottomSheetHeader extends StatelessWidget {
     );
   }
 }
-

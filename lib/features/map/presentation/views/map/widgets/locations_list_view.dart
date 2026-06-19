@@ -23,7 +23,7 @@ class LocationsListView extends StatelessWidget {
             padding: const EdgeInsets.only(top: 12),
             child: PlaceCard(isCardSelected: isCardSelected, activityModel: activityModel[index],),
           ),
-          itemCount: 6,
+          itemCount: activityModel.length,
         ),
       ),
     );

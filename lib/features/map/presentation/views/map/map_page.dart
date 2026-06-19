@@ -7,7 +7,7 @@ import 'package:explore_egypt/features/map/presentation/views/map/widgets/map_ma
 import 'package:explore_egypt/features/map/presentation/views/map/widgets/user_position_marker.dart';
 import 'package:flutter/material.dart';
 import 'package:maplibre/maplibre.dart';
-
+import 'package:geolocator/geolocator.dart' as geo;
 class MapPage extends StatefulWidget {
   final List<ActivityModel>? activityModel;
   final int dayNumber;
@@ -45,11 +45,14 @@ class _MapPageState extends State<MapPage> {
         )
         .toList();
   }
+late Future<geo.Position?> _positionFuture;
 
   @override
   void initState() {
     super.initState();
     _requestPermission();
+      _positionFuture = _locationService.getCurrentPosition();
+
   }
 
   Future<void> _requestPermission() async {
@@ -86,7 +89,7 @@ class _MapPageState extends State<MapPage> {
             children: [
               WidgetLayer(markers: _buildMarkers(), allowInteraction: true),
               FutureBuilder(
-                future: _locationService.getCurrentPosition(),
+                future: _positionFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final pos = snapshot.data!;
