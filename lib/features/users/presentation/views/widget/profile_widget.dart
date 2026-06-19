@@ -1,4 +1,5 @@
 import 'package:explore_egypt/core/constants/app_constants.dart';
+import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
 import 'package:explore_egypt/features/users/model/entities/user_model.dart';
 import 'package:explore_egypt/features/users/presentation/views/widget/custom_app_bar.dart';
 import 'package:explore_egypt/core/widgets/custom_app_bar_background.dart';
@@ -7,6 +8,7 @@ import 'package:explore_egypt/features/users/presentation/views/widget/user_cust
 import 'package:explore_egypt/features/users/presentation/views/widget/user_info.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileWidget extends StatelessWidget {
   final UserModel userModel;
@@ -53,7 +55,9 @@ class ProfileWidget extends StatelessWidget {
                     onTap: () =>
                         Navigator.pushNamed(context, AppRoutes.helpCenterPage),
                   ),
-                  CustomListTile(title: 'Logout', onTap: () {}, icon: ''),
+                  CustomListTile(title: 'Logout', onTap: () {
+                    context.read<SessionCubit>().endSession();
+                  }, icon: ''),
                 ],
               ),
             ),

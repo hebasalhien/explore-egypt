@@ -1,3 +1,4 @@
+import 'package:explore_egypt/core/constants/storage_constants.dart';
 import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/core/services/shared_pref_helper.dart';
 import 'package:explore_egypt/features/splash/model/entities/session_user.dart';
@@ -45,7 +46,7 @@ class SessionCubit extends Cubit<SessionState> {
 
   Future<dynamic> endSession() async {
     try {
-      await SharedPrefHelper.clearAlldata();
+      await SharedPrefHelper.removeSecureData(StorageConstants.userToken);
       await ApiService.instance.cookieJar.deleteAll();
       
       debugPrint('token deleted');
