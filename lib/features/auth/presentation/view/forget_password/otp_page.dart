@@ -33,8 +33,10 @@ class _OtpPageState extends State<OtpPage> {
 
   @override
   Widget build(BuildContext context) {
+    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final bool isKeyboardOpen = keyboardHeight > 0;
+
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: BlocListener<ForgotPasswordCubit, ForgotPasswordState>(
         listener: (context, state) {
           if (state is OtpVerified) {
@@ -51,11 +53,12 @@ class _OtpPageState extends State<OtpPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 20,
             children: [
+              SizedBox(height: isKeyboardOpen ? 40 : 0),
               Text('OTP', style: AppTextStyle.heading1),
               SvgPicture.asset(
                 AppConstants.otpImage,
-                height: 264,
-                width: 264,
+                height: isKeyboardOpen ? 240 : 264,
+                width: isKeyboardOpen ? 240 : 264,
               ),
               OtpTextField(controllers: controllers),
               CustomButton(

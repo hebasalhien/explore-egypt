@@ -26,51 +26,54 @@ class RegisterFormComponents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      spacing: 20,
-      children: [
-        Text('Sign Up', style: AppTextStyle.heading1),
-        CustomTextField(
-          controller: nameController,
-          validator: Validators.validateName,
-          label: 'User name',
-        ),
-        CustomTextField(
-          controller: emailController,
-          validator: Validators.emailValidator,
-          label: 'Email',
-        ),
-
-        CustomPasswordTextField(controller: passController),
-        CustomPasswordTextField(
-          controller: confirmPassController,
-          validator: (value) =>
-              Validators.validatePassConfirm(value, passController.text),
-          label: 'Confirm Password',
-          textInputAction: TextInputAction.done,
-        ),
-
-        CustomButton(
-          onPressed: () async {
-            if (formKey.currentState!.validate()) {
-              await context.read<AuthCubit>().register(
-                email: emailController.text.trim(),
-                username: nameController.text.trim(),
-                password: passController.text.trim(),
-              );
-            }
-          },
-          label: 'Sign Up',
-        ),
-        AuthBottomLink(
-          message: 'I already have an account?',
-          actionMessage: 'Login',
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    );
+final double keyboardHeight = View.of(context).viewInsets.bottom;
+  final bool isKeyboardOpen = keyboardHeight > 0;
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: isKeyboardOpen ? 10 : 20,
+        children: [
+          SizedBox(height: isKeyboardOpen ? 10 : 70),
+          Text('Sign Up', style: AppTextStyle.heading1),
+          CustomTextField(
+            controller: nameController,
+            validator: Validators.validateName,
+            label: 'User name',
+          ),
+          CustomTextField(
+            controller: emailController,
+            validator: Validators.emailValidator,
+            label: 'Email',
+          ),
+      
+          CustomPasswordTextField(controller: passController),
+          CustomPasswordTextField(
+            controller: confirmPassController,
+            validator: (value) =>
+                Validators.validatePassConfirm(value, passController.text),
+            label: 'Confirm Password',
+            textInputAction: TextInputAction.done,
+          ),
+      
+          CustomButton(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                await context.read<AuthCubit>().register(
+                  email: emailController.text.trim(),
+                  username: nameController.text.trim(),
+                  password: passController.text.trim(),
+                );
+              }
+            },
+            label: 'Sign Up',
+          ),
+          AuthBottomLink(
+            message: 'I already have an account?',
+            actionMessage: 'Login',
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      );
   }
 }

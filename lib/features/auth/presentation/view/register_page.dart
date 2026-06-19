@@ -30,7 +30,6 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthRegisterSuccess) {
@@ -59,4 +58,3 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 }
-

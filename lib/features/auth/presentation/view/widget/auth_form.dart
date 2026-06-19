@@ -12,15 +12,7 @@ class AuthForm extends StatelessWidget {
     return MainBackground(
       child: Form(
         key: formKey,
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom > 0 ? 40 : 0,
-          ),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: child,
-          ),
-        ),
+        child: child,
       ),
     );
   }

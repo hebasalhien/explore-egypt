@@ -31,10 +31,13 @@ class LoginFormComponents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double keyboardHeight = View.of(context).viewInsets.bottom;
+    final bool isKeyboardOpen = keyboardHeight > 0;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      spacing: 20,
+      spacing: isKeyboardOpen ? 10 : 22,
       children: [
+        SizedBox(height: isKeyboardOpen ? 20 : 60),
         Text('Login', style: AppTextStyle.heading1),
         CustomTextField(
           controller: emailController,
@@ -49,7 +52,7 @@ class LoginFormComponents extends StatelessWidget {
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
-
+    
           children: [
             TextButton(
               onPressed: () {

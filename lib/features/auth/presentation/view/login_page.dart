@@ -31,7 +31,6 @@ class _LoginPageState extends State<LoginPage> {
     return BlocProvider(
       create: (context) => AuthCubit(context.read<AuthRepository>()),
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
         body: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthSuccess) {

@@ -24,9 +24,10 @@ class _ResetPassPageState extends State<ResetPassPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
+    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final bool isKeyboardOpen = keyboardHeight > 0;
 
+    return Scaffold(
       body: BlocListener<ForgotPasswordCubit, ForgotPasswordState>(
         listener: (context, state) {
           if (state is PasswordResetSuccess) {
@@ -48,13 +49,14 @@ class _ResetPassPageState extends State<ResetPassPage> {
           formKey: formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 20,
+            spacing: isKeyboardOpen ? 10 : 20,
             children: [
+              SizedBox(height: isKeyboardOpen ? 40 : 0),
               Text('Reset Password', style: AppTextStyle.heading1),
               SvgPicture.asset(
                 AppConstants.resetPasswordImage,
-                height: 200,
-                width: 243,
+                height: isKeyboardOpen ? 160 : 200,
+                width: isKeyboardOpen ? 160 : 243,
               ),
               CustomPasswordTextField(
                 controller: _passController,
@@ -63,10 +65,8 @@ class _ResetPassPageState extends State<ResetPassPage> {
               ),
               CustomPasswordTextField(
                 controller: _confirmPassController,
-                validator: (value) => Validators.validatePassConfirm(
-                  value,
-                  _passController.text,
-                ),
+                validator: (value) =>
+                    Validators.validatePassConfirm(value, _passController.text),
                 label: 'Confirm Password',
                 textInputAction: TextInputAction.done,
               ),

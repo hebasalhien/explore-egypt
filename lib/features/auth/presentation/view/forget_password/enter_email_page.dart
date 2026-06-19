@@ -29,8 +29,10 @@ class _EnterEmailPageState extends State<EnterEmailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final bool isKeyboardOpen = keyboardHeight > 0;
+
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: BlocListener<ForgotPasswordCubit, ForgotPasswordState>(
         listener: (context, state) {
           if (state is EmailSent) {
@@ -47,12 +49,13 @@ class _EnterEmailPageState extends State<EnterEmailPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 20,
             children: [
+              SizedBox(height: isKeyboardOpen ? 40 : 0),
               Text('Forget Password', style: AppTextStyle.heading1),
               SvgPicture.asset(
                 AppConstants.forgetPasswordImage,
-                height: 200,
+                height: isKeyboardOpen ? 170 : 200,
               ),
-          
+
               CustomTextField(
                 controller: _emailController,
                 label: 'Email',
