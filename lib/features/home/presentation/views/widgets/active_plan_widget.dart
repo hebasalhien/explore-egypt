@@ -1,7 +1,7 @@
 import 'package:explore_egypt/features/home/model/entities/active_plan_model.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/active_plan_header.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/custom_linear_indecator.dart';
-import 'package:explore_egypt/features/home/presentation/views/widgets/next_destinationWidget.dart';
+import 'package:explore_egypt/features/home/presentation/views/widgets/next_destination_widget.dart';
 import 'package:flutter/material.dart';
 
 class ActivePlanWidget extends StatelessWidget {
@@ -21,7 +21,6 @@ class ActivePlanWidget extends StatelessWidget {
           children: [
             ActivePlanHeader(activePlanModel: activePlanModel),
             CustomLinearIndicator(activePlanModel: activePlanModel),
-
             NextDestinationWidget(activePlanModel: activePlanModel),
           ],
         ),

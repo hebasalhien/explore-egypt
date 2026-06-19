@@ -1,28 +1,29 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:explore_egypt/features/favorites/presentation/cubit/favorites_cubit.dart';
 import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/glass_icon_button.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/photo_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LandmarkCard extends StatelessWidget {
   const LandmarkCard({
     super.key,
     required this.screenHeight,
     required this.screenWidth,
-    required this.landmark
+    required this.landmark,
   });
 
   final double screenHeight;
   final double screenWidth;
   final LandmarkModel landmark;
 
-
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: CachedNetworkImage(
-        imageUrl:  landmark.imageUrl,
+        imageUrl: landmark.imageUrl,
         imageBuilder: (context, imageProvider) => Container(
           height: screenHeight,
           width: screenWidth * .45,
@@ -33,7 +34,31 @@ class LandmarkCard extends StatelessWidget {
           ),
           child: Stack(
             children: [
-              Positioned(right: 8, top: 8, child: GlassIconButton()),
+              Positioned(
+                right: 8,
+                top: 8,
+                // child: BlocSelector<FavoritesCubit, FavoritesState, bool>(
+                // selector: (state) =>
+                //     state is FavoritesLoaded &&
+                //     state.favLandmarkIds.contains(landmark.id),,
+                //   builder: (context, isFavorite) {
+                //     return GlassIconButton(
+                //       isFavorite: isFavorite,
+                //       onPressed: () {
+                //         // context.read<FavoritesCubit>().toggleLandmarkFavorite(
+                //         //         landmark.id,
+                //         //       );
+                //       },
+                //     );
+                //   },
+                // ),
+                child: GlassIconButton(
+                  isFavorite: false,
+                  onPressed: () {
+                    debugPrint("pressed");
+                  },
+                ),
+              ),
 
               Positioned(
                 left: 15,

@@ -1,4 +1,6 @@
+import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/features/favorites/presentation/cubit/favorites_cubit.dart';
 import 'package:explore_egypt/features/home/model/data_sources/home_remote_data_source.dart';
 import 'package:explore_egypt/features/home/model/entities/active_plan_model.dart';
 import 'package:explore_egypt/features/home/model/repos/home_repository.dart';
@@ -68,101 +70,156 @@ class _HomePageState extends State<HomePage> {
       appBar: CustomAppBar(),
       body: BlocProvider(
         create: (context) =>
-            HomeCubit(HomeRepository(HomeRemoteDataSource()))..getHome(),
-        child: Stack(
-          children: [
-            // ── ONLY CHANGE: height now shrinks with scroll ──
-            Align(
-              alignment: Alignment.topCenter,
-              child: SizedBox(
-                height: gradientHeight,
-                child: AppBarBackground(
-                  colors: [AppColors.kPrimaryColor, AppColors.kSecondary],
-                  r1: 0,
-                ),
-              ),
-            ),
-
-            // ── EXACTLY AS YOUR ORIGINAL ──
-            Positioned.fill(
-              top: appBarHeight,
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                physics: const ClampingScrollPhysics(),
-                child: BlocBuilder<HomeCubit, HomeState>(
-                  builder: (context, state) {
-                    if (state is HomeLoaded) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Column(
-                          spacing: 20,
-                          children: [
-                            const SizedBox(height: 24),
-                            HomeCardWidget(
-                              screenHeight: screenHeight,
-                              screenWidth: screenWidth,
-                            ),
-                            CustomRow(
-                              onPressed: () {},
-                              header: 'Your Active Plan ',
-                              label: 'Live Now',
-                            ),
-                            ActivePlanWidget(activePlanModel: activePlanModel),
-                            HorizontalSection(
-                              header: 'Trending Expeditions',
-                              label: 'view all',
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.trendingPage,
-                                  arguments: state.landmarks,
-                                );
-                              },
-                              itemCount: state.landmarks.length.clamp(0, 5),
-                              itemHeight: screenHeight * .25,
-                              itemBuilder: (context, index) => LandmarkCard(
-                                screenHeight: screenHeight * .25,
-                                screenWidth: screenWidth,
-                                landmark: state.landmarks[index],
-                              ),
-                            ),
-                            HorizontalSection(
-                              header: 'Suggested Plans',
-                              label: 'view all',
-                              onPressed: () {
-                                  final homeCubit = context.read<HomeCubit>();
-
-                                Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.suggestedPlansPage,
-                                  arguments: homeCubit.plans,
-                                );
-                              },
-                              itemCount: state.planCardModel.length.clamp(0, 5),
-                              itemHeight: screenHeight * .25,
-                              itemBuilder: (context, index) => PlanCard(
-                                screenHeight: screenHeight,
-                                screenWidth: screenWidth,
-                                planCardModel: state.planCardModel[index],
-                              ),
-                            ),
-                            SizedBox(
-                              height:
-                                  MediaQuery.of(context).padding.bottom + 20,
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-              ),
-            ),
-          ],
+            HomeCubit(HomeRepository(HomeRemoteDataSource(ApiService.instance)))
+              ..getHome(),
+        child: BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) {
+            return BlocBuilder<FavoritesCubit, FavoritesState>(
+              builder: (context, favState) {
+                if (state is HomeError || favState is FavoritesError) {
+                  return Center(
+                    child: Text(
+                      state is HomeError
+                          ? 'Home Error'
+                          : favState is FavoritesError
+                          ? favState.message
+                          : 'Error',
+                    ),
+                  );
+                }
+                if (state is HomeLoaded && favState is FavoritesLoaded) {
+                  return HomeLoadedWidget(
+                    gradientHeight: gradientHeight,
+                    appBarHeight: appBarHeight,
+                    scrollController: _scrollController,
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                    activePlanModel: activePlanModel,
+                  );
+                }
+                return Center(
+                  child: CircularProgressIndicator(color: AppColors.kSecondary),
+                );
+              },
+            );
+          },
         ),
       ),
+    );
+  }
+}
+
+class HomeLoadedWidget extends StatelessWidget {
+  const HomeLoadedWidget({
+    super.key,
+    required this.gradientHeight,
+    required this.appBarHeight,
+    required ScrollController scrollController,
+    required this.screenHeight,
+    required this.screenWidth,
+    required this.activePlanModel,
+  }) : _scrollController = scrollController;
+
+  final double gradientHeight;
+  final double appBarHeight;
+  final ScrollController _scrollController;
+  final double screenHeight;
+  final double screenWidth;
+  final ActivePlanModel activePlanModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // ── ONLY CHANGE: height now shrinks with scroll ──
+        Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            height: gradientHeight,
+            child: AppBarBackground(
+              colors: [AppColors.kPrimaryColor, AppColors.kSecondary],
+              r1: 0,
+            ),
+          ),
+        ),
+
+        // ── EXACTLY AS YOUR ORIGINAL ──
+        Positioned.fill(
+          top: appBarHeight,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            physics: const ClampingScrollPhysics(),
+            child: BlocBuilder<HomeCubit, HomeState>(
+              builder: (context, state) {
+                if (state is HomeLoaded) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      spacing: 20,
+                      children: [
+                        const SizedBox(height: 24),
+                        HomeCardWidget(
+                          screenHeight: screenHeight,
+                          screenWidth: screenWidth,
+                        ),
+                        CustomRow(
+                          onPressed: () {},
+                          header: 'Your Active Plan ',
+                          label: 'Live Now',
+                        ),
+                        ActivePlanWidget(activePlanModel: activePlanModel),
+                        HorizontalSection(
+                          header: 'Trending Expeditions',
+                          label: 'view all',
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.trendingPage,
+                              arguments: state.landmarks,
+                            );
+                          },
+                          itemCount: state.landmarks.length.clamp(0, 5),
+                          itemHeight: screenHeight * .25,
+                          itemBuilder: (context, index) => LandmarkCard(
+                            screenHeight: screenHeight * .25,
+                            screenWidth: screenWidth,
+                            landmark: state.landmarks[index],
+                          ),
+                        ),
+                        HorizontalSection(
+                          header: 'Suggested Plans',
+                          label: 'view all',
+                          onPressed: () {
+                            final homeCubit = context.read<HomeCubit>();
+
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.suggestedPlansPage,
+                              arguments: homeCubit.plans,
+                            );
+                          },
+                          itemCount: state.planCardModel.length.clamp(0, 5),
+                          itemHeight: screenHeight * .25,
+                          itemBuilder: (context, index) => PlanCard(
+                            screenHeight: screenHeight,
+                            screenWidth: screenWidth,
+                            planCardModel: state.planCardModel[index],
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).padding.bottom + 20,
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

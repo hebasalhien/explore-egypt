@@ -1,11 +1,13 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/core/widgets/custom_button.dart';
+import 'package:explore_egypt/features/favorites/presentation/cubit/favorites_cubit.dart';
 import 'package:explore_egypt/features/home/model/entities/plan_card_model.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/glass_icon_button.dart';
 import 'package:explore_egypt/features/plans/presentation/view/widgets/plan_info.dart';
 import 'package:explore_egypt/features/plans/presentation/view/widgets/suggested_plan_card_background.dart';
 import 'package:explore_egypt/features/plans/presentation/view/widgets/suggested_plan_card_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SuggestedPlansList extends StatelessWidget {
   const SuggestedPlansList({
@@ -46,6 +48,7 @@ class SuggestedPlansList extends StatelessWidget {
                   top: 12,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
+                    spacing: 5,
                     children: [
                       Container(
                         decoration: BoxDecoration(
@@ -57,15 +60,28 @@ class SuggestedPlansList extends StatelessWidget {
                           vertical: 6,
                         ),
                         child: Text(
-                          RegExp(
-                                r'\d+\s*days',
-                              ).stringMatch(planCardModel[index].subtitle)?.toUpperCase() ?? '3 Days',
+                          '${RegExp(r'\d+').stringMatch(planCardModel[index].subtitle)} Days',
                           style: Theme.of(
                             context,
                           ).textTheme.headlineMedium!.copyWith(fontSize: 12),
                         ),
                       ),
-                      GlassIconButton(opacity: 0),
+                      BlocSelector<FavoritesCubit, FavoritesState, bool>(
+                        selector: (state) =>
+                            state is FavoritesLoaded &&
+                            state.favPlanIds.contains(planCardModel[index].id),
+                        builder: (context, isFavorite) {
+                          return GlassIconButton(
+                            opacity: 0,
+                            isFavorite: isFavorite,
+                            onPressed: () {
+                              context.read<FavoritesCubit>().togglePlanFavorite(
+                                planCardModel[index].id,
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -100,4 +116,3 @@ class SuggestedPlansList extends StatelessWidget {
     );
   }
 }
-

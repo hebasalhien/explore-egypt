@@ -20,10 +20,6 @@ class WhereToStart extends StatelessWidget {
         spacing: 16,
         children: [
           Text(
-            'Not sure where to start?',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          Text(
             'Suggested expedition',
             style: Theme.of(
               context,
@@ -47,4 +43,3 @@ class WhereToStart extends StatelessWidget {
     );
   }
 }
-

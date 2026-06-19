@@ -3,6 +3,9 @@ import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/features/chat/model/data_sources/chat_remote_data_source.dart';
 import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:explore_egypt/features/chat/presentation/views/chat_page.dart';
+import 'package:explore_egypt/features/favorites/model/data_source/favorites_remote_data_source.dart';
+import 'package:explore_egypt/features/favorites/model/repo/favorites_repo.dart';
+import 'package:explore_egypt/features/favorites/presentation/cubit/favorites_cubit.dart';
 import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
 import 'package:explore_egypt/features/main/presentation/cubit/navigation_cubit.dart';
 import 'package:explore_egypt/features/main/presentation/views/widgets/custom_navigation_destination.dart';
@@ -35,8 +38,15 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => NavigationCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => NavigationCubit()),
+        BlocProvider(
+          create: (context) => FavoritesCubit(
+            FavoritesRepo(FavoritesRemoteDataSource(ApiService.instance)),
+          )..loadFavorites(),
+        ),
+      ],
       child: BlocConsumer<NavigationCubit, NavigationState>(
         listener: (context, state) {
           setState(() {
@@ -81,8 +91,9 @@ class _MainPageState extends State<MainPage> {
                     onGenerateRoute: (_) => MaterialPageRoute(
                       builder: (_) => _initialized[1]
                           ? RepositoryProvider(
-                              create: (context) =>
-                                  ChatRepository(ChatRemoteDataSource(ApiService.instance)),
+                              create: (context) => ChatRepository(
+                                ChatRemoteDataSource(ApiService.instance),
+                              ),
                               child: ChatPage(),
                             )
                           : const SizedBox.shrink(),
@@ -104,54 +115,30 @@ class _MainPageState extends State<MainPage> {
                     ),
                   ),
 
-                  // Tab 3 - Profile
-                  // Navigator(
-                  //   key: _navigatorKeys[3],
-                  //   onGenerateRoute: (settings) {
-                  //     if (settings.name == Navigator.defaultRouteName) {
-                  //       return MaterialPageRoute(
-                  //         builder: (_) => _initialized[3]
-                  //             ? RepositoryProvider(
-                  //                 create: (context) =>
-                  //                     UserRepository(UserRemoteDataSource()),
-                  //                 child: BlocProvider(
-                  //                   create: (context) => ProfileCubit(
-                  //                      context.read<UserRepository>(),
-                  //                   )..getUserData(),
-                  //                   child: ProfilePage(),
-                  //                 ),
-                  //               )
-                  //             : const SizedBox.shrink(),
-                  //       );
-                  //     }
-                  //     // Any other named route (e.g. trendingPage) → AppRoutes
-                  //     // This keeps the bottom nav bar visible
-                  //     return AppRoutes.onGenerateRoute(settings);
-                  //   },
-                  // ),
-                  // Tab 3 - Profile
-RepositoryProvider(
-  create: (_) => UserRepository(UserRemoteDataSource(ApiService.instance)),
-  child: BlocProvider(
-    create: (context) => ProfileCubit(
-      context.read<UserRepository>(),
-    )..getUserData(),
-    child: Navigator(
-      key: _navigatorKeys[3],
-      onGenerateRoute: (settings) {
-        if (settings.name == Navigator.defaultRouteName) {
-          return MaterialPageRoute(
-            builder: (_) => _initialized[3]
-                ? const ProfilePage()
-                : const SizedBox.shrink(),
-          );
-        }
+                  RepositoryProvider(
+                    create: (_) => UserRepository(
+                      UserRemoteDataSource(ApiService.instance),
+                    ),
+                    child: BlocProvider(
+                      create: (context) =>
+                          ProfileCubit(context.read<UserRepository>())
+                            ..getUserData(),
+                      child: Navigator(
+                        key: _navigatorKeys[3],
+                        onGenerateRoute: (settings) {
+                          if (settings.name == Navigator.defaultRouteName) {
+                            return MaterialPageRoute(
+                              builder: (_) => _initialized[3]
+                                  ? const ProfilePage()
+                                  : const SizedBox.shrink(),
+                            );
+                          }
 
-        return AppRoutes.onGenerateRoute(settings);
-      },
-    ),
-  ),
-),
+                          return AppRoutes.onGenerateRoute(settings);
+                        },
+                      ),
+                    ),
+                  ),
                 ],
               ),
               bottomNavigationBar: NavigationBar(

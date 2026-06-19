@@ -1,6 +1,8 @@
+import 'package:explore_egypt/features/favorites/presentation/cubit/favorites_cubit.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/glass_icon_button.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/card_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ExpeditionCard extends StatelessWidget {
   const ExpeditionCard({
@@ -23,9 +25,7 @@ class ExpeditionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           color: Colors.transparent,
           image: DecorationImage(
-            image: AssetImage(
-              'assets/images/pyramid.png',
-            ),
+            image: AssetImage('assets/images/pyramid.png'),
             fit: BoxFit.cover,
           ),
         ),
@@ -34,17 +34,32 @@ class ExpeditionCard extends StatelessWidget {
             Positioned(
               right: 8,
               top: 8,
-              child: GlassIconButton(),
+              // child: BlocSelector<FavoritesCubit, FavoritesState, bool>(
+              //   selector: (state) =>
+              //       state is FavoritesLoaded &&
+              //       state.favLandmarkIds.contains(landmark.id),
+              //   builder: (context, isFavorite) {
+              //     return GlassIconButton(isFavorite: isFavorite, onPressed: () {
+              //                       //         // context.read<FavoritesCubit>().toggleLandmarkFavorite(
+              //   //         //         landmark.id,
+              //   //         //       );
+              //     });
+              //   },
+              // ),
+              child: GlassIconButton(
+                isFavorite: false,
+                onPressed: () {
+                  debugPrint("pressed");
+                },
+              ),
             ),
-            
+
             Positioned(
               bottom: 10,
-              left:0,
-              right:0,
+              left: 0,
+              right: 0,
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: CardInfo(screenWidth: screenWidth),
               ),
             ),
@@ -54,4 +69,3 @@ class ExpeditionCard extends StatelessWidget {
     );
   }
 }
-
