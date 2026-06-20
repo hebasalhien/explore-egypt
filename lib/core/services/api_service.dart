@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
@@ -16,9 +18,10 @@ class ApiService {
   late final SessionCubit sessionCubit;
   late final PersistCookieJar cookieJar;
 
-
   bool _isRefreshing = false;
-static const _skipRefreshEndpoints = [
+  final List<Completer<String>> _pendingRefreshCompleters = [];
+
+  static const _skipRefreshEndpoints = [
     ApiConstants.login,
     ApiConstants.register,
     ApiConstants.refreshToken,
@@ -29,17 +32,20 @@ static const _skipRefreshEndpoints = [
 
   static ApiService get instance {
     if (_instance == null) {
-      throw Exception('ApiService not initialized. Call ApiService.create() first.');
+      throw Exception(
+        'ApiService not initialized. Call ApiService.create() first.',
+      );
     }
     return _instance!;
   }
-static Future<ApiService> create({required SessionCubit sessionCubit}) async {
-  if (_instance == null) {
-    _instance = ApiService._internal();
-    await _instance!._init(sessionCubit);
+
+  static Future<ApiService> create({required SessionCubit sessionCubit}) async {
+    if (_instance == null) {
+      _instance = ApiService._internal();
+      await _instance!._init(sessionCubit);
+    }
+    return _instance!;
   }
-  return _instance!;
-}
 
   Future<void> _init(SessionCubit cubit) async {
     sessionCubit = cubit;
@@ -54,7 +60,7 @@ static Future<ApiService> create({required SessionCubit sessionCubit}) async {
     );
 
     final appDocDir = await getApplicationDocumentsDirectory();
-     cookieJar = PersistCookieJar(
+    cookieJar = PersistCookieJar(
       storage: FileStorage('${appDocDir.path}/.cookies/'),
     );
     dio.interceptors.add(CookieManager(cookieJar));
@@ -70,7 +76,6 @@ static Future<ApiService> create({required SessionCubit sessionCubit}) async {
       InterceptorsWrapper(onRequest: onRequest, onError: onError),
     );
   }
-
 
   Future<void> onRequest(
     RequestOptions options,
@@ -91,62 +96,98 @@ static Future<ApiService> create({required SessionCubit sessionCubit}) async {
     ErrorInterceptorHandler handler,
   ) async {
     debugPrint('Request error: ${error.message}');
-    if (error.response?.statusCode == 401) {
-      debugPrint('Unauthorized error, attempting token refresh');
-      if (_skipRefreshEndpoints.contains(error.requestOptions.path)) {
-        debugPrint('Skipping token refresh for endpoint: ${error.requestOptions.path}');
+
+    if (error.response?.statusCode != 401) {
+      return handler.next(error);
+    }
+
+    if (_skipRefreshEndpoints.contains(error.requestOptions.path)) {
+      debugPrint(
+        'Skipping token refresh for endpoint: ${error.requestOptions.path}',
+      );
+      return handler.next(error);
+    }
+
+    // If already refreshing, queue this request and wait for the new token
+    if (_isRefreshing) {
+      final completer = Completer<String>();
+      _pendingRefreshCompleters.add(completer);
+
+      try {
+        final newToken = await completer.future;
+        return handler.resolve(
+          await _retryRequest(error.requestOptions, newToken),
+        );
+      } catch (_) {
         return handler.next(error);
       }
-      if (!_isRefreshing) {
-        _isRefreshing = true;
+    }
 
-        try {
-          // Call refresh token endpoint
-          final refreshResponse = await dio.post(ApiConstants.refreshToken);
+    // First request to get 401 — do the refresh
+    _isRefreshing = true;
 
-          if (refreshResponse.statusCode == 200) {
-            // 👇 Get new token from response
-            final newToken = refreshResponse.data[StorageConstants.userToken];
+    try {
+      final refreshResponse = await dio.post(ApiConstants.refreshToken);
 
-            if (newToken != null) {
-              // Save new token
-              await SharedPrefHelper.setSecureString(
-                StorageConstants.userToken,
-                newToken,
-              );
+      if (refreshResponse.statusCode == 200) {
+        final newToken = refreshResponse.data[StorageConstants.userToken];
 
-              // Update header for retry
-              error.requestOptions.headers['Authorization'] =
-                  'Bearer $newToken';
-
-              // Retry original request with new token
-              _isRefreshing = false;
-              return handler.resolve(
-                await dio.request(
-                  error.requestOptions.path,
-                  options: Options(
-                    method: error.requestOptions.method,
-                    headers: error.requestOptions.headers,
-                  ),
-                  data: error.requestOptions.data,
-                  queryParameters: error.requestOptions.queryParameters,
-                ),
-              );
-            }
+        if (newToken != null) {
+          // Save new token
+          await SharedPrefHelper.setSecureString(
+            StorageConstants.userToken,
+            newToken,
+          );
+          debugPrint('Refresh response data: ${refreshResponse.data}');
+          debugPrint('Token key: ${StorageConstants.userToken}');
+          debugPrint(
+            'New token: ${refreshResponse.data[StorageConstants.userToken]}',
+          );
+          // Resolve all queued requests with the new token
+          for (final completer in _pendingRefreshCompleters) {
+            completer.complete(newToken);
           }
+          _pendingRefreshCompleters.clear();
 
-          // Refresh failed
-          await sessionCubit.endSession();
-          _isRefreshing = false;
-          return handler.next(error);
-        } catch (e) {
-          debugPrint('Token refresh error: $e');
-          await sessionCubit.endSession();
-          _isRefreshing = false;
-          return handler.next(error);
+          // Retry original request
+          return handler.resolve(
+            await _retryRequest(error.requestOptions, newToken),
+          );
         }
       }
+
+      // Refresh response was not 200
+      _failPendingRequests();
+      await sessionCubit.endSession();
+      return handler.next(error);
+    } catch (e) {
+      debugPrint('Token refresh error: $e');
+      _failPendingRequests();
+      await sessionCubit.endSession();
+      return handler.next(error);
+    } finally {
+      _isRefreshing = false;
     }
-    handler.next(error);
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  Future<Response> _retryRequest(RequestOptions options, String token) {
+    return dio.request(
+      options.path,
+      options: Options(
+        method: options.method,
+        headers: {...options.headers, 'Authorization': 'Bearer $token'},
+      ),
+      data: options.data,
+      queryParameters: options.queryParameters,
+    );
+  }
+
+  void _failPendingRequests() {
+    for (final completer in _pendingRefreshCompleters) {
+      completer.completeError('Token refresh failed');
+    }
+    _pendingRefreshCompleters.clear();
   }
 }
