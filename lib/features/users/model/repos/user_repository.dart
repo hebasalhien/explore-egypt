@@ -15,8 +15,10 @@ class UserRepository {
     }on DioException catch (e) {
       throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerException('An unexpected error occurred');
-    } 
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));    } 
   }
   /// it calls the remote data source to update user data
   Future<UserModel> updateUserData({
@@ -33,7 +35,9 @@ class UserRepository {
     } on DioException catch (e) {
       throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerException('An unexpected error occurred');
-    }
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));    }
   }
 }

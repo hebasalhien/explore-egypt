@@ -12,7 +12,9 @@ class ActivityModel {
     required this.time,
     required this.landmarkName,
     required this.description,
-    required this.image, required this.lat, required this.lng,
+    required this.image,
+    required this.lat,
+    required this.lng,
   });
 
   factory ActivityModel.fromjson(json) {
@@ -21,7 +23,7 @@ class ActivityModel {
       time: json['time'],
       landmarkName: json['title'],
       description: json['description'],
-      image: json['image_url']?? 'assets/images/pyramid.png',
+      image: json['image_url'] ?? 'assets/images/pyramid.png',
       lat: (json['lat'] as num).toDouble(),
       lng: (json['lng'] as num).toDouble(),
     );

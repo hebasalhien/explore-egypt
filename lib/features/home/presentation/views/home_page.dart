@@ -73,32 +73,59 @@ class _HomePageState extends State<HomePage> {
             HomeCubit(HomeRepository(HomeRemoteDataSource(ApiService.instance)))
               ..getHome(),
         child: BlocBuilder<HomeCubit, HomeState>(
-          builder: (context, state) {
+          builder: (context, homeState) {
             return BlocBuilder<FavoritesCubit, FavoritesState>(
               builder: (context, favState) {
-                if (state is HomeError || favState is FavoritesError) {
-                  return Center(
-                    child: Text(
-                      state is HomeError
-                          ? 'Home Error'
-                          : favState is FavoritesError
-                          ? favState.message
-                          : 'Error',
+                if (homeState is HomeError || favState is FavoritesError) {
+                  return HomeBaseWidget(
+                    scrollController: _scrollController,
+                    appBarHeight: appBarHeight,
+                    gradientHeight: gradientHeight,
+                    child: Column(
+                      spacing: 20,
+                      children: [
+                        SizedBox(height: 24),
+                        HomeCardWidget(screenWidth: screenWidth, screenHeight: screenHeight),
+                        Center(
+                          child: Text(
+                            homeState is HomeError
+                                ? 'Home Error'
+                                : favState is FavoritesError
+                                ? favState.message
+                                : 'Error',
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 }
-                if (state is HomeLoaded && favState is FavoritesLoaded) {
-                  return HomeLoadedWidget(
+                if (homeState is HomeLoaded && favState is FavoritesLoaded) {
+                  return HomeBaseWidget(
                     gradientHeight: gradientHeight,
                     appBarHeight: appBarHeight,
                     scrollController: _scrollController,
-                    screenHeight: screenHeight,
-                    screenWidth: screenWidth,
-                    activePlanModel: activePlanModel,
+                    child: HomeLoadedWidget(
+                      screenHeight: screenHeight,
+                      screenWidth: screenWidth,
+                      activePlanModel: activePlanModel,
+                      homeState: homeState,
+                    ),
                   );
                 }
-                return Center(
-                  child: CircularProgressIndicator(color: AppColors.kSecondary),
+                return HomeBaseWidget(
+                  scrollController: _scrollController,
+                  appBarHeight: appBarHeight,
+                  gradientHeight: gradientHeight,
+                  child: Column(
+                    spacing: 20,
+                    children: [
+                      SizedBox(height: 24),
+                      HomeCardWidget(screenWidth: screenWidth, screenHeight: screenHeight),
+                      Center(
+                        child: CircularProgressIndicator(color: AppColors.kSecondary),
+                      ),
+                    ],
+                  ),
                 );
               },
             );
@@ -109,23 +136,19 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class HomeLoadedWidget extends StatelessWidget {
-  const HomeLoadedWidget({
+class HomeBaseWidget extends StatelessWidget {
+  const HomeBaseWidget({
     super.key,
     required this.gradientHeight,
     required this.appBarHeight,
     required ScrollController scrollController,
-    required this.screenHeight,
-    required this.screenWidth,
-    required this.activePlanModel,
+    required this.child,
   }) : _scrollController = scrollController;
 
   final double gradientHeight;
   final double appBarHeight;
   final ScrollController _scrollController;
-  final double screenHeight;
-  final double screenWidth;
-  final ActivePlanModel activePlanModel;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -149,76 +172,81 @@ class HomeLoadedWidget extends StatelessWidget {
           child: SingleChildScrollView(
             controller: _scrollController,
             physics: const ClampingScrollPhysics(),
-            child: BlocBuilder<HomeCubit, HomeState>(
-              builder: (context, state) {
-                if (state is HomeLoaded) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      spacing: 20,
-                      children: [
-                        const SizedBox(height: 24),
-                        HomeCardWidget(
-                          screenHeight: screenHeight,
-                          screenWidth: screenWidth,
-                        ),
-                        CustomRow(
-                          onPressed: () {},
-                          header: 'Your Active Plan ',
-                          label: 'Live Now',
-                        ),
-                        ActivePlanWidget(activePlanModel: activePlanModel),
-                        HorizontalSection(
-                          header: 'Trending Expeditions',
-                          label: 'view all',
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              AppRoutes.trendingPage,
-                              arguments: state.landmarks,
-                            );
-                          },
-                          itemCount: state.landmarks.length.clamp(0, 5),
-                          itemHeight: screenHeight * .25,
-                          itemBuilder: (context, index) => LandmarkCard(
-                            screenHeight: screenHeight * .25,
-                            screenWidth: screenWidth,
-                            landmark: state.landmarks[index],
-                          ),
-                        ),
-                        HorizontalSection(
-                          header: 'Suggested Plans',
-                          label: 'view all',
-                          onPressed: () {
-                            final homeCubit = context.read<HomeCubit>();
-
-                            Navigator.pushNamed(
-                              context,
-                              AppRoutes.suggestedPlansPage,
-                              arguments: homeCubit.plans,
-                            );
-                          },
-                          itemCount: state.planCardModel.length.clamp(0, 5),
-                          itemHeight: screenHeight * .25,
-                          itemBuilder: (context, index) => PlanCard(
-                            screenHeight: screenHeight,
-                            screenWidth: screenWidth,
-                            planCardModel: state.planCardModel[index],
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).padding.bottom + 20,
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
-              },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: child,
             ),
           ),
         ),
+      ],
+    );
+  }
+}
+
+class HomeLoadedWidget extends StatelessWidget {
+  const HomeLoadedWidget({
+    super.key,
+    required this.screenHeight,
+    required this.screenWidth,
+    required this.activePlanModel,
+    required this.homeState,
+  });
+
+  final double screenHeight;
+  final double screenWidth;
+  final ActivePlanModel activePlanModel;
+  final HomeLoaded homeState;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      spacing: 20,
+      children: [
+        const SizedBox(height: 24),
+        HomeCardWidget(screenHeight: screenHeight, screenWidth: screenWidth),
+        CustomRow(
+          onPressed: () {},
+          header: 'Your Active Plan ',
+          label: 'Live Now',
+        ),
+        ActivePlanWidget(activePlanModel: activePlanModel),
+        HorizontalSection(
+          header: 'Trending Expeditions',
+          label: 'view all',
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              AppRoutes.trendingPage,
+              arguments: homeState.landmarks,
+            );
+          },
+          itemCount: homeState.landmarks.length.clamp(0, 5),
+          itemHeight: screenHeight * .25,
+          itemBuilder: (context, index) => LandmarkCard(
+            screenHeight: screenHeight * .25,
+            screenWidth: screenWidth,
+            landmark: homeState.landmarks[index],
+          ),
+        ),
+        HorizontalSection(
+          header: 'Suggested Plans',
+          label: 'view all',
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              AppRoutes.suggestedPlansPage,
+              arguments: homeState.planCardModel,
+            );
+          },
+          itemCount: homeState.planCardModel.length.clamp(0, 5),
+          itemHeight: screenHeight * .25,
+          itemBuilder: (context, index) => PlanCard(
+            screenHeight: screenHeight,
+            screenWidth: screenWidth,
+            planCardModel: homeState.planCardModel[index],
+          ),
+        ),
+        SizedBox(height: MediaQuery.of(context).padding.bottom + 20),
       ],
     );
   }

@@ -1,8 +1,11 @@
+import 'package:explore_egypt/core/local_db/hive_service.dart';
 import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
 import 'package:explore_egypt/core/theme/app_theme.dart';
 import 'package:explore_egypt/features/auth/model/data_sources/auth_remote_data_source.dart';
 import 'package:explore_egypt/features/auth/model/repos/auth_repository.dart';
+import 'package:explore_egypt/features/users/model/data_sources/user_remote_data_source.dart';
+import 'package:explore_egypt/features/users/model/repos/user_repository.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
 import 'package:explore_egypt/features/auth/presentation/view/login_page.dart';
 import 'package:explore_egypt/features/main/presentation/views/main_page.dart';
@@ -12,12 +15,28 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await HiveService.init();
   await dotenv.load(fileName: ".env");
-  final sessionCubit = SessionCubit();
+
+  final hiveService = HiveService();
+  final sessionCubit = SessionCubit(hiveService);
+
   await ApiService.create(sessionCubit: sessionCubit);
+
+  // inject UserRepository into SessionCubit after ApiService is ready
+  final userRepository = UserRepository(UserRemoteDataSource(ApiService.instance));
+  sessionCubit.setUserRepository(userRepository);
+
   runApp(
-    RepositoryProvider(
-      create: (_) => AuthRepository(AuthRemoteDataSource(ApiService.instance)),
+    MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (_) => AuthRepository(AuthRemoteDataSource(ApiService.instance)),
+        ),
+        RepositoryProvider(
+          create: (_) => userRepository, // ← reuse same instance
+        ),
+      ],
       child: BlocProvider(
         create: (context) => sessionCubit..restoreSession(),
         child: MyApp(),
@@ -29,7 +48,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

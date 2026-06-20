@@ -4,8 +4,11 @@ abstract class SessionState {}
 
 final class SessionCubitInitial extends SessionState {}
 final class SessionAuthenticated extends SessionState {
-String token;
-  SessionAuthenticated(this.token);
+  final String token;
+  final String username;
+  final String? imageUrl;
+
+  SessionAuthenticated(this.token, this.username, this.imageUrl);
 
 }
 class SessionUnauthenticated extends SessionState {}

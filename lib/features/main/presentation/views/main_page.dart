@@ -1,5 +1,6 @@
 import 'package:explore_egypt/core/constants/app_constants.dart';
 import 'package:explore_egypt/core/services/api_service.dart';
+import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
 import 'package:explore_egypt/features/chat/model/data_sources/chat_remote_data_source.dart';
 import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:explore_egypt/features/chat/presentation/views/chat_page.dart';
@@ -121,7 +122,10 @@ class _MainPageState extends State<MainPage> {
                     ),
                     child: BlocProvider(
                       create: (context) =>
-                          ProfileCubit(context.read<UserRepository>())
+                          ProfileCubit(
+                            context.read<UserRepository>(),
+                            context.read<SessionCubit>(),
+                          )
                             ..getUserData(),
                       child: Navigator(
                         key: _navigatorKeys[3],
