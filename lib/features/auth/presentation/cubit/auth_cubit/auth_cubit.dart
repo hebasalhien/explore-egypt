@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:explore_egypt/core/errors/exception.dart';
 import 'package:explore_egypt/features/auth/model/repos/auth_repository.dart';
 import 'package:flutter/foundation.dart';
@@ -16,10 +18,10 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       final data = await _repo.login(email: email, password: password);
       emit(AuthSuccess(data));
-    } on ServerException catch (e) {
-      emit(AuthError(e.message));
+    }  on ServerException catch (e) {
+      emit(AuthError(e.message.message));
     } catch (e) {
-      emit(AuthError('An unexpected error occurred:$e'));
+      emit(AuthError('An unexpected error occurred'));
     }
   }
 
@@ -37,7 +39,7 @@ class AuthCubit extends Cubit<AuthState> {
       );
       emit(AuthRegisterSuccess(data));
     } on ServerException catch (e) {
-      emit(AuthError(e.message));
+      emit(AuthError(e.message.message));
     } catch (e) {
       emit(AuthError('An un expected error occured'));
     }

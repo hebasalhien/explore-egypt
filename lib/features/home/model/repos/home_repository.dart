@@ -5,6 +5,7 @@ import 'package:explore_egypt/features/home/model/data_sources/home_remote_data_
 
 class HomeRepository {
   final HomeRemoteDataSource _dataSource;
+  
   HomeRepository(this._dataSource);
 
   Future<dynamic> getHome() async {
@@ -14,7 +15,22 @@ class HomeRepository {
     } on DioException catch (e) {
       throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerException('An unexpected error occurred: $e');
-    }
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));    }
+  }
+
+  Future<dynamic> getCategories() async {
+    try {
+      final data = await _dataSource.getCategories();
+      return data;
+    } on DioException catch (e) {
+      throw ServerException(ExceptionHandleHelper.handleDioException(e));
+    } catch (e) {
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));    }
   }
 }

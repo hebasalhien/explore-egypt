@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:explore_egypt/core/constants/storage_constants.dart';
 import 'package:explore_egypt/core/errors/exception.dart';
 import 'package:explore_egypt/core/errors/exception_handle_helper.dart';
-import 'package:explore_egypt/core/errors/failure.dart';
 import 'package:explore_egypt/core/services/shared_pref_helper.dart';
 import 'package:explore_egypt/features/auth/model/data_sources/auth_remote_data_source.dart';
 
@@ -25,8 +24,10 @@ class AuthRepository {
     } on DioException catch (e) {
       throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerException('An unexpected error occurred');
-    }
+throw ServerException(ExceptionResult( 
+      message: 'An unexpected error occurred',
+      type: DioExceptionType2.unknown,
+    ));    }
   }
 
   Future<String> login({
@@ -46,7 +47,10 @@ class AuthRepository {
     } on DioException catch (e) {
       throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerException('An unexpected error occurred');
+      throw ServerException(ExceptionResult( 
+      message: 'An unexpected error occurred',
+      type: DioExceptionType2.unknown,
+    ));
     }
   }
 
@@ -55,9 +59,12 @@ class AuthRepository {
       await _remoteDataSource.sendOtp(email: email);
       return 'Reset email sent successfully';
     } on DioException catch (e) {
-      throw ServerFailure(ExceptionHandleHelper.handleDioException(e));
+      throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerFailure('An unexpected error occurred');
+      throw ServerException(ExceptionResult(
+      message: 'An unexpected error occurred',
+      type: DioExceptionType2.unknown,
+    ));
     }
   }
 
@@ -74,10 +81,12 @@ class AuthRepository {
       );
       return 'Password reset successfully';
     } on DioException catch (e) {
-      throw ServerFailure(ExceptionHandleHelper.handleDioException(e));
+      throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerFailure('An unexpected error occurred');
-    }
+      throw ServerException(ExceptionResult( // 👈
+      message: 'An unexpected error occurred',
+      type: DioExceptionType2.unknown,
+    ));    }
   }
 
 
