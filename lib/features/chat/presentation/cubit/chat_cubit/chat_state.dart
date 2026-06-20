@@ -21,6 +21,13 @@ final class MessageLoaded extends ChatState {
   final String? conversationId;
   MessageLoaded({this.conversationId,required this.messages});
 }
+final class ChatTimeout extends ChatState {
+  final List<MessageModel> messages;
+  final MessageModel lastMessage;
+
+  ChatTimeout({required this.messages,required this.lastMessage});
+}
+
 final class ChatError extends ChatState {
   final String errorMessage;
 

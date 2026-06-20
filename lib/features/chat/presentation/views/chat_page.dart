@@ -111,10 +111,24 @@ class _ChatPageState extends State<ChatPage> {
                   },
                   builder: (context, state) {
                     if (state is MessageSending) {
-                      return StopGenerating(
-                        onTap: () {
-                          context.read<ChatCubit>().cancelGenerating();
-                        },
+                      return Column(
+                        children: [
+                          StopGenerating(
+                            onTap: () {
+                              context.read<ChatCubit>().cancelGenerating();
+                            },
+                          ),
+                           RetryBubble(
+                        onRetry: () =>
+                            context.read<ChatCubit>().regenerateLastMessage(),
+                      )
+                        ],
+                      );
+                    }
+                    if (state is MessageLoaded) {
+                      return RetryBubble(
+                        onRetry: () =>
+                            context.read<ChatCubit>().regenerateLastMessage(),
                       );
                     }
                     return const SizedBox.shrink();
@@ -169,6 +183,29 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class RetryBubble extends StatelessWidget {
+  const RetryBubble({super.key, required this.onRetry});
+
+  final VoidCallback onRetry;
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 100,
+      child: TextButton.icon(
+        onPressed: onRetry,
+        label: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text('Retry'),
+            Icon(Icons.restart_alt, color: AppColors.kWhite),
+          ],
+        ),
+        style: TextButton.styleFrom(backgroundColor: AppColors.kSecondary),
       ),
     );
   }

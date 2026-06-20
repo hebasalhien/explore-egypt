@@ -50,7 +50,7 @@ class ChatBubble extends StatelessWidget {
           ),
           child: isBot(message.sender)
               ? MarkdownBody(
-                  data: message.content,
+                  data: message.content ?? '',
                   shrinkWrap: true,
                   styleSheet: MarkdownStyleSheet(
                     p: TextStyle(
@@ -61,22 +61,15 @@ class ChatBubble extends StatelessWidget {
                     ),
                   ),
                 )
-              : Text(
-                  message.content,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white,
-                    letterSpacing: 0,
-                  ),
-                  softWrap: true,
-                ),
+              : TextMessageWidget(message: message),
         ),
         if (isBot(message.sender))
           IconButton(
             icon: Icon(Icons.copy_rounded, size: 24, color: AppColors.kWhite),
             onPressed: () {
-              Clipboard.setData(ClipboardData(text: message.content));
+              if (message.content != null || message.content!.isNotEmpty) {
+                Clipboard.setData(ClipboardData(text: message.content!));
+              }
             },
           ),
       ],
@@ -88,5 +81,26 @@ class ChatBubble extends StatelessWidget {
       return true;
     }
     return false;
+  }
+
+}
+
+class TextMessageWidget extends StatelessWidget {
+  const TextMessageWidget({super.key, required this.message});
+
+  final MessageModel message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      message.content ?? 'file was sent',
+      style: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        color: Colors.white,
+        letterSpacing: 0,
+      ),
+      softWrap: true,
+    );
   }
 }

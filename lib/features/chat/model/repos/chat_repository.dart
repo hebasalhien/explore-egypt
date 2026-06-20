@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:explore_egypt/core/errors/exception.dart';
 import 'package:explore_egypt/core/errors/exception_handle_helper.dart';
-import 'package:explore_egypt/core/errors/failure.dart';
 import 'package:explore_egypt/features/chat/model/data_sources/chat_remote_data_source.dart';
 
 class ChatRepository {
@@ -9,21 +8,24 @@ class ChatRepository {
 
   ChatRepository(this._dataSource);
 
-    Future<dynamic> getConversation({String? conversationID} ) async {
+    Future<dynamic> getConversation({String? conversationID, CancelToken? cancelToken} ) async {
     try {
-      final data = await _dataSource.getConversation(conversationID: conversationID);
+      final data = await _dataSource.getConversation(conversationID: conversationID, cancelToken: cancelToken);
       return data;
     } 
     on DioException catch (e) {
       throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerException('An unexpected error occurred: $e');
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred',
+        type: DioExceptionType2.unknown,
+      ));
     }
   }
 
    Future<dynamic> sendMessage(
     String? conversationId , {
-    required String message,
+    String? message,
     List<String>? filePath,
     String? mode,
     CancelToken? cancelToken,
@@ -38,9 +40,16 @@ class ChatRepository {
       );
       return data;
     } on DioException catch (e) {
-      throw ServerFailure(ExceptionHandleHelper.handleDioException(e));
+      final reselt = ExceptionHandleHelper.handleDioException(e);
+      if(reselt.type == DioExceptionType2.timeout){
+        throw const TimeoutException();
+      }
+      throw ServerException(reselt);
     } catch (e) {
-      throw ServerFailure('An unexpected error occurred: $e');
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));
     }
   }
 
@@ -49,10 +58,26 @@ class ChatRepository {
       final data = await _dataSource.deleteConversation(conversationId: conversationId);
       return data;
     } on DioException catch (e) {
-      throw ServerFailure(ExceptionHandleHelper.handleDioException(e));
+      throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerFailure('An unexpected error occurred: $e');
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));
     }
   }
 
+Future<dynamic> regenerateLastMessage({required String? conversationId}) async{
+      try {
+      final data = await _dataSource.regenerate(conversationId: conversationId);
+      return data;
+    } on DioException catch (e) {
+      throw ServerException(ExceptionHandleHelper.handleDioException(e));
+    } catch (e) {
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));
+    }
+}
 }

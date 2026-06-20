@@ -1,22 +1,27 @@
 import 'package:dio/dio.dart';
 import 'package:explore_egypt/core/constants/api_constants.dart';
 import 'package:explore_egypt/core/services/api_service.dart';
+import 'package:flutter/material.dart';
 
 class ChatRemoteDataSource {
   final ApiService _apiService;
 
   ChatRemoteDataSource(this._apiService);
 
-  Future<dynamic> getConversation({String? conversationID}) async {
+  Future<dynamic> getConversation({
+    String? conversationID,
+    CancelToken? cancelToken,
+  }) async {
     final response = await _apiService.dio.get(
       ApiConstants.chats + (conversationID != null ? '/$conversationID' : ''),
+      cancelToken: cancelToken,
     );
     return response.data;
   }
 
   Future<dynamic> sendMessage(
     String? conversationId, {
-    required String message,
+    String? message,
     String? mode,
     List<String>? filePath,
     CancelToken? cancelToken,
@@ -28,11 +33,12 @@ class ChatRemoteDataSource {
         files.add(
           await MultipartFile.fromFile(path, filename: path.split('/').last),
         );
+        debugPrint("this is file ${path}");
       }
     }
 
     FormData formData = FormData.fromMap({
-      "message": message,
+      if (message != null) "message": message,
       if (conversationId != null) "conversationId": conversationId,
       if (files.isNotEmpty) "files": files,
       if (mode != null) "type": mode,
@@ -52,7 +58,7 @@ class ChatRemoteDataSource {
     return response.statusCode!;
   }
 
-  Future<dynamic> regenerate({required String conversationId}) async {
+  Future<dynamic> regenerate({required String? conversationId}) async {
     final response = await _apiService.dio.post(
       '${ApiConstants.chats}/$conversationId${ApiConstants.regenerate}',
     );
