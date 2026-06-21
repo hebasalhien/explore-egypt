@@ -8,7 +8,7 @@ final class AuthInitial extends AuthState {}
 final class AuthLoading extends AuthState {}
 
 final class AuthSuccess extends AuthState {
-  final String data;
+  final Map<String, dynamic> data;
 
   AuthSuccess(this.data);
 }

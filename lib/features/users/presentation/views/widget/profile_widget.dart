@@ -20,77 +20,97 @@ class ProfileWidget extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double headerHeight = MediaQuery.of(context).size.height * .41;
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: headerHeight),
-            child: SingleChildScrollView(
-              child: Column(
-                spacing: 10,
-                children: [
-                  UserCustomContainer(
-                    bio: userModel.bio == null ? 'Bio' : userModel.bio!,
-                    number1: userModel.plans,
-                    number2: userModel.sites,
-                    number3: userModel.nights,
-                  ),
-                  // CustomListTile(
-                  //   title: 'Payment Methods',
-                  //   icon: AppConstants.moneyIcon,
-                  //   route: AppRoutes.paymentMethodsPage,
-                  // ),
-                  CustomListTile(
-                    title: 'Account Settings',
-                    icon: AppConstants.accountIcon,
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      AppRoutes.editProfilePage,
-                      arguments: userModel,
+    return BlocListener<SessionCubit, SessionState>(
+      listener: (context, state) {
+        if (state is SessionUnauthenticated) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('logged out successfully')));
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            AppRoutes.loginPage,
+            (route) => false,
+          );
+        }
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: headerHeight),
+              child: SingleChildScrollView(
+                child: Column(
+                  spacing: 10,
+                  children: [
+                    UserCustomContainer(
+                      bio: userModel.bio == null ? 'Bio' : userModel.bio!,
+                      number1: userModel.plans,
+                      number2: userModel.sites,
+                      number3: userModel.nights,
                     ),
-                  ),
-                  CustomListTile(
-                    title: 'Help Center',
-                    icon: AppConstants.helpIcon,
-                    onTap: () =>
-                        Navigator.pushNamed(context, AppRoutes.helpCenterPage),
-                  ),
-                  CustomListTile(title: 'Logout', onTap: () {
-                    context.read<SessionCubit>().endSession();
-                  }, icon: ''),
-                ],
+                    // CustomListTile(
+                    //   title: 'Payment Methods',
+                    //   icon: AppConstants.moneyIcon,
+                    //   route: AppRoutes.paymentMethodsPage,
+                    // ),
+                    CustomListTile(
+                      title: 'Account Settings',
+                      icon: AppConstants.accountIcon,
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        AppRoutes.editProfilePage,
+                        arguments: userModel,
+                      ),
+                    ),
+                    CustomListTile(
+                      title: 'Help Center',
+                      icon: AppConstants.helpIcon,
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        AppRoutes.helpCenterPage,
+                      ),
+                    ),
+                    CustomListTile(
+                      title: 'Logout',
+                      onTap: () {
+                        context.read<SessionCubit>().endSession();
+                      },
+                      icon: '',
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: SizedBox(
-              height: headerHeight,
-              child: Stack(
-                children: [
-                  Positioned(child: AppBarBackground()),
-                  Positioned(
-                    width: screenWidth,
-                    top: screenHeight * 0.05,
-                    child: CustomAppBar(),
-                  ),
-                  Positioned(
-                    top: screenHeight * .14,
-                    left: 0,
-                    right: 0,
-                    child: UserInfo(
-                      name: userModel.name,
-                      imageURL: userModel.imageURL,
-                      level: userModel.level,
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SizedBox(
+                height: headerHeight,
+                child: Stack(
+                  children: [
+                    Positioned(child: AppBarBackground()),
+                    Positioned(
+                      width: screenWidth,
+                      top: screenHeight * 0.05,
+                      child: CustomAppBar(),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      top: screenHeight * .14,
+                      left: 0,
+                      right: 0,
+                      child: UserInfo(
+                        name: userModel.name,
+                        imageURL: userModel.imageURL,
+                        level: userModel.level,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

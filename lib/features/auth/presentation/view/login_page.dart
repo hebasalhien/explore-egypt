@@ -1,3 +1,4 @@
+import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
 import 'package:explore_egypt/features/auth/model/repos/auth_repository.dart';
 import 'package:explore_egypt/features/auth/presentation/view/widget/auth_form.dart';
 import 'package:explore_egypt/features/auth/presentation/view/widget/login_form_components.dart';
@@ -34,9 +35,11 @@ class _LoginPageState extends State<LoginPage> {
         body: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthSuccess) {
+              final sessionCubit = context.read<SessionCubit>();
+              sessionCubit.startSession(state.data);
               ScaffoldMessenger.of(
                 context,
-              ).showSnackBar(SnackBar(content: Text(state.data)));
+              ).showSnackBar(SnackBar(content: Text(state.data['message'])));
               Navigator.pushReplacementNamed(context, AppRoutes.mainPage);
             } else if (state is AuthError) {
               ScaffoldMessenger.of(

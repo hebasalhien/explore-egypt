@@ -19,8 +19,9 @@ class SessionCubit extends Cubit<SessionState> {
     _userRepository = repo;
   }
 
-  Future<void> startSession(String token) async {
-    await SharedPrefHelper.setSecureString('accessToken', token);
+  Future<void> startSession(Map<String, dynamic> data) async {
+    final token = data[StorageConstants.userToken];
+    await SharedPrefHelper.setSecureString(StorageConstants.userToken, token);
     // fetch user after login
     final user = await _userRepository.getUserData();
     // cache user
@@ -42,13 +43,6 @@ class SessionCubit extends Cubit<SessionState> {
 
       // validate token + get fresh data
       final user = await _userRepository.getUserData();
-
-      // cache user
-      await _hiveService.saveUser(
-        UserModelHive()
-          ..username = user.name
-          ..imageUrl = user.imageURL ?? '',
-      );
 
       emit(SessionAuthenticated(token, user.name, user.imageURL));
     } catch (e) {

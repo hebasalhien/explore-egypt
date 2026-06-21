@@ -1,6 +1,5 @@
 import 'package:explore_egypt/features/auth/model/repos/auth_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 
 part 'forgot_password_state.dart';
 

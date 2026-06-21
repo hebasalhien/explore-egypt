@@ -1,6 +1,6 @@
 part of 'forgot_password_cubit.dart';
 
-@immutable
+
 sealed class ForgotPasswordState {
   const ForgotPasswordState();
 }

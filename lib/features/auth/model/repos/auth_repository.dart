@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:explore_egypt/core/constants/storage_constants.dart';
 import 'package:explore_egypt/core/errors/exception.dart';
 import 'package:explore_egypt/core/errors/exception_handle_helper.dart';
-import 'package:explore_egypt/core/services/shared_pref_helper.dart';
 import 'package:explore_egypt/features/auth/model/data_sources/auth_remote_data_source.dart';
 
 class AuthRepository {
@@ -30,7 +28,7 @@ throw ServerException(ExceptionResult(
     ));    }
   }
 
-  Future<String> login({
+  Future<dynamic> login({
     required String email,
     required String password,
   }) async {
@@ -39,11 +37,7 @@ throw ServerException(ExceptionResult(
         email: email,
         password: password,
       );
-      await SharedPrefHelper.setSecureString(
-        StorageConstants.userToken,
-        data[StorageConstants.userToken],
-      );
-      return data['message'];
+      return data;
     } on DioException catch (e) {
       throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
