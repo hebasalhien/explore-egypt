@@ -65,7 +65,6 @@ class ChatCubit extends Cubit<ChatState> {
         ),
       );
     } catch (e) {
-  _messages.removeLast();
         if (e is TimeoutException) { 
     emit(ChatTimeout(messages: _messages, lastMessage: newMessage));
   } else if (e is ServerException) {
