@@ -57,13 +57,6 @@ class _HomePageState extends State<HomePage> {
       expandedHeight,
     );
 
-    final ActivePlanModel activePlanModel = ActivePlanModel(
-      planName: 'voyage To Luxor',
-      theCurrentDay: 2,
-      planDays: 5,
-      nextDestination: '14:00 - Karnak Temple',
-    );
-
     return Scaffold(
       backgroundColor: AppColors.kHBGColor,
       extendBodyBehindAppBar: true,
@@ -107,7 +100,6 @@ class _HomePageState extends State<HomePage> {
                     child: HomeLoadedWidget(
                       screenHeight: screenHeight,
                       screenWidth: screenWidth,
-                      activePlanModel: activePlanModel,
                       homeState: homeState,
                     ),
                   );
@@ -188,13 +180,11 @@ class HomeLoadedWidget extends StatelessWidget {
     super.key,
     required this.screenHeight,
     required this.screenWidth,
-    required this.activePlanModel,
     required this.homeState,
   });
 
   final double screenHeight;
   final double screenWidth;
-  final ActivePlanModel activePlanModel;
   final HomeLoaded homeState;
 
   @override
@@ -204,12 +194,17 @@ class HomeLoadedWidget extends StatelessWidget {
       children: [
         const SizedBox(height: 24),
         HomeCardWidget(screenHeight: screenHeight, screenWidth: screenWidth),
-        CustomRow(
-          onPressed: () {},
-          header: 'Your Active Plan ',
-          label: 'Live Now',
+        if(homeState.activePlanModel !=null && homeState.activePlanModel!.isNotEmpty)
+        Column(
+          children: [
+            CustomRow(
+              onPressed: () {},
+              header: 'Your Active Plan ',
+              label: 'Live Now',
+            ),
+            ActivePlanWidget(activePlanModel: homeState.activePlanModel!),
+          ],
         ),
-        ActivePlanWidget(activePlanModel: activePlanModel),
         HorizontalSection(
           header: 'Trending Expeditions',
           label: 'view all',

@@ -11,7 +11,7 @@ class ActivePlanHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          activePlanModel.planName.toUpperCase(),
+          activePlanModel.planName?.toUpperCase() ?? '',
           style: Theme.of(
             context,
           ).textTheme.titleSmall!.copyWith(color: AppColors.kTitleMedium),

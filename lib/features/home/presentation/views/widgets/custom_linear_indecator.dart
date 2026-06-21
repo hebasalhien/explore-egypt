@@ -8,7 +8,10 @@ class CustomLinearIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LinearProgressIndicator(
-      value: activePlanModel.theCurrentDay / activePlanModel.planDays,
+      value: activePlanModel.theCurrentDay != null &&
+              activePlanModel.planDays != null
+          ? activePlanModel.theCurrentDay! / activePlanModel.planDays!
+          : 0,
       valueColor: AlwaysStoppedAnimation(AppColors.kRowActionColor),
       backgroundColor: Color(0xffEFE0CD),
       minHeight: 5,

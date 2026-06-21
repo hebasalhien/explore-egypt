@@ -1,19 +1,28 @@
 class ActivePlanModel {
-  final String planName;
-  final int theCurrentDay;
-  final int planDays;
-  final String nextDestination;
+  final String? planName;
+  final int? theCurrentDay;
+  final int? planDays;
+  final String? time;
+  final String? title;
 
-  ActivePlanModel({required this.planName, required this.theCurrentDay, required this.planDays, required this.nextDestination});
+  ActivePlanModel({
+    this.planName,
+    this.theCurrentDay,
+    this.planDays,
+    this.time,
+    this.title,
+  });
 
- factory ActivePlanModel.fromMap(Map<String, dynamic> json) {
+  bool get isEmpty => planName == null && planDays == null;
+  bool get isNotEmpty => !isEmpty;
+
+  factory ActivePlanModel.fromjson(Map<String, dynamic> json) {
     return ActivePlanModel(
-      planName: json['active_plan']['planName'],
-      theCurrentDay: json['active_plan']['theCurrentDay'],
-      planDays: json['active_plan']['planDays'],
-      nextDestination: json['active_plan']['nextDestination'],
+      planName: json['title'],
+      theCurrentDay: json['currentDay'],
+      planDays: json['totalDays'],
+      time: json['nextDestination']['time'],
+      title: json['nextDestination']['title'].toString(),
     );
- }
-
-  
+  }
 }

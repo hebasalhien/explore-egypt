@@ -18,7 +18,9 @@ class NextDestinationWidget extends StatelessWidget {
         ).textTheme.titleSmall!.copyWith(color: AppColors.kRowActionColor),
       ),
       subtitle: Text(
-        activePlanModel.nextDestination,
+        activePlanModel.time != null? 
+        '${activePlanModel.time} - ${activePlanModel.title}':
+        '',
         style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 18),
       ),
       leading: Container(
