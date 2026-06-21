@@ -12,6 +12,11 @@ class MapRemoteDataSource {
     return response.data;
   }
 
+  Future<dynamic> getActivePlan() async {
+    final response = await _apiService.dio.get(ApiConstants.activePlan);
+    return response.data;
+  }
+
   Future<dynamic> savePlan({required TripModel trip}) async {
     final response = await _apiService.dio.post(
       ApiConstants.savePlan,
@@ -23,6 +28,17 @@ class MapRemoteDataSource {
   Future<dynamic> deletePlan({required String tripId}) async {
     final response = await _apiService.dio.delete(
       '${ApiConstants.plan}/$tripId',
+    );
+    return response.data;
+  }
+
+  Future<dynamic> activatePlan({
+    required String newPlanId,
+    String? currentPlanId,
+  }) async {
+    final response = await _apiService.dio.post(
+      '${ApiConstants.plan}/$newPlanId${ApiConstants.activatePlan}',
+      data: {'currentPlanId': currentPlanId},
     );
     return response.data;
   }

@@ -1,7 +1,6 @@
-import 'package:bloc/bloc.dart';
 import 'package:explore_egypt/core/services/location_services.dart';
 import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'map_state.dart';
 

@@ -1,11 +1,10 @@
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
+import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SwitchPlan extends StatelessWidget {
-  const SwitchPlan({
-    super.key, required this.trip,
-
-  });
+  const SwitchPlan({super.key, required this.trip});
 
   final TripModel trip;
 
@@ -16,12 +15,11 @@ class SwitchPlan extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: trip.active 
+          border: trip.active
               ? Border.all(color: Color(0x66D38A5D), width: 2)
               : Border.all(color: Color(0xffF3F4F6), width: 2),
         ),
         child: ListTile(
-          
           contentPadding: EdgeInsets.all(8),
           title: Text(
             trip.title,
@@ -30,7 +28,7 @@ class SwitchPlan extends StatelessWidget {
             ).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w600),
           ),
           subtitle: Text(
-            '${trip.days} days  • ${trip.dayModel.length} stops',
+            '${trip.days} days  • ${trip.dayModel[0].activity.length } stops',
             style: TextStyle(
               color: Color(0xff9CA3AF),
               fontSize: 12,
@@ -53,23 +51,28 @@ class SwitchPlan extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             spacing: 6,
             children: [
-              trip.active
-                  ? Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Color(0xffF3E9D9),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'Active',
-                        style: TextStyle(color: Color(0xffD38A5D)),
-                      ),
-                    )
-                  : Icon(Icons.circle_outlined, color: Color(0xffD1D5DB)),
+              if (trip.active)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Color(0xffF3E9D9),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'Active',
+                    style: TextStyle(color: Color(0xffD38A5D)),
+                  ),
+                ),
+              Icon(
+                trip.active
+                    ? Icons.check_circle_rounded
+                    : Icons.circle_outlined,
+                color: trip.active ? Color(0xffD38A5D) : Color(0xffD1D5DB),
+              ),
             ],
           ),
           onTap: () {
-            // Handle switching the plan here
+            context.read<PlanCubit>().activatePlan(newPlanId: trip.id!);
             Navigator.pop(context);
           },
         ),

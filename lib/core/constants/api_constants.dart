@@ -23,9 +23,11 @@ class ApiConstants {
   static const String suggestedPlans = '$home/plans';
   static const String favorite = 'api/favorites';
   static const String favoriteLandmarks = '$favorite/landmarks';
+  static const String landmarks = '$home/landmark';
 
   /// plan endpoints
   static const String plan = 'api/plans';
+  static const String activePlan = '$plan/active';
   static const String savePlan = '$plan/save';
   static const String activatePlan = '/activate';
 }

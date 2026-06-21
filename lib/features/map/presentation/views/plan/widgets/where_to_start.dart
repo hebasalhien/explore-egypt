@@ -1,3 +1,4 @@
+import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/Expedition_card.dart';
 import 'package:flutter/material.dart';
 
@@ -6,11 +7,12 @@ class WhereToStart extends StatelessWidget {
     super.key,
     required this.screenHeight,
     required this.screenWidth,
+    this.plans
   });
 
   final double screenHeight;
   final double screenWidth;
-
+  final List<TripModel>? plans;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -20,7 +22,7 @@ class WhereToStart extends StatelessWidget {
         spacing: 16,
         children: [
           Text(
-            'Suggested expedition',
+            plans!= null && plans!.isNotEmpty ? 'Your Plans':'Suggested expedition',
             style: Theme.of(
               context,
             ).textTheme.headlineMedium!.copyWith(fontSize: 20),
@@ -29,11 +31,12 @@ class WhereToStart extends StatelessWidget {
             height: screenHeight * .4,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 5,
+              itemCount: plans?.length??0,
               itemBuilder: (context, index) {
                 return ExpeditionCard(
                   screenHeight: screenHeight,
                   screenWidth: screenWidth,
+                  trip:plans![index],
                 );
               },
             ),

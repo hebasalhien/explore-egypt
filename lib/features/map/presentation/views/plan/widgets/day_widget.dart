@@ -83,7 +83,7 @@ class PlanTitle extends StatelessWidget {
           builder: (sheetContext) {
             // Bottom sheet has its own widget tree — inject the same cubit instance
             return BlocProvider.value(
-              value: planCubit,
+              value: planCubit..getAllPlans(),
               child: Builder(
                 builder: (innerContext) {
                   return Container(
@@ -135,33 +135,7 @@ class PlanTitle extends StatelessWidget {
                               } else if (state is GetAllPlansSuccess) {
                                 return SwitchPlanList(
                                   plans: state.plans,
-                                  onPlanDismissed: () => {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return BlocProvider.value(
-                                          value: planCubit,
-                                          child:
-                                              BlocBuilder<
-                                                PlanCubit,
-                                                PlanState
-                                              >(
-                                                builder: (context, state) {
-                                                  return DeleteConfirmationDialog(
-                                                    onConfirm: () {
-                                                      context.read<PlanCubit>().deletePlan(tripId: trip.id ?? '');
-                                                      
-                                                    },
-                                                    title: 'Delete plan',
-                                                    content:
-                                                        'Are you sure you want to delete this plan?',
-                                                  );
-                                                },
-                                              ),
-                                        );
-                                      },
-                                    ),
-                                  },
+                                  
                                 );
                               } else if (state is GetAllPlansFailure) {
                                 return Expanded(

@@ -8,6 +8,7 @@ import 'package:explore_egypt/features/map/presentation/views/map/map_page.dart'
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/plan_page.dart';
+import 'package:explore_egypt/features/map/presentation/views/plan/widgets/no_active_plan.dart';
 import 'package:explore_egypt/features/map/presentation/views/widgets/custom_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,8 +50,10 @@ class _MainMapPageState extends State<MainMapPage>
     final double screenWidth = MediaQuery.of(context).size.width;
     return MultiBlocProvider(
       providers: [
-       // BlocProvider(create: (context) => MapCubit()),
-        BlocProvider(create: (context) => PlanCubit(mapRepository)..getAllPlans()),
+        // BlocProvider(create: (context) => MapCubit()),
+        BlocProvider(
+          create: (context) => PlanCubit(mapRepository)..getActivePlan(),
+        ),
       ],
       child: DefaultTabController(
         length: 2,
@@ -69,7 +72,6 @@ class _MainMapPageState extends State<MainMapPage>
               PlanPage(
                 screenHeight: screenHeight,
                 screenWidth: screenWidth,
-                trip: widget.trip,
                 onDayChanged: (index) {
                   setState(() => _selectedDay = index);
                 },

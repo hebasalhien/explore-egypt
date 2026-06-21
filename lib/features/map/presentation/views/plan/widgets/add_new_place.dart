@@ -1,6 +1,5 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/custom_search_bar.dart';
-import 'package:explore_egypt/features/map/presentation/views/plan/widgets/generate_with_ai_button.dart';
 import 'package:flutter/material.dart';
 
 class AddNewPlace extends StatelessWidget {

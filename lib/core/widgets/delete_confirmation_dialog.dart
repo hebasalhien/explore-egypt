@@ -37,8 +37,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
             Expanded(
               child: TextButton(
                 onPressed: () =>
-                    Navigator.pop(context), // Closes the dialog safely
-                style: TextButton.styleFrom(
+Navigator.of(context).pop(false),                style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 child: Text(
@@ -55,7 +54,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context); // Close the dialog box safely
+                  Navigator.of(context).pop(true); // Close the dialog box safely
                   onConfirm(); // Fire the actual deletion callback function
                 },
                 style: ElevatedButton.styleFrom(

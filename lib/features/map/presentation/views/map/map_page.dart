@@ -8,6 +8,7 @@ import 'package:explore_egypt/features/map/presentation/views/map/widgets/user_p
 import 'package:flutter/material.dart';
 import 'package:maplibre/maplibre.dart';
 import 'package:geolocator/geolocator.dart' as geo;
+
 class MapPage extends StatefulWidget {
   final List<ActivityModel>? activityModel;
   final int dayNumber;
@@ -45,14 +46,14 @@ class _MapPageState extends State<MapPage> {
         )
         .toList();
   }
-late Future<geo.Position?> _positionFuture;
+
+  late Future<geo.Position?> _positionFuture;
 
   @override
   void initState() {
     super.initState();
     _requestPermission();
-      _positionFuture = _locationService.getCurrentPosition();
-
+    _positionFuture = _locationService.getCurrentPosition();
   }
 
   Future<void> _requestPermission() async {
@@ -114,19 +115,21 @@ late Future<geo.Position?> _positionFuture;
           ),
           Positioned(
             right: 0,
-            bottom: 240,
+            bottom:
+                widget.activityModel != null && widget.activityModel!.isNotEmpty
+                ? 240
+                : 20,
             child: MapControllersButtons(
               controller: _controller,
               locationService: _locationService,
             ),
           ),
-          
-              MapBottomSheet(
-                dayNumber: widget.dayNumber,
-                planTitle: widget.planTitle,
-                activityModel: widget.activityModel!,
-              ),
-            
+          if (widget.activityModel != null && widget.activityModel!.isNotEmpty)
+            MapBottomSheet(
+              dayNumber: widget.dayNumber,
+              planTitle: widget.planTitle,
+              activityModel: widget.activityModel!,
+            ),
         ],
       ),
     );

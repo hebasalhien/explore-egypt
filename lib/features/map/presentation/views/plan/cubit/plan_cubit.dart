@@ -1,7 +1,8 @@
+import 'package:explore_egypt/core/constants/storage_constants.dart';
+import 'package:explore_egypt/core/services/shared_pref_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:explore_egypt/features/map/model/repo/map_repository.dart';
-import 'package:meta/meta.dart';
 part 'plan_state.dart';
 
 class PlanCubit extends Cubit<PlanState> {
@@ -11,13 +12,31 @@ class PlanCubit extends Cubit<PlanState> {
     emit(GetAllPlansLoading());
 
     try {
-      final result = await mapRepository.getAllMyPlans();
-      final List<TripModel> plans = (result as List)
-          .map((x) => TripModel.fromJson(x))
-          .toList();
+      final List<TripModel> plans = await mapRepository.getAllMyPlans();
+
       emit(GetAllPlansSuccess(plans: plans));
     } on Exception catch (e) {
       emit(GetAllPlansFailure(e.toString()));
+    }
+  }
+
+  Future<void> getActivePlan() async {
+    emit(PlanLoading());
+    try {
+      final response = await mapRepository.getActivePlan();
+
+      // empty array = no active plan
+      if (response is Map && response.isEmpty) {
+        final plans = await mapRepository.getAllMyPlans();
+        emit(NoActivePlan(plans: plans));
+        return;
+      }
+
+      final trip = TripModel.fromJson(response);
+      await SharedPrefHelper.setData(StorageConstants.currentPlanId, trip.id);
+      emit(GetActivePlanSuccess(activePlan: trip));
+    } catch (e) {
+      emit(GetActivePlanFailure(e.toString()));
     }
   }
 
@@ -25,12 +44,32 @@ class PlanCubit extends Cubit<PlanState> {
     emit(GetAllPlansLoading());
 
     try {
-      final result = await mapRepository.deletePlan(tripId: tripId);
-      final List<TripModel> plans = getAllPlans() as List<TripModel>;
-      plans.removeWhere((element) => element.id == tripId);
-      emit(GetAllPlansSuccess(plans: plans));
+      await mapRepository.deletePlan(tripId: tripId);
     } on Exception catch (e) {
       emit(GetAllPlansFailure(e.toString()));
+    }
+  }
+
+  void selectActivePlan(TripModel trip) {
+    emit(GetActivePlanSuccess(activePlan: trip));
+  }
+Future<String> getCurrentPlanId() async {
+  return await SharedPrefHelper.getString(StorageConstants.currentPlanId);
+}
+  Future<void> activatePlan({
+    required String newPlanId,
+  }) async {
+    final currentPlanId = await getCurrentPlanId();
+    emit(PlanLoading());
+    try {
+      final result = await mapRepository.activatePlan(
+        newPlanId: newPlanId,
+        currentPlanId: currentPlanId,
+      );
+      final trip = TripModel.fromJson(result);
+      emit(GetActivePlanSuccess(activePlan: trip));
+    } on Exception catch (e) {
+      emit(GetActivePlanFailure(e.toString()));
     }
   }
 }

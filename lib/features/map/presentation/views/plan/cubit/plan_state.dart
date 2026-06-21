@@ -1,20 +1,25 @@
 part of 'plan_cubit.dart';
 
-@immutable
 sealed class PlanState {}
 
 final class PlanInitial extends PlanState {}
 
 final class PlanLoading extends PlanState {}
 
-final class NoActivePlan extends PlanState {}
+final class NoActivePlan extends PlanState {
+final List<TripModel> plans;
+NoActivePlan({ this.plans= const []});
+}
 
 final class PlanLoaded extends PlanState {
   final TripModel trip;
   PlanLoaded({required this.trip});
 }
 
-final class CreateNewPlan extends PlanState {}
+final class CreateNewPlan extends PlanState {
+  final String title;
+  CreateNewPlan({required this.title});
+}
 
 final class CreateNewPlanSuccess extends PlanState {
   final TripModel trip;
@@ -22,13 +27,47 @@ final class CreateNewPlanSuccess extends PlanState {
 }
 
 final class GetAllPlansLoading extends PlanState {}
+
 final class GetAllPlansFailure extends PlanState {
   final String error;
   GetAllPlansFailure(this.error);
 }
+
 final class GetAllPlansSuccess extends PlanState {
   final List<TripModel> plans;
   GetAllPlansSuccess({required this.plans});
+}
+
+final class GetActivePlan extends PlanState{}
+final class GetActivePlanFailure extends PlanState{
+  final String error;
+  GetActivePlanFailure(this.error);
+}
+final class GetActivePlanSuccess extends PlanState{
+  final TripModel activePlan;
+  GetActivePlanSuccess({required this.activePlan});
+}
+
+final class CreateNewPlanFailure extends PlanState {
+  final String error;
+  CreateNewPlanFailure(this.error);
+}
+final class DeletePlanSuccess extends PlanState{}
+
+final class DeletePlaceFromTrip extends PlanState {
+  final String placeId;
+  final String tripId;
+  DeletePlaceFromTrip({required this.placeId, required this.tripId});
+}
+
+final class DeletePlaceFromTripSuccess extends PlanState {
+  final TripModel trip;
+  DeletePlaceFromTripSuccess({required this.trip});
+}
+
+final class DeletePlaceFromTripFailure extends PlanState {
+  final String error;
+  DeletePlaceFromTripFailure(this.error);
 }
 
 final class AddNewDayToPlan extends PlanState {}
@@ -36,4 +75,3 @@ final class AddNewDayToPlan extends PlanState {}
 final class AddNewDaySuccess extends PlanState {}
 
 final class PlanError extends PlanState {}
-

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
@@ -46,9 +47,11 @@ Future<bool> requestPermission() async {
           timeLimit: Duration(seconds: 10), // optional timeout
         ),
       );
-    } catch (e) {
-      return null;
-    }
+    } catch (e, st) {
+  debugPrint('Location error: $e');
+  debugPrintStack(stackTrace: st);
+  return null;
+}
   }
 
   Future<bool> _checkPermission() async {
