@@ -47,14 +47,17 @@ class MapBottomSheetHeader extends StatelessWidget {
             padding: const EdgeInsets.all(12.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              spacing: 5,
               children: [
-                Text(
-                  'Day $dayNumber Plan: $shortTitle ...',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.headlineMedium!.copyWith(fontSize: 20),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                Expanded(
+                  child: Text(
+                    'Day $dayNumber Plan: $shortTitle ...',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.headlineMedium!.copyWith(fontSize: 20),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 LocationsNumberContainer(locationsNumber: locationsNumber),
               ],

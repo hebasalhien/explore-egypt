@@ -22,7 +22,7 @@ class WhereToStart extends StatelessWidget {
         spacing: 16,
         children: [
           Text(
-            plans!= null && plans!.isNotEmpty ? 'Your Plans':'Suggested expedition',
+            plans!= null && plans!.isNotEmpty ? 'Available Plans':'Suggested expedition',
             style: Theme.of(
               context,
             ).textTheme.headlineMedium!.copyWith(fontSize: 20),

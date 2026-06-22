@@ -17,10 +17,22 @@ class MapRemoteDataSource {
     return response.data;
   }
 
+  Future<dynamic> getLandmarkList() async {
+    final response = await _apiService.dio.get(ApiConstants.landmarks);
+    return response.data;
+  }
+
   Future<dynamic> savePlan({required TripModel trip}) async {
     final response = await _apiService.dio.post(
       ApiConstants.savePlan,
-      data: {},
+      data: trip.toJson(),
+    );
+    return response.data;
+  }
+
+  Future<dynamic> addNewDayToPlan({required String tripId}) async {
+    final response = await _apiService.dio.post(
+      '${ApiConstants.plan}/$tripId${ApiConstants.addDayToPlan}',
     );
     return response.data;
   }

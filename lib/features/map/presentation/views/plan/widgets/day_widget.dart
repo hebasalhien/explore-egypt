@@ -3,6 +3,7 @@ import 'package:explore_egypt/core/widgets/delete_confirmation_dialog.dart';
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/dashed_rounded_button.dart';
+import 'package:explore_egypt/features/map/presentation/views/plan/widgets/no_places_added_yet.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/plan_step_card.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/switch_plan_list.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/total_plans_number.dart';
@@ -32,7 +33,9 @@ class DayWidget extends StatelessWidget {
         child: Center(child: Text('No data available for this day')),
       );
     }
-
+    if(trip.dayModel[selectedDay].activity.isEmpty){
+      return NoPlacesAddedYet(day: selectedDay,);
+    }
     return Expanded(
       child: SingleChildScrollView(
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),

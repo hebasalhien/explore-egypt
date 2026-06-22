@@ -7,13 +7,18 @@ final class PlanInitial extends PlanState {}
 final class PlanLoading extends PlanState {}
 
 final class NoActivePlan extends PlanState {
-final List<TripModel> plans;
-NoActivePlan({ this.plans= const []});
+  final List<TripModel> plans;
+  NoActivePlan({this.plans = const []});
 }
 
 final class PlanLoaded extends PlanState {
   final TripModel trip;
   PlanLoaded({required this.trip});
+}
+
+final class GetLandmarksSuccess extends PlanState {
+  final List<LandmarkModelPlan> landmarks;
+  GetLandmarksSuccess({required this.landmarks});
 }
 
 final class CreateNewPlan extends PlanState {
@@ -38,12 +43,12 @@ final class GetAllPlansSuccess extends PlanState {
   GetAllPlansSuccess({required this.plans});
 }
 
-final class GetActivePlan extends PlanState{}
-final class GetActivePlanFailure extends PlanState{
+final class GetActivePlanFailure extends PlanState {
   final String error;
   GetActivePlanFailure(this.error);
 }
-final class GetActivePlanSuccess extends PlanState{
+
+final class GetActivePlanSuccess extends PlanState {
   final TripModel activePlan;
   GetActivePlanSuccess({required this.activePlan});
 }
@@ -52,7 +57,8 @@ final class CreateNewPlanFailure extends PlanState {
   final String error;
   CreateNewPlanFailure(this.error);
 }
-final class DeletePlanSuccess extends PlanState{}
+
+final class DeletePlanSuccess extends PlanState {}
 
 final class DeletePlaceFromTrip extends PlanState {
   final String placeId;
@@ -72,6 +78,9 @@ final class DeletePlaceFromTripFailure extends PlanState {
 
 final class AddNewDayToPlan extends PlanState {}
 
-final class AddNewDaySuccess extends PlanState {}
+final class AddNewDaySuccess extends PlanState {
+  final TripModel trip;
+  AddNewDaySuccess({required this.trip});
+}
 
 final class PlanError extends PlanState {}

@@ -11,6 +11,7 @@ import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
 import 'package:explore_egypt/features/main/presentation/cubit/navigation_cubit.dart';
 import 'package:explore_egypt/features/main/presentation/views/widgets/custom_navigation_destination.dart';
 import 'package:explore_egypt/features/map/presentation/views/main_map_page.dart';
+import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:explore_egypt/features/users/model/data_sources/user_remote_data_source.dart';
 import 'package:explore_egypt/features/users/model/repos/user_repository.dart';
 import 'package:explore_egypt/features/users/presentation/cubit/profile_cubit/profile_cubit.dart';
@@ -49,11 +50,23 @@ class _MainPageState extends State<MainPage> {
         ),
       ],
       child: BlocConsumer<NavigationCubit, NavigationState>(
-        listener: (context, state) {
-          setState(() {
-            _initialized[state.index] = true;
-          });
-        },
+listener: (context, state) {
+  setState(() {
+    _initialized[state.index] = true;
+  });
+
+  // ✅ Push MainMapPage with trip into tab 2's navigator
+  if (state.trip != null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _navigatorKeys[2].currentState?.push(
+        MaterialPageRoute(
+          builder: (_) => MainMapPage(trip: state.trip),
+        ),
+      );
+      context.read<NavigationCubit>().clearTrip();
+    });
+  }
+},
         builder: (context, state) {
           return PopScope(
             // Handle back button: pop within tab instead of exiting
@@ -102,31 +115,47 @@ class _MainPageState extends State<MainPage> {
                   ),
 
                   // Tab 2 - Map
+                  // Navigator(
+                  //   key: _navigatorKeys[2],
+                  //   onGenerateRoute: (_) => MaterialPageRoute(
+                  //     builder: (routeContext) =>
+                  //         BlocBuilder<NavigationCubit, NavigationState>(
+                  //           builder: (context, navState) {
+                  //             if (!_initialized[2])
+                  //               return const SizedBox.shrink();
+
+                  //             return PopScope(
+                  //               canPop: false,
+                  //               onPopInvokedWithResult: (didPop, result) {
+                  //                 final planCubit = context.read<PlanCubit>();
+                  //                 if (planCubit.state is PlanLoaded) {
+                  //                   planCubit.goBackToPlans();
+                  //                 }
+                  //               },
+                  //               child: MainMapPage(trip: navState.trip),
+                  //             );
+                  //           },
+                  //         ),
+                  //   ),
+                  // ),
                   Navigator(
-                    key: _navigatorKeys[2],
-                    onGenerateRoute: (_) => MaterialPageRoute(
-                      builder: (routeContext) =>
-                          BlocBuilder<NavigationCubit, NavigationState>(
-                            builder: (context, navState) {
-                              return _initialized[2]
-                                  ? MainMapPage(trip: navState.trip)
-                                  : const SizedBox.shrink();
-                            },
-                          ),
-                    ),
-                  ),
+  key: _navigatorKeys[2],
+  onGenerateRoute: (_) => MaterialPageRoute(
+    builder: (_) => _initialized[2]
+        ? const MainMapPage() // ← always root, no trip
+        : const SizedBox.shrink(),
+  ),
+),
 
                   RepositoryProvider(
                     create: (_) => UserRepository(
                       UserRemoteDataSource(ApiService.instance),
                     ),
                     child: BlocProvider(
-                      create: (context) =>
-                          ProfileCubit(
-                            context.read<UserRepository>(),
-                            context.read<SessionCubit>(),
-                          )
-                            ..getUserData(),
+                      create: (context) => ProfileCubit(
+                        context.read<UserRepository>(),
+                        context.read<SessionCubit>(),
+                      )..getUserData(),
                       child: Navigator(
                         key: _navigatorKeys[3],
                         onGenerateRoute: (settings) {

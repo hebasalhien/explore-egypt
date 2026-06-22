@@ -8,12 +8,16 @@ class MapBottomSheet extends StatelessWidget {
     super.key,
     required this.dayNumber,
     required this.planTitle,
-     required this.activityModel,
+    required this.activityModel,
+    required this.selectedIndex,
+    required this.onCardSelected,
   });
   final int dayNumber;
   final String planTitle;
-  final bool isCardSelected = true;
   final List<ActivityModel> activityModel;
+  final int? selectedIndex;
+  final ValueChanged<int> onCardSelected;
+
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
@@ -37,9 +41,10 @@ class MapBottomSheet extends StatelessWidget {
               ),
             ),
             LocationsListView(
-              isCardSelected: isCardSelected,
+              selectedIndex: selectedIndex,
               scrollController: scrollController,
               activityModel: activityModel,
+              onCardSelected: onCardSelected,
             ),
           ],
         ),

@@ -12,7 +12,7 @@ ActivityModelHive toHiveActivity(ActivityModel model) {
     ..time = model.time
     ..landmarkName = model.landmarkName
     ..description = model.description
-    ..image = model.image
+    ..image = model.image??'assets/images/pyramid.png'
     ..lat = model.lat
     ..lng = model.lng;
 }

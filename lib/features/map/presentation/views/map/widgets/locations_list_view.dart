@@ -5,13 +5,17 @@ import 'package:flutter/material.dart';
 class LocationsListView extends StatelessWidget {
   const LocationsListView({
     super.key,
-    required this.isCardSelected,
-    required this.scrollController, required this.activityModel,
+    required this.selectedIndex,
+    required this.scrollController,
+    required this.activityModel,
+    required this.onCardSelected,
   });
 
-  final bool isCardSelected;
+  final int? selectedIndex;
   final ScrollController scrollController;
   final List<ActivityModel> activityModel;
+  final ValueChanged<int> onCardSelected;
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -21,7 +25,11 @@ class LocationsListView extends StatelessWidget {
           controller: scrollController,
           itemBuilder: (context, index) => Padding(
             padding: const EdgeInsets.only(top: 12),
-            child: PlaceCard(isCardSelected: isCardSelected, activityModel: activityModel[index],),
+            child: PlaceCard(
+              isCardSelected: selectedIndex == index,
+              activityModel: activityModel[index],
+              onTap: () => onCardSelected(index),
+            ),
           ),
           itemCount: activityModel.length,
         ),

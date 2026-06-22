@@ -1,7 +1,9 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/add_day_circle.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/add_new_place.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MenuButton extends StatefulWidget {
   const MenuButton({super.key});
@@ -174,12 +176,18 @@ class _MenuButtonState extends State<MenuButton>
                   icon: Icons.location_on_outlined,
                   label: 'Add Place',
                   hasBorder: false,
-                  onTap: () {
+                  onTap: ()  {
+                    context.read<PlanCubit>().getLandmarkList();
+                    var state = context.read<PlanCubit>().state;
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
                       builder: (context) {
-                        return AddNewPlace();
+                        return AddNewPlace(
+                          landmark: state is GetLandmarksSuccess
+                              ? state.landmarks
+                              : [],
+                        );
                       },
                     );
                   },
@@ -203,4 +211,3 @@ class _MenuButtonState extends State<MenuButton>
     );
   }
 }
-

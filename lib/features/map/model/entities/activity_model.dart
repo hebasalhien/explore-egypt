@@ -3,7 +3,7 @@ class ActivityModel {
   final String time;
   final String landmarkName;
   final String description;
-  final String image;
+  final String? image;
   final double lat;
   final double lng;
 
@@ -23,9 +23,19 @@ class ActivityModel {
       time: json['time'],
       landmarkName: json['title'],
       description: json['description'],
-      image: json['image_url'] ?? 'assets/images/pyramid.png',
+      image: json['image_url'] ,
       lat: (json['lat'] as num).toDouble(),
       lng: (json['lng'] as num).toDouble(),
     );
+  }
+  Map<String,dynamic> toJson(){
+    return
+{'cost_usd' : cost ,
+'time' : time,
+'description' : description,
+'image_url' : image,
+'lat' : lat,
+'lng' : lng,
+'title' : landmarkName,};
   }
 }

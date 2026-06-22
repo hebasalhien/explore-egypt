@@ -13,4 +13,7 @@ class NavigationCubit extends Cubit<NavigationState> {
   void switchTab(int index, {TripModel? trip}) {
     emit(NavigationState(index, trip: trip ?? state.trip));
   }
+  void clearTrip() {
+  emit(NavigationState(state.index, trip: null));
+}
 }

@@ -52,7 +52,17 @@ class _MainMapPageState extends State<MainMapPage>
       providers: [
         // BlocProvider(create: (context) => MapCubit()),
         BlocProvider(
-          create: (context) => PlanCubit(mapRepository)..getActivePlan(),
+            create: (context) {
+    final cubit = PlanCubit(mapRepository);
+    // ✅ If a trip was passed, display it directly
+    // ❌ Don't call getActivePlan()
+    if (widget.trip != null) {
+      cubit.displayPlan(widget.trip!);
+    } else {
+      cubit.getActivePlan();
+    }
+    return cubit;
+  },
         ),
       ],
       child: DefaultTabController(
@@ -72,6 +82,7 @@ class _MainMapPageState extends State<MainMapPage>
               PlanPage(
                 screenHeight: screenHeight,
                 screenWidth: screenWidth,
+                selectedDay: _selectedDay,
                 onDayChanged: (index) {
                   setState(() => _selectedDay = index);
                 },

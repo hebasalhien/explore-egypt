@@ -1,4 +1,5 @@
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
+import 'package:explore_egypt/features/map/presentation/views/main_map_page.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,11 +38,18 @@ class CardInfo extends StatelessWidget {
           softWrap: true,
         ),
         ElevatedButton(
-          onPressed: () {
-            if (trip != null) {
-              context.read<PlanCubit>().selectActivePlan(trip!);
-            }
-          },
+onPressed: () {
+  if (trip != null) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: context.read<PlanCubit>(),
+          child: MainMapPage(trip: trip!),
+        ),
+      ),
+    );
+  }
+},
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius:

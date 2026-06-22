@@ -1,4 +1,5 @@
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
+import 'package:explore_egypt/features/map/presentation/views/main_map_page.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +29,7 @@ class SwitchPlan extends StatelessWidget {
             ).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w600),
           ),
           subtitle: Text(
-            '${trip.days} days  • ${trip.dayModel[0].activity.length } stops',
+            '${trip.days} days  • ${trip.dayModel[0].activity.length} stops',
             style: TextStyle(
               color: Color(0xff9CA3AF),
               fontSize: 12,
@@ -63,16 +64,30 @@ class SwitchPlan extends StatelessWidget {
                     style: TextStyle(color: Color(0xffD38A5D)),
                   ),
                 ),
-              Icon(
-                trip.active
-                    ? Icons.check_circle_rounded
-                    : Icons.circle_outlined,
+              IconButton(
+                icon: Icon(
+                  trip.active
+                      ? Icons.check_circle_rounded
+                      : Icons.circle_outlined,
+                ),
+                onPressed: () {
+                  context.read<PlanCubit>().activatePlan(newPlanId: trip.id!);
+                  Navigator.pop(context);
+                },
                 color: trip.active ? Color(0xffD38A5D) : Color(0xffD1D5DB),
               ),
             ],
           ),
           onTap: () {
-            context.read<PlanCubit>().activatePlan(newPlanId: trip.id!);
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => BlocProvider.value(
+                  value: context.read<PlanCubit>(),
+                  child: MainMapPage(trip: trip),
+                ),
+              ),
+            );
+
             Navigator.pop(context);
           },
         ),

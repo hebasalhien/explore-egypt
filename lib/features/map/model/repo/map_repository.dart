@@ -17,6 +17,13 @@ Future<List<TripModel>> getAllMyPlans() async {
 Future<dynamic> getActivePlan() async {
   return await _mapRemoteDataSource.getActivePlan();
 }
+Future<dynamic> getLandmarkList() async {
+  return await _mapRemoteDataSource.getLandmarkList();
+}
+
+Future<dynamic> addNewDayToPlan({required String tripId}) async {
+  return await _mapRemoteDataSource.addNewDayToPlan(tripId: tripId);
+}
 
 Future<dynamic> deletePlan({required String tripId}) async {
   return await _mapRemoteDataSource.deletePlan(tripId: tripId);

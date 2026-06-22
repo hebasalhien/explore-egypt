@@ -1,11 +1,14 @@
+import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/add_day_circle.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/day_circle.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/rps_custom_painter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DayStepper extends StatelessWidget {
   final int selectedDay;
   final int totalDays;
+  final VoidCallback onTap;
   final ValueChanged<int> onDaySelected;
 
   const DayStepper({
@@ -13,6 +16,7 @@ class DayStepper extends StatelessWidget {
     required this.selectedDay,
     required this.totalDays,
     required this.onDaySelected,
+    required this.onTap,
   });
 
   @override
@@ -25,7 +29,11 @@ class DayStepper extends StatelessWidget {
           ListView.builder(
             itemBuilder: (_, index) {
               if (index == totalDays) {
-                return Center(child: AddDayCircle(onTap: () {}));
+                return Center(
+                  child: AddDayCircle(
+                    onTap: onTap,
+                  ),
+                );
               }
               return Center(
                 child: DayCircle(

@@ -26,8 +26,24 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   MapController? _controller;
+  int? _selectedCardIndex;
 
   final _locationService = LocationService();
+
+  void _selectCard(int? index) {
+    setState(() {
+      _selectedCardIndex = index;
+    });
+    if (index != null && widget.activityModel != null) {
+      final activity = widget.activityModel![index];
+      final currentZoom = _controller?.getCamera()?.zoom;
+      _controller?.animateCamera(
+        center: Geographic(lon: activity.lng, lat: activity.lat),
+        zoom: currentZoom != null && currentZoom > 12 ? currentZoom : 12,
+        nativeDuration: const Duration(milliseconds: 500),
+      );
+    }
+  }
 
   List<Marker> _buildMarkers() {
     final landmarks = widget.activityModel;
@@ -41,7 +57,15 @@ class _MapPageState extends State<MapPage> {
             point: Geographic(lon: entry.value.lng, lat: entry.value.lat),
             size: const Size(42, 52),
             alignment: Alignment.bottomCenter,
-            child: MapMarker(number: entry.key + 1),
+            child: GestureDetector(
+              onTap: () {
+                _selectCard(_selectedCardIndex == entry.key ? null : entry.key);
+              },
+              child: MapMarker(
+                number: entry.key + 1,
+                selected: _selectedCardIndex == entry.key,
+              ),
+            ),
           ),
         )
         .toList();
@@ -129,6 +153,10 @@ class _MapPageState extends State<MapPage> {
               dayNumber: widget.dayNumber,
               planTitle: widget.planTitle,
               activityModel: widget.activityModel!,
+              selectedIndex: _selectedCardIndex,
+              onCardSelected: (index) {
+                _selectCard(_selectedCardIndex == index ? null : index);
+              },
             ),
         ],
       ),

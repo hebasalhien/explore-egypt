@@ -1,10 +1,11 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/features/map/model/entities/landmark_model_plan.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/custom_search_bar.dart';
 import 'package:flutter/material.dart';
 
 class AddNewPlace extends StatelessWidget {
-  const AddNewPlace({super.key});
-
+  const AddNewPlace({super.key, required this.landmark});
+  final List<LandmarkModelPlan> landmark;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -49,8 +50,8 @@ class AddNewPlace extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: 4,
-              itemBuilder: (context, index) => AddPlaceCard(),
+              itemCount: landmark.length,
+              itemBuilder: (context, index) => AddPlaceCard(landmark: landmark[index],),
             ),
           ),
           ElevatedButton(
@@ -78,8 +79,8 @@ class AddNewPlace extends StatelessWidget {
 }
 
 class AddPlaceCard extends StatelessWidget {
-  const AddPlaceCard({super.key});
-
+  const AddPlaceCard({super.key, required this.landmark});
+final LandmarkModelPlan landmark;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -99,7 +100,7 @@ class AddPlaceCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 image: DecorationImage(
-                  image: AssetImage('assets/images/pyramid.png'),
+                  image:NetworkImage(landmark.imageUrl),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -109,20 +110,14 @@ class AddPlaceCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Giza Pyramids',
+                  landmark.title,
                   style: Theme.of(
                     context,
                   ).textTheme.headlineSmall?.copyWith(color: AppColors.kBlack),
                 ),
                 Text(
-                  'Giza Pyramids',
+                  landmark.category,
                   style: Theme.of(context).textTheme.displaySmall,
-                ),
-                Text(
-                  '12:00 pm',
-                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                    color: AppColors.kSecondary,
-                  ),
                 ),
               ],
             ),
@@ -131,7 +126,7 @@ class AddPlaceCard extends StatelessWidget {
               spacing: 4,
               children: [
                 Text(
-                  '15 \$',
+                  '${landmark.priceEgp} EGP',
                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
                     color: AppColors.kSecondary,
                     fontSize: 14,

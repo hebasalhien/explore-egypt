@@ -6,7 +6,7 @@ class PlanStepCard extends StatelessWidget {
   final String cost;
   final String title;
   final String subtitle;
-  final String imageURL;
+  final String? imageURL;
   const PlanStepCard({
     super.key,
     required this.screenHeight,
@@ -45,7 +45,7 @@ class PlanStepCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  cost,
+                  cost.contains('\$') ? cost : '$cost\$',
                   style: Theme.of(context).textTheme.labelSmall!.copyWith(
                     color: AppColors.kPrimaryColor,
                   ),
@@ -73,8 +73,8 @@ class PlanStepCard extends StatelessWidget {
                 height: screenHeight * .16,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  image: DecorationImage(image: AssetImage(imageURL)
-                   //NetworkImage(imageURL)
+                  image: DecorationImage(
+                    image:imageURL!=null?NetworkImage(imageURL!): AssetImage("assets/images/pyramid.png"),
                   ),
                 ),
               ),
@@ -85,4 +85,3 @@ class PlanStepCard extends StatelessWidget {
     );
   }
 }
-

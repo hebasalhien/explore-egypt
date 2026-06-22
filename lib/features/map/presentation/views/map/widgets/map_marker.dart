@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class MapMarker extends StatelessWidget {
-  const MapMarker({super.key, required this.number});
+  const MapMarker({super.key, required this.number,required this.selected});
   final int number;
+  final bool selected;  
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +18,8 @@ class MapMarker extends StatelessWidget {
             height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(width: 3, color: Colors.white),
-              color: const Color(0xffB2001A),
+              border: Border.all(width: 3, color:selected?const Color(0xffB2001A): Colors.white),
+              color: selected?Colors.white:const Color(0xffB2001A),
               boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
@@ -30,8 +31,8 @@ class MapMarker extends StatelessWidget {
             child: Center(
               child: Text(
                 '$number',
-                style: const TextStyle(
-                  color: Colors.white,
+                style:  TextStyle(
+                  color:selected?const Color(0xffB2001A): Colors.white,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -43,7 +44,7 @@ class MapMarker extends StatelessWidget {
             child: Container(
               width: 4,
               height: 12,
-              color: const Color(0xffB2001A),
+              color: selected?Colors.white:const Color(0xffB2001A),
             ),
           ),
         ],
@@ -51,4 +52,3 @@ class MapMarker extends StatelessWidget {
     );
   }
 }
-

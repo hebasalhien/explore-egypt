@@ -5,8 +5,9 @@ class TripModel {
   final int days;
   final String title;
   final bool active;
+  final String? conversationId;
   final List<DayModel> dayModel;
-  TripModel({required this.days, required this.dayModel, required this.title, required this.active,  this.id});
+  TripModel({required this.days, required this.dayModel, required this.title, required this.active,  this.id, this.conversationId});
 
   factory TripModel.fromJson(json) {
     return TripModel(
@@ -17,6 +18,20 @@ class TripModel {
       dayModel: (json['data']['days'] as List)
           .map((e) => DayModel.fromjson(e))
           .toList(),
+          conversationId: json['conversationId'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "data": {
+        "title": title,
+        "days": dayModel.map((e) => e.toJson()).toList(),
+      },
+      "id": id,
+      "days": days,
+      "title":title,
+      "conversationId": conversationId,
+    };
   }
 }

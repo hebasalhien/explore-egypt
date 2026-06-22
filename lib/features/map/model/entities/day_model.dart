@@ -14,4 +14,14 @@ class DayModel {
           .toList(),
     );
   }
+
+   Map<String, dynamic> toJson() {
+    return {
+      "total_cost_usd": totalCost,
+      "activities": activity.map((e) => e.toJson()).toList(),
+    };
+  }
 }
+   
+                                          
+    
