@@ -2,7 +2,6 @@ import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/favorites/presentation/cubit/favorites_cubit.dart';
 import 'package:explore_egypt/features/home/model/data_sources/home_remote_data_source.dart';
-import 'package:explore_egypt/features/home/model/entities/active_plan_model.dart';
 import 'package:explore_egypt/features/home/model/repos/home_repository.dart';
 import 'package:explore_egypt/features/home/presentation/cubit/home_cubit.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/active_plan_widget.dart';

@@ -1,13 +1,17 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/plans/model/entities/categories_model.dart';
-import 'package:explore_egypt/features/plans/presentation/cubit/suggested_plans_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CategoriesList extends StatelessWidget {
-  const CategoriesList({super.key, required this.categories, required this.selectedCategoryId});
+  const CategoriesList({
+    super.key,
+    required this.categories,
+    required this.selectedCategoryId,
+    required this.onCategoryTap,
+  });
   final List<CategoriesModel> categories;
   final String selectedCategoryId;
+  final void Function(String) onCategoryTap;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -22,9 +26,7 @@ class CategoriesList extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: GestureDetector(
               onTap: () {
-                context.read<SuggestedPlansCubit>().getPlansByCategory(
-                  categoryId: categories[index].id,
-                );
+                onCategoryTap(categories[index].id);
               },
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 8),

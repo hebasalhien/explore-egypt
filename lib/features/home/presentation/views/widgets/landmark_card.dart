@@ -37,25 +37,19 @@ class LandmarkCard extends StatelessWidget {
               Positioned(
                 right: 8,
                 top: 8,
-                // child: BlocSelector<FavoritesCubit, FavoritesState, bool>(
-                // selector: (state) =>
-                //     state is FavoritesLoaded &&
-                //     state.favLandmarkIds.contains(landmark.id),,
-                //   builder: (context, isFavorite) {
-                //     return GlassIconButton(
-                //       isFavorite: isFavorite,
-                //       onPressed: () {
-                //         // context.read<FavoritesCubit>().toggleLandmarkFavorite(
-                //         //         landmark.id,
-                //         //       );
-                //       },
-                //     );
-                //   },
-                // ),
-                child: GlassIconButton(
-                  isFavorite: false,
-                  onPressed: () {
-                    debugPrint("pressed");
+                child: BlocSelector<FavoritesCubit, FavoritesState, bool>(
+                selector: (state) =>
+                    state is FavoritesLoaded &&
+                    state.favLandmarkIds.contains(landmark.id),
+                  builder: (context, isFavorite) {
+                    return GlassIconButton(
+                      isFavorite: isFavorite,
+                      onPressed: () {
+                        context.read<FavoritesCubit>().toggleLandmarkFavorite(
+                                landmark.id!,
+                              );
+                      },
+                    );
                   },
                 ),
               ),
