@@ -1,4 +1,5 @@
 import 'package:explore_egypt/core/errors/exception.dart';
+import 'package:explore_egypt/core/errors/exception_handle_helper.dart';
 import 'package:explore_egypt/features/favorites/model/data_source/favorites_remote_data_source.dart';
 
 class FavoritesRepo {
@@ -10,7 +11,10 @@ class FavoritesRepo {
     final data = await _dataSource.getFavoritePlans();
     return data;
     } catch(e){
-      throw ServerException('An unexpected error occurred: $e');
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));
     }
   }
 
@@ -19,8 +23,10 @@ class FavoritesRepo {
     final data = await _dataSource.addPlanToFavorites(planId: planId);
     return data;
     } catch(e){
-      throw ServerException('An unexpected error occurred: $e');
-    }
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));    }
   }
 
   Future<dynamic> removePlanFromFavorites({required String planId}) async{
@@ -28,8 +34,10 @@ class FavoritesRepo {
     final data = await _dataSource.removePlanFromFavorites(planId: planId);
     return data;
     } catch(e){
-      throw ServerException('An unexpected error occurred: $e');
-    }
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));    }
   }
 
   Future<dynamic> getFavoriteLandmarks() async{
@@ -37,8 +45,10 @@ class FavoritesRepo {
     final data = await _dataSource.getFavoriteLandmarks();
     return data;
     } catch(e){
-      throw ServerException('An unexpected error occurred: $e');
-    }
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));    }
   }
 
   Future<dynamic> addLandmarkToFavorites({required String landmarkId}) async{
@@ -46,8 +56,10 @@ class FavoritesRepo {
     final data = await _dataSource.addLandmarkToFavorites(landmarkId: landmarkId);
     return data;
     } catch(e){
-      throw ServerException('An unexpected error occurred: $e');
-    }
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));    }
   }
 
   Future<dynamic> removeLandmarkFromFavorites({required String landmarkId}) async{
@@ -55,7 +67,9 @@ class FavoritesRepo {
     final data = await _dataSource.removeLandmarkFromFavorites(landmarkId: landmarkId);
     return data;
     } catch(e){
-      throw ServerException('An unexpected error occurred: $e');
-    }
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));    }
   }
 }

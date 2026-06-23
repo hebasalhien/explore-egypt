@@ -1,6 +1,5 @@
 part of 'favorites_cubit.dart';
 
-@immutable
 abstract class FavoritesState {}
 
 class FavoritesInitial extends FavoritesState {}
@@ -8,11 +7,11 @@ class FavoritesInitial extends FavoritesState {}
 class FavoritesLoading extends FavoritesState {}
 
 class FavoritesLoaded extends FavoritesState {
-  //final Set<String> favLandmarkIds;
+  final Set<String> favLandmarkIds;
   final Set<String> favPlanIds;
 
   FavoritesLoaded({
-    //required this.favLandmarkIds,
+    required this.favLandmarkIds,
     required this.favPlanIds,
   });
 
@@ -21,7 +20,7 @@ class FavoritesLoaded extends FavoritesState {
     Set<String>? favPlanIds,
   }) {
     return FavoritesLoaded(
-      //favLandmarkIds: favLandmarkIds ?? this.favLandmarkIds,
+      favLandmarkIds: favLandmarkIds ?? this.favLandmarkIds,
       favPlanIds: favPlanIds ?? this.favPlanIds,
     );
   }

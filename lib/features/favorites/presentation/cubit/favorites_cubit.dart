@@ -1,7 +1,6 @@
-import 'package:bloc/bloc.dart';
 import 'package:explore_egypt/core/errors/exception.dart';
 import 'package:explore_egypt/features/favorites/model/repo/favorites_repo.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'favorites_state.dart';
 
@@ -16,48 +15,47 @@ class FavoritesCubit extends Cubit<FavoritesState> {
     emit(FavoritesLoading());
     try {
       final results = await Future.wait([
-        // _repo.getFavoriteLandmarks(),
+        _repo.getFavoriteLandmarks(),
         _repo.getFavoritePlans(),
       ]);
 
       emit(
         FavoritesLoaded(
-          //favLandmarkIds: _toIdSet(results[0]),
-          //favPlanIds: _toIdSet(results[1]),
-          favPlanIds: _toIdSet(results[0]),
+          favLandmarkIds: _toIdSet(results[0]),
+          favPlanIds: _toIdSet(results[1]),
         ),
       );
     } on ServerException catch (e) {
-      emit(FavoritesError(e.message));
+      emit(FavoritesError(e.message.message));
     } catch (e) {
       emit(FavoritesError(e.toString()));
     }
   }
 
   /// toggle landmark favorite
-  // Future<void> toggleLandmarkFavorite(String id) async {
-  //   final current = _currentLoaded;
-  //   if (current == null) return;
+  Future<void> toggleLandmarkFavorite(String id) async {
+    final current = _currentLoaded;
+    if (current == null) return;
 
-  //   final isFavorited = current.favLandmarkIds.contains(id);
+    final isFavorited = current.favLandmarkIds.contains(id);
 
-  //   // Optimistic update
-  //   final updatedIds = Set<String>.from(current.favLandmarkIds);
-  //   isFavorited ? updatedIds.remove(id) : updatedIds.add(id);
-  //   emit(current.copyWith(favLandmarkIds: updatedIds));
+    // Optimistic update
+    final updatedIds = Set<String>.from(current.favLandmarkIds);
+    isFavorited ? updatedIds.remove(id) : updatedIds.add(id);
+    emit(current.copyWith(favLandmarkIds: updatedIds));
 
-  //   try {
-  //     if (isFavorited) {
-  //       await _repo.removeLandmarkFromFavorites(landmarkId: id);
-  //     } else {
-  //       await _repo.addLandmarkToFavorites(landmarkId: id);
-  //     }
-  //   } on ServerException catch (_) {
-  //     emit(current); // revert on failure
-  //   } catch (_) {
-  //     emit(current); // revert on failure
-  //   }
-  // }
+    try {
+      if (isFavorited) {
+        await _repo.removeLandmarkFromFavorites(landmarkId: id);
+      } else {
+        await _repo.addLandmarkToFavorites(landmarkId: id);
+      }
+    } on ServerException catch (_) {
+      emit(current); // revert on failure
+    } catch (_) {
+      emit(current); // revert on failure
+    }
+  }
 
   /// toggle plan favorite
   Future<void> togglePlanFavorite(String id) async {
