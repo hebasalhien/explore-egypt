@@ -9,14 +9,17 @@ class ConversationCubit extends Cubit<ConversationState> {
   final ChatRepository _repository;
   ConversationCubit(this._repository) : super(ConversationInitial());
   List<ChatModel> _conversations = [];
-  CancelToken? _cancelToken ;
+  CancelToken? _cancelToken;
+
   /// fetches all conversations from the server and updates the state accordingly
   Future<void> fetchAllConversations() async {
     _cancelToken = CancelToken();
     emit(ConversationLoading());
     try {
-      final response = await _repository.getConversation(cancelToken: _cancelToken);
-      if(isClosed) return;
+      final response = await _repository.getConversation(
+        cancelToken: _cancelToken,
+      );
+      if (isClosed) return;
       debugPrint('all Conversation fetched successfully');
       _conversations = (response as List)
           .map((conversationJson) => ChatModel.fromJson(conversationJson))
@@ -25,30 +28,43 @@ class ConversationCubit extends Cubit<ConversationState> {
           .toList();
       emit(ConversationLoaded(conversations: _conversations));
     } catch (e) {
-      if(isClosed) return;
+      if (isClosed) return;
       debugPrint('Error fetching conversation: $e');
       emit(ConversationError(errorMessage: e.toString()));
     }
   }
 
-    @override
+  /// cancle request when darwer closed
+  @override
   Future<void> close() {
-    _cancelToken?.cancel(); // 👈 cancels the request when drawer closes
+    _cancelToken?.cancel();
     return super.close();
   }
 
+  /// delete a conversation with that [conversationId]
   Future<dynamic> deleteConversation({required String conversationId}) async {
     emit(ConversationLoading());
     try {
-      await _repository.deleteConversation(
-        conversationId: conversationId,
-      );
+      await _repository.deleteConversation(conversationId: conversationId);
       _conversations.removeWhere((e) => e.conversationId == conversationId);
       debugPrint('conversation deleted successfully');
       emit(ConversationLoaded(conversations: _conversations));
     } catch (e) {
       debugPrint('Error deleting conversation: $e');
       emit(ConversationError(errorMessage: e.toString()));
+    }
+  }
+
+  void search(String query) {
+    if (query.isEmpty) {
+      emit(ConversationLoaded(conversations: _conversations));
+    } else {
+      final filtered = _conversations
+          .where(
+            (chat) => chat.title.toLowerCase().contains(query.toLowerCase()),
+          )
+          .toList();
+      emit(ConversationLoaded(conversations: filtered));
     }
   }
 }

@@ -26,13 +26,14 @@ class AttachmentCard extends StatelessWidget {
             Positioned.fill(
               child: Card(
                 clipBehavior: Clip.antiAlias,
+                color: AppColors.kWhite,
                 child: fileExtension == 'jpg' || fileExtension == 'png'
                     ? Image.file(File(filePath), fit: BoxFit.cover)
                     : Center(
                         child: Text(
                           fileExtension!,
                           style: Theme.of(context).textTheme.labelSmall!
-                              .copyWith(color: AppColors.kBlack),
+                              .copyWith(color: AppColors.kPrimaryVariant),
                         ),
                       ),
               ),

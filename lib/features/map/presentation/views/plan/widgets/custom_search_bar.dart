@@ -7,14 +7,20 @@ class CustomSearchBar extends StatelessWidget {
     this.radius,
     this.iconColor,
     this.hintColor,
+    this.controller,
+    this.onChanged,
   });
   final String hint;
   final double? radius;
   final Color? iconColor;
   final Color? hintColor;
+  final TextEditingController? controller;  
+  final ValueChanged<String>? onChanged; 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
+      onChanged: onChanged,
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.search, color: iconColor ?? Color(0xff6B7280)),
         hintText: hint,

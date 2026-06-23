@@ -1,8 +1,10 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/features/chat/presentation/cubit/chat_cubit/chat_cubit.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/attachment_card.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_pop_up_button.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MessageTextField extends StatelessWidget {
   const MessageTextField({
@@ -62,40 +64,54 @@ class MessageTextField extends StatelessWidget {
                   },
                 ),
               ),
-            TextField(
-              controller: controller,
-              textInputAction: TextInputAction.newline,
-              keyboardType: TextInputType.multiline,
-              maxLines: 5,
-              minLines: 1,
-              cursorColor: const Color.from(
-                alpha: 1,
-                red: 0.89,
-                green: 0.639,
-                blue: 0.4,
-              ),
-              decoration: InputDecoration(
-                hintText: 'Generate a name of ...',
-                contentPadding: EdgeInsets.all(10),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                suffixIcon: IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.mic_none),
-                ),
-                prefixIcon: CustomPopUpButton(
-                  files: files,
-                  onFilesChanged: onFilesChanged,
-                  onModeChanged: onModeChanged,
-                )
-                
-              ),
+            BlocBuilder<ChatCubit, ChatState>(
+              buildWhen: (prev, curr) =>
+                  curr is RecordingStarted || curr is RecordingStopped,
+              builder: (context, state) {
+                final isRecording = state is RecordingStarted;
+                return TextField(
+                  controller: controller,
+                  textInputAction: TextInputAction.newline,
+                  keyboardType: TextInputType.multiline,
+
+                  maxLines: 5,
+                  minLines: 1,
+                  cursorColor: const Color.from(
+                    alpha: 1,
+                    red: 0.89,
+                    green: 0.639,
+                    blue: 0.4,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Generate a name of ...',
+                    contentPadding: EdgeInsets.all(10),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    suffixIcon: GestureDetector(
+                      onLongPressStart: (_) => context.read<ChatCubit>().startRecording(),
+                      onLongPressEnd: (_) => context.read<ChatCubit>().stopRecording(),
+
+                      child: Icon(
+                        isRecording ? Icons.mic : Icons.mic_none,
+                        color: isRecording
+                            ? Colors.red
+                            : AppColors.kPrimaryColor,
+                      ),
+                    ),
+                    prefixIcon: CustomPopUpButton(
+                      files: files,
+                      onFilesChanged: onFilesChanged,
+                      onModeChanged: onModeChanged,
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),

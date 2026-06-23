@@ -33,3 +33,6 @@ final class ChatError extends ChatState {
 
   ChatError({required this.errorMessage});
 }
+
+final class RecordingStarted extends ChatState {}
+final class RecordingStopped extends ChatState {}

@@ -127,63 +127,69 @@ class ApiService {
     _isRefreshing = true;
 
     try {
-      final refreshResponse = await dio.post(ApiConstants.refreshToken);
+  final refreshResponse = await dio.post(ApiConstants.refreshToken);
 
-      if (refreshResponse.statusCode == 200) {
-        final newToken = refreshResponse.data[StorageConstants.userToken];
+  if (refreshResponse.statusCode == 200) {
+    final newToken = refreshResponse.data[StorageConstants.userToken];
 
-        if (newToken != null) {
-          // Save new token
-          await SharedPrefHelper.setSecureString(
-            StorageConstants.userToken,
-            newToken,
-          );
-          debugPrint('Refresh response data: ${refreshResponse.data}');
-          debugPrint('Token key: ${StorageConstants.userToken}');
-          debugPrint(
-            'New token: ${refreshResponse.data[StorageConstants.userToken]}',
-          );
-          // Resolve all queued requests with the new token
-          for (final completer in _pendingRefreshCompleters) {
-            completer.complete(newToken);
-          }
-          _pendingRefreshCompleters.clear();
-
-          // Retry original request
-          return handler.resolve(
-            await _retryRequest(error.requestOptions, newToken),
-          );
-        }
+    if (newToken != null) {
+      await SharedPrefHelper.setSecureString(
+        StorageConstants.userToken,
+        newToken,
+      );
+      for (final completer in _pendingRefreshCompleters) {
+        completer.complete(newToken);
       }
+      _pendingRefreshCompleters.clear();
 
-      // Refresh response was not 200
-      _failPendingRequests();
-      await sessionCubit.endSession();
-      return handler.next(error);
-    } catch (e) {
-      debugPrint('Token refresh error: $e');
-      _failPendingRequests();
-      await sessionCubit.endSession();
-      return handler.next(error);
-    } finally {
-      _isRefreshing = false;
+      // Retry — errors here should NOT trigger sign-out
+      try {
+        return handler.resolve(
+          await _retryRequest(error.requestOptions, newToken),
+        );
+      } catch (retryError) {
+        debugPrint('Retry failed after token refresh: $retryError');
+        return handler.next(error); // pass original error, don't sign out
+      }
     }
+  }
+
+  _failPendingRequests();
+  await sessionCubit.endSession();
+  return handler.next(error);
+
+} catch (e) {
+  debugPrint('Token refresh error: $e');
+  _failPendingRequests();
+  await sessionCubit.endSession();
+  return handler.next(error);
+} finally {
+  _isRefreshing = false;
+}
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────────
 
-  Future<Response> _retryRequest(RequestOptions options, String token) {
-    return dio.request(
-      options.path,
-      options: Options(
-        method: options.method,
-        headers: {...options.headers, 'Authorization': 'Bearer $token'},
-      ),
-      data: options.data,
-      queryParameters: options.queryParameters,
-    );
+Future<Response> _retryRequest(RequestOptions options, String token) {
+  // Rebuild FormData if needed — reusing a finalized FormData crashes
+  dynamic data = options.data;
+  if (data is FormData) {
+    final newFormData = FormData();
+    newFormData.fields.addAll(data.fields);
+    newFormData.files.addAll(data.files);
+    data = newFormData;
   }
 
+  return dio.request(
+    options.path,
+    options: Options(
+      method: options.method,
+      headers: {...options.headers, 'Authorization': 'Bearer $token'},
+    ),
+    data: data,
+    queryParameters: options.queryParameters,
+  );
+}
   void _failPendingRequests() {
     for (final completer in _pendingRefreshCompleters) {
       completer.completeError('Token refresh failed');

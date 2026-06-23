@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:explore_egypt/core/errors/exception.dart';
 import 'package:explore_egypt/core/errors/exception_handle_helper.dart';
@@ -6,10 +8,15 @@ import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:record/record.dart';
 part 'chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
   final ChatRepository _chatRepository;
+  final AudioRecorder _recorder = AudioRecorder();
+  final AudioRecorder _callRecorder = AudioRecorder();
+  StreamSubscription? _audioSubscription;
   ChatCubit(this._chatRepository) : super(ChatInitial());
   List<MessageModel> _messages = [];
   String? _currentConversationId;
@@ -26,7 +33,7 @@ class ChatCubit extends Cubit<ChatState> {
     final newMessage = MessageModel(
       content: message,
       sender: 'user',
-      conversationId: _currentConversationId ,
+      conversationId: _currentConversationId,
       localPaths: filePath ?? [],
       files: [],
     );
@@ -65,51 +72,88 @@ class ChatCubit extends Cubit<ChatState> {
         ),
       );
     } catch (e) {
-        if (e is TimeoutException) { 
-    emit(ChatTimeout(messages: _messages, lastMessage: newMessage));
-  } else if (e is ServerException) {
-    emit(ChatError(errorMessage: e.message.message));
-  } else {
-    emit(ChatError(errorMessage: e.toString()));
-  }
+      emit(MessageLoaded(messages: _messages));
+          if (e is DioException) {
+        final result = ExceptionHandleHelper.handleDioException(e);
+        if (result.type == DioExceptionType2.cancelled) {
+          emit(MessageLoaded(messages: _messages));
+          return;
+        } else if (result.type == DioExceptionType2.timeout) {
+          emit(ChatTimeout(messages: _messages, lastMessage: _messages.last));
+        } else {
+          emit(ChatError(errorMessage: result.message));
+        }
+      }else {
+        emit(ChatError(errorMessage: e.toString()));
+      }
     }
   }
 
-  void cancelGenerating() {
-    if (_cancelToken != null && !_cancelToken!.isCancelled) {
-      _cancelToken!.cancel('Request cancelled');
-    }
-  }
-
-  Future<void> regenerateLastMessage() async{
-  emit(MessageSending(messages: List.from(_messages)));
-  _cancelToken = CancelToken();
-    try{
-    final data = await _chatRepository.regenerateLastMessage(conversationId: _currentConversationId!);
-    _messages = (data['messages'] as List)
-          .map((msg) => MessageModel.fromJson(msg))
-          .toList();
-    emit(
-      MessageLoaded(
-        messages: _messages,
-        conversationId: _currentConversationId,
-      ),
-    );
+  /// make the model stop generating
+  Future<void> stopGenerating() async {
+    emit(MessageSending(messages: _messages));
+    try {
+      await _chatRepository.stopGenerating(
+        conversationId: _currentConversationId!,
+      );
+      _cancelToken!.cancel();
+      emit(
+        MessageLoaded(
+          messages: _messages,
+          conversationId: _currentConversationId,
+        ),
+      );
     } catch (e) {
       emit(MessageLoaded(messages: _messages));
       if (e is DioException) {
-    final result = ExceptionHandleHelper.handleDioException(e);
+        final result = ExceptionHandleHelper.handleDioException(e);
+        if (result.type == DioExceptionType2.cancelled) {
+          emit(MessageLoaded(messages: _messages));
+          return;
+        } else if (result.type == DioExceptionType2.timeout) {
+          emit(ChatTimeout(messages: _messages, lastMessage: _messages.last));
+        } else {
+          emit(ChatError(errorMessage: result.message));
+        }
+      } else {
+        emit(ChatError(errorMessage: e.toString()));
+      }
+    }
+  }
+  
+  /// regenerate the model last reply
+  Future<void> regenerateLastMessage() async {
+    emit(MessageSending(messages: List.from(_messages)));
+    _cancelToken = CancelToken();
+    try {
+      final data = await _chatRepository.regenerateLastMessage(
+        conversationId: _currentConversationId!,
+      );
+      _messages = (data['messages'] as List)
+          .map((msg) => MessageModel.fromJson(msg))
+          .toList();
+      emit(
+        MessageLoaded(
+          messages: _messages,
+          conversationId: _currentConversationId,
+        ),
+      );
+    } catch (e) {
+      emit(MessageLoaded(messages: _messages));
+      if (e is DioException) {
+        final result = ExceptionHandleHelper.handleDioException(e);
 
-    if (result.type == DioExceptionType2.timeout) {
-      emit(ChatTimeout(messages: _messages, lastMessage: _messages.last)); 
-    } else {
-      emit(ChatError(errorMessage: result.message));
+        if (result.type == DioExceptionType2.timeout) {
+          emit(ChatTimeout(messages: _messages, lastMessage: _messages.last));
+        } else {
+          emit(ChatError(errorMessage: result.message));
+        }
+      } else {
+        emit(ChatError(errorMessage: e.toString()));
+      }
     }
-  } else {
-    emit(ChatError(errorMessage: e.toString()));
   }
-    }
-  }
+
   /// getter for the current conversation ID, which can be used to continue an existing conversation or start a new one
   String? get currentConversationId => _currentConversationId;
 
@@ -152,4 +196,49 @@ class ChatCubit extends Cubit<ChatState> {
       ),
     );
   }
+  
+  /// start a live call with the model
+  Future<void> startVoiceCall() async {
+    // 1. Connect socket
+    _chatRepository.connectVoiceCall();
+
+    // 2. Listen to incoming audio from backend
+    _audioSubscription = _chatRepository.getIncomingAudioStream().listen((audioBytes) {
+      // play audioBytes
+    });
+
+    // 3. Stream mic to backend
+    final micStream = await _callRecorder.startStream(
+      const RecordConfig(encoder: AudioEncoder.pcm16bits),
+    );
+    micStream.listen((chunk) => _chatRepository.sendAudioChunk(chunk));
+  }
+  
+  /// end a live call with the model
+  Future<void> endVoiceCall() async {
+    await _callRecorder.stop();
+    _audioSubscription?.cancel();
+    _chatRepository.endVoiceCall();
+  }
+
+Future<void> startRecording() async {
+  if (await _recorder.hasPermission()) {
+    final dir = await getTemporaryDirectory();
+    final path = '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+    await _recorder.start(const RecordConfig(), path: path);
+    emit(RecordingStarted());
+  }
+}
+
+Future<void> stopRecording() async {
+  final path = await _recorder.stop();
+  emit(RecordingStopped());
+
+  if (path != null) {
+    await sendMessage(
+      conversationId: currentConversationId,
+      filePath: [path],
+    );
+  }
+}
 }

@@ -6,6 +6,7 @@ enum DioExceptionType2 {
   cancelled,
   serverError,
   unknown,
+
 }
 
 class ExceptionResult {

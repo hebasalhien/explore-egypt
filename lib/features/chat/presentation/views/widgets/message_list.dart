@@ -4,6 +4,7 @@ import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/chat/model/entities/message_model.dart';
 import 'package:explore_egypt/features/chat/presentation/cubit/chat_cubit/chat_cubit.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/chat_bubble.dart';
+import 'package:explore_egypt/features/chat/presentation/views/widgets/voice_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -59,17 +60,24 @@ class _MessageListState extends State<MessageList> {
           return ListView.builder(
             itemCount: messages.length,
             itemBuilder: (context, index) {
-              if (messages[index].sender == 'bot') {
-                return ChatBubble(message: messages[index]);
+              final message = messages[index];
+              if (message.sender == 'bot') {
+                return ChatBubble(message: message);
               } else {
                 return Column(
                   children: [
-                    if (messages[index].files.isNotEmpty ||
-                        messages[index].localPaths.isNotEmpty)
-                      FileBubble(message: messages[index]),
-                    if (messages[index].content != null &&
-                        messages[index].content!.isNotEmpty)
-                      ChatBubble(message: messages[index]),
+                  if (message.isVoice)
+                    VoiceBubble(message: message),
+
+                  // image/file attachments (non-voice)
+                  if (!message.isVoice &&
+                      (message.files.isNotEmpty ||
+                          message.localPaths.isNotEmpty))
+                    FileBubble(message: message),
+
+                  // text content
+                  if (message.content != null && message.content!.isNotEmpty)
+                    ChatBubble(message: message),
                   ],
                 );
               }

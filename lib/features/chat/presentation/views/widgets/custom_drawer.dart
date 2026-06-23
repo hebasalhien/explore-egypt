@@ -17,58 +17,60 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      backgroundColor: AppColors.kPlanPageBgColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          bottomLeft: Radius.circular(30),
+    return BlocProvider(
+      create: (context) =>
+          ConversationCubit(context.read<ChatRepository>())
+            ..fetchAllConversations(),
+      child: Drawer(
+        backgroundColor: AppColors.kPlanPageBgColor,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            bottomLeft: Radius.circular(30),
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 30),
-        child: Column(
-          spacing: 20,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'History',
-                  style: GoogleFonts.libreBaskerville(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.kBlack,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 30),
+          child: Column(
+            spacing: 20,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'History',
+                    style: GoogleFonts.libreBaskerville(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.kBlack,
+                    ),
                   ),
-                ),
-                IconButton.outlined(
-                  style: IconButton.styleFrom(
-                    side: BorderSide(color: Color(0xffFFEDD5)),
-                    backgroundColor: Colors.white,
+                  IconButton.outlined(
+                    style: IconButton.styleFrom(
+                      side: BorderSide(color: Color(0xffFFEDD5)),
+                      backgroundColor: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(
+                      Icons.arrow_forward_ios,
+                      color: Color(0xffAF5D48),
+                      size: 20,
+                    ),
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.arrow_forward_ios,
-                    color: Color(0xffAF5D48),
-                    size: 20,
-                  ),
-                ),
-              ],
-            ),
-            CustomSearchBar(
-              hint: 'Search conversations',
-              iconColor: Color(0xffC89D7C),
-              hintColor: Color(0x99C89D7C),
-            ),
-            Expanded(
-              child: BlocProvider(
-                create: (context) =>
-                    ConversationCubit(context.read<ChatRepository>())
-                      ..fetchAllConversations(),
-
+                ],
+              ),
+              CustomSearchBar(
+                hint: 'Search conversations',
+                iconColor: Color(0xffC89D7C),
+                hintColor: Color(0x99C89D7C),
+                onChanged: (value) {
+                  context.read<ConversationCubit>().search(value);
+                },
+              ),
+              Expanded(
                 child: BlocBuilder<ConversationCubit, ConversationState>(
                   builder: (context, state) {
                     final selectedConversationId = context
@@ -115,35 +117,35 @@ class CustomDrawer extends StatelessWidget {
                   },
                 ),
               ),
-            ),
 
-            Container(
-              width: double.infinity,
-              height: 1,
-              padding: EdgeInsets.all(0),
-              decoration: BoxDecoration(
-                color: AppColors.kPlanPageBgColor,
-                boxShadow: const [
-                  BoxShadow(
-                    color: AppColors.kBlack,
-                    offset: Offset(0, -4),
-                    blurRadius: 6.1,
-                    spreadRadius: 0.0,
-                  ),
-                ],
+              Container(
+                width: double.infinity,
+                height: 1,
+                padding: EdgeInsets.all(0),
+                decoration: BoxDecoration(
+                  color: AppColors.kPlanPageBgColor,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: AppColors.kBlack,
+                      offset: Offset(0, -4),
+                      blurRadius: 6.1,
+                      spreadRadius: 0.0,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            CustomGradientButton(
-              screenWidth: MediaQuery.of(context).size.width * 0.8,
-              title: 'New Chat',
-              onPressed: () {
-                context.read<ChatCubit>().startNewConversation();
-                Navigator.pop(context);
-              },
-              icon: Icons.add,
-              topToBottom: false,
-            ),
-          ],
+              CustomGradientButton(
+                screenWidth: MediaQuery.of(context).size.width * 0.8,
+                title: 'New Chat',
+                onPressed: () {
+                  context.read<ChatCubit>().startNewConversation();
+                  Navigator.pop(context);
+                },
+                icon: Icons.add,
+                topToBottom: false,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -280,7 +282,10 @@ class ConversationListTile extends StatelessWidget {
                   builder: (dialogContext) => DeleteConfirmationDialog(
                     onConfirm: () {
                       if (onDelete != null) onDelete!();
-                    }, title: 'Delete Chat?', content: 'Are you sure you want to delete this conversation?',
+                    },
+                    title: 'Delete Chat?',
+                    content:
+                        'Are you sure you want to delete this conversation?',
                   ),
                 );
               }
@@ -321,4 +326,3 @@ class ConversationListTile extends StatelessWidget {
     );
   }
 }
-

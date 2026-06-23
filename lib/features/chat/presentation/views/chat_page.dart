@@ -115,20 +115,23 @@ class _ChatPageState extends State<ChatPage> {
                         children: [
                           StopGenerating(
                             onTap: () {
-                              context.read<ChatCubit>().cancelGenerating();
+                              context.read<ChatCubit>().stopGenerating();
                             },
                           ),
-                           RetryBubble(
-                        onRetry: () =>
-                            context.read<ChatCubit>().regenerateLastMessage(),
-                      )
                         ],
                       );
                     }
-                    if (state is MessageLoaded) {
-                      return RetryBubble(
-                        onRetry: () =>
-                            context.read<ChatCubit>().regenerateLastMessage(),
+                    if (state is MessageLoaded && state.messages.isNotEmpty) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(width: 12),
+                          RetryBubble(
+                            onRetry: () => context
+                                .read<ChatCubit>()
+                                .regenerateLastMessage(),
+                          ),
+                        ],
                       );
                     }
                     return const SizedBox.shrink();
@@ -155,6 +158,15 @@ class _ChatPageState extends State<ChatPage> {
                           setState(() {
                             mode = newMode;
                           });
+                        },
+                        onVoiceRecorded: (path) {
+                          context.read<ChatCubit>().sendMessage(
+                            conversationId: context
+                                .read<ChatCubit>()
+                                .currentConversationId,
+                            filePath: [path],
+                            mode: mode,
+                          );
                         },
                         onPressed: (files) {
                           List<String>? filePaths;
@@ -195,17 +207,17 @@ class RetryBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 100,
+      width: 140,
       child: TextButton.icon(
         onPressed: onRetry,
         label: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text('Retry'),
-            Icon(Icons.restart_alt, color: AppColors.kWhite),
+            Text('Regenerate', style: TextStyle(color: AppColors.kBlack)),
+            Icon(Icons.restart_alt, color: AppColors.kPrimaryVariant),
           ],
         ),
-        style: TextButton.styleFrom(backgroundColor: AppColors.kSecondary),
+        style: TextButton.styleFrom(backgroundColor: AppColors.kBGColor),
       ),
     );
   }
