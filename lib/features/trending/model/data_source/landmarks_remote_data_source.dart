@@ -7,7 +7,7 @@ class LandmarksRemoteDataSource {
   LandmarksRemoteDataSource(this._apiService) ;
 
   Future<dynamic> getLandmarksByCategory({required String categoryId}) async {
-    final response = await _apiService.dio.get('${ApiConstants.suggestedPlans}/$categoryId');
+    final response = await _apiService.dio.get('${ApiConstants.landmarks}/category/$categoryId');
     return response.data;
   }
 

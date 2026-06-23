@@ -94,6 +94,11 @@ class LandmarksLoaddedWidgets extends StatelessWidget {
         CategoriesList(
           categories: categories,
           selectedCategoryId: selectedCategoryId,
+          onCategoryTap: (categoryId) {
+            context.read<LandmarksCubit>().getLandmarksByCategory(
+              categoryId: categoryId,
+            );
+          },
         ),
         LandmarkGridView(landmarkModel: landmarkModel),
       ],
