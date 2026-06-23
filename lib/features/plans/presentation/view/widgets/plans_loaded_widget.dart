@@ -4,8 +4,10 @@ import 'package:explore_egypt/core/widgets/custom_app_bar_background.dart';
 import 'package:explore_egypt/features/home/model/entities/plan_card_model.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/custom_search_bar.dart';
 import 'package:explore_egypt/features/plans/model/entities/categories_model.dart';
+import 'package:explore_egypt/features/plans/presentation/cubit/suggested_plans_cubit.dart';
 import 'package:explore_egypt/features/plans/presentation/view/widgets/suggested_plans_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PlansLoaddedWidget extends StatelessWidget {
   const PlansLoaddedWidget({
@@ -61,7 +63,13 @@ class PlansLoaddedWidget extends StatelessWidget {
             ],
           ),
         ),
-        CategoriesList(categories: categories, selectedCategoryId: selectedCategoryId),
+        CategoriesList(categories: categories, selectedCategoryId: selectedCategoryId,
+        onCategoryTap: (categoryId) {
+          context.read<SuggestedPlansCubit>().getPlansByCategory(
+            categoryId: categoryId,
+          );
+        },
+        ),
         SuggestedPlansList(
           screenHeight: screenHeight,
           screenWidth: screenWidth,

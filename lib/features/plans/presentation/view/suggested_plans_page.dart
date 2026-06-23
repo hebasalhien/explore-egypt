@@ -14,6 +14,7 @@ class SuggestedPlansPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xffF8F3ED),
       body: BlocBuilder<SuggestedPlansCubit, SuggestedPlansState>(
+        buildWhen: (previous, current) => current is SuggestedPlansLoaded || current is SuggestedPlansLoading || current is SuggestedPlansError,
         builder: (context, state) {
           if (state is SuggestedPlansLoading) {
             return Center(child: CircularProgressIndicator());

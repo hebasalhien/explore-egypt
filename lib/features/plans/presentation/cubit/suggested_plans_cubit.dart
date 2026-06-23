@@ -1,9 +1,8 @@
-import 'package:bloc/bloc.dart';
 import 'package:explore_egypt/features/home/model/entities/plan_card_model.dart';
 import 'package:explore_egypt/features/home/model/repos/home_repository.dart';
 import 'package:explore_egypt/features/plans/model/entities/categories_model.dart';
 import 'package:explore_egypt/features/plans/model/repo/suggested_plans_repo.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'suggested_plans_state.dart';
 

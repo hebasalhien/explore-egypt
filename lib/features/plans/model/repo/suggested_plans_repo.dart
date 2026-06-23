@@ -14,8 +14,10 @@ class SuggestedPlansRepo {
     } on DioException catch (e) {
       throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerException('An unexpected error occurred: $e');
-    }
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));    }
   }
 
   Future<dynamic> getFavoritePlans() async {
@@ -25,7 +27,9 @@ class SuggestedPlansRepo {
     } on DioException catch (e) {
       throw ServerException(ExceptionHandleHelper.handleDioException(e));
     } catch (e) {
-      throw ServerException('An unexpected error occurred: $e');
-    }
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));    }
   }
 }
