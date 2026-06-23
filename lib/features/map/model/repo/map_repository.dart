@@ -32,4 +32,7 @@ Future<dynamic> deletePlan({required String tripId}) async {
 Future<dynamic> activatePlan({required String newPlanId, String? currentPlanId}) async {
   return await _mapRemoteDataSource.activatePlan(newPlanId: newPlanId, currentPlanId: currentPlanId);
 }
+Future<dynamic> deactivatePlan({required String currentPlanId}) async {
+  return await _mapRemoteDataSource.deactivatePlan(currentPlanId: currentPlanId);
+}
 }

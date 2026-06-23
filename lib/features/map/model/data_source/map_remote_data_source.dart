@@ -54,4 +54,13 @@ class MapRemoteDataSource {
     );
     return response.data;
   }
+
+  Future<dynamic> deactivatePlan({
+    required String currentPlanId,
+  }) async {
+    final response = await _apiService.dio.post(
+      '${ApiConstants.plan}/$currentPlanId${ApiConstants.deactivatePlan}',
+    );
+    return response.data;
+  }
 }

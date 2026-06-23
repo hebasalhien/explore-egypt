@@ -1,5 +1,4 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
-import 'package:explore_egypt/core/widgets/delete_confirmation_dialog.dart';
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/dashed_rounded_button.dart';

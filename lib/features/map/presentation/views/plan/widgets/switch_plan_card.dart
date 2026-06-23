@@ -71,7 +71,7 @@ class SwitchPlan extends StatelessWidget {
                       : Icons.circle_outlined,
                 ),
                 onPressed: () {
-                  context.read<PlanCubit>().activatePlan(newPlanId: trip.id!);
+                  context.read<PlanCubit>().togglePlanActivation(newPlanId: trip.id!);
                   Navigator.pop(context);
                 },
                 color: trip.active ? Color(0xffD38A5D) : Color(0xffD1D5DB),
