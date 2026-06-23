@@ -4,8 +4,10 @@
 	<dict>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>We need microphone access to send voice messages</string>
 		<key>CFBundleDisplayName</key>
-		<string>Explore Egypt</string>
+		<string>Sawahny</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
