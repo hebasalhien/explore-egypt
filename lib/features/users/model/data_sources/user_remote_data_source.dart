@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:explore_egypt/core/constants/api_constants.dart';
 import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/features/users/model/entities/user_model.dart';
@@ -20,9 +21,21 @@ class UserRemoteDataSource {
     String? userName,
     String? bio,
   }) async {
+    MultipartFile? userImage;
+    if (image != null && image.isNotEmpty) {
+      userImage = await MultipartFile.fromFile(
+        image,
+        filename: image.split('/').last,
+      );
+    }
+    FormData formData = FormData.fromMap({
+      if (userName != null) "username": userName,
+      if (bio != null) "bio": bio,
+      if (userImage != null) "userImage": userImage,
+    });
     final response = await _apiService.dio.put(
       ApiConstants.profile,
-      data: {'username': userName, 'bio': bio, 'userImage': image},
+      data: formData,
     );
     final message = response.data['message'];
     if (response.statusCode != null &&

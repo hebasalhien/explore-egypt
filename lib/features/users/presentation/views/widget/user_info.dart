@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:explore_egypt/core/constants/app_constants.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +50,7 @@ class UserPhoto extends StatelessWidget {
           radius: 50,
           backgroundColor: Colors.transparent,
           backgroundImage: (imageURL != null && imageURL!.isNotEmpty)
-              ? FileImage(File(imageURL!))
+              ? NetworkImage(imageURL!)
               : const AssetImage(AppConstants.userImage),
         ),
       ),

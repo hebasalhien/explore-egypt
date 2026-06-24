@@ -224,6 +224,7 @@ class UpdateUserDataWidget extends StatelessWidget {
                       color: AppColors.kPrimaryVariant,
                     ),
                     controller: bioController,
+                    initialValue: null,
                   ),
                 ],
               ),
