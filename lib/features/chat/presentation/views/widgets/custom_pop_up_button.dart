@@ -1,5 +1,4 @@
 import 'package:explore_egypt/core/media/file_picker_services.dart';
-import 'package:explore_egypt/features/chat/presentation/views/voice_call_screen.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/menu_item.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +7,14 @@ class CustomPopUpButton extends StatelessWidget {
   final List<PlatformFile> files;
   final ValueChanged<List<PlatformFile>> onFilesChanged;
   final ValueChanged<String>? onModeChanged;
+  final VoidCallback onCallPressed;
 
   const CustomPopUpButton({
     super.key,
     required this.files,
     required this.onFilesChanged,
     this.onModeChanged,
+    required this.onCallPressed,
   });
 
   @override
@@ -36,12 +37,7 @@ class CustomPopUpButton extends StatelessWidget {
         } else if (value == 'planMode') {
           onModeChanged?.call('plan');
         } else if (value == 'call') {
-          if (context.mounted) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const VoiceCallScreen()),
-            );
-          }
+          onCallPressed();
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[

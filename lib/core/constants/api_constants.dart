@@ -2,7 +2,7 @@ import 'package:explore_egypt/core/config/app_config.dart';
 
 class ApiConstants {
   static final baseUrl = AppConfig.backendUrl;
-  static final voiceUrl = AppConfig.voiceUrl;
+  static final voiceUrl = AppConfig.voiceCall;
   //auth endpoints //
   static const String auth = 'api/auth/';
   static const String login = 'login';
@@ -18,7 +18,6 @@ class ApiConstants {
   static const String chats = 'api/chats';
   static const String regenerate = '/regenerate';
   static const String stopGenerating = '/stop';
-  static const String voiceCall = 'voice';
 
   /// home endpoints
   static const String home = 'api/home';
@@ -35,4 +34,5 @@ class ApiConstants {
   static const String activatePlan = '/activate';
   static const String deactivatePlan = '/deactivate';
   static const String addDayToPlan = '/days';
+  static const String places = '/places';
 }

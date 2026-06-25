@@ -52,6 +52,7 @@ dependencies:
   maplibre: ^0.3.0
   path_provider: ^2.1.5
   pretty_dio_logger: ^1.4.0
+  flutter_pcm_sound: ^3.3.3
   record: ^6.2.1
   shared_preferences: ^2.5.3
   shimmer: ^3.0.0

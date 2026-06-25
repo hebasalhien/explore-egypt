@@ -13,14 +13,14 @@ class CustomRow extends StatelessWidget {
     required this.files,
     required this.onFilesChanged,
     this.onModeChanged,
-    required this.onVoiceRecorded,
+    required this.onCallPressed,
   });
   final TextEditingController controller;
   final void Function(List<PlatformFile> files) onPressed;
   final List<PlatformFile> files;
   final ValueChanged<List<PlatformFile>> onFilesChanged;
   final ValueChanged<String>? onModeChanged;
-  final ValueChanged<String> onVoiceRecorded;
+  final VoidCallback onCallPressed;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -32,6 +32,7 @@ class CustomRow extends StatelessWidget {
           files: files,
           onFilesChanged: onFilesChanged,
           onModeChanged: onModeChanged,
+          onCallPressed: onCallPressed,
         ),
         ElevatedButton(
           onPressed: () => onPressed(files),

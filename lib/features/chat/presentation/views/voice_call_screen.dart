@@ -52,8 +52,10 @@ class _VoiceCallScreenState extends State<VoiceCallScreen>
   }
 
   Future<void> _startCall() async {
-    // context.read<ChatCubit>().startVoiceCall();
-
+  final cubit = context.read<ChatCubit>();
+  if (!cubit.isCallActive) {
+    cubit.startVoiceCall();
+  }
     setState(() {
       _isCallActive = true;
       _status = 'Listening to you...';
@@ -76,7 +78,7 @@ class _VoiceCallScreenState extends State<VoiceCallScreen>
     _pulseController.stop();
     _pulse2Controller.stop();
 
-    // await context.read<ChatCubit>().endVoiceCall();
+    context.read<ChatCubit>().endVoiceCall();
 
     await Future.delayed(const Duration(seconds: 2));
 
@@ -334,9 +336,9 @@ class _EndCallButton extends StatelessWidget {
             height: 70,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFFA32D2D),
+              color: AppColors.kPrimaryColor,
             ),
-            child: const Icon(Icons.call_end, color: Colors.white, size: 30),
+            child: const Icon(Icons.close_rounded, color: Colors.white, size: 30),
           ),
           const SizedBox(height: 8),
           const Text(

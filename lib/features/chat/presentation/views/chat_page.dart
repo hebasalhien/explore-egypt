@@ -3,6 +3,7 @@ import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/core/widgets/gradient_app_bar.dart';
 import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:explore_egypt/features/chat/presentation/cubit/chat_cubit/chat_cubit.dart';
+import 'package:explore_egypt/features/chat/presentation/views/voice_call_screen.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/chat_background.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_drawer.dart';
 import 'package:explore_egypt/features/chat/presentation/views/widgets/custom_row.dart';
@@ -159,14 +160,19 @@ class _ChatPageState extends State<ChatPage> {
                             mode = newMode;
                           });
                         },
-                        onVoiceRecorded: (path) {
-                          context.read<ChatCubit>().sendMessage(
-                            conversationId: context
-                                .read<ChatCubit>()
-                                .currentConversationId,
-                            filePath: [path],
-                            mode: mode,
-                          );
+                        onCallPressed: () {
+                          if (context.mounted) {
+                            final chatCubit = context.read<ChatCubit>();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider.value(
+                                  value: chatCubit,
+                                  child: const VoiceCallScreen(),
+                                ),
+                              ),
+                            );
+                          }
                         },
                         onPressed: (files) {
                           List<String>? filePaths;

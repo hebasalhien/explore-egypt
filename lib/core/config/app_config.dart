@@ -10,5 +10,7 @@ class AppConfig {
       'https://api.maptiler.com/maps/019e5b83-9d95-791b-be05-28fcc0c224ba/style.json?key=$mapTilerKey';
   
   static String get voiceUrl => dotenv.env['VOICE_CALL_URL']!;
+  static String get voiceCall => '${voiceUrl}voice';
+
   
 }

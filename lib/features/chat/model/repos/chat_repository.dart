@@ -133,8 +133,8 @@ class ChatRepository {
   }
 
   
-  void connectVoiceCall() {
-    _dataSource.connectVoiceCall();
+  Future<void> connectVoiceCall() async {
+    await _dataSource.connectVoiceCall();
   }
 
   

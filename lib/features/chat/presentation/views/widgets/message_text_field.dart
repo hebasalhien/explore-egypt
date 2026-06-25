@@ -13,12 +13,14 @@ class MessageTextField extends StatelessWidget {
     required this.files,
     required this.onFilesChanged,
     this.onModeChanged,
+    required this.onCallPressed,
   });
 
   final TextEditingController controller;
   final List<PlatformFile> files;
   final ValueChanged<List<PlatformFile>> onFilesChanged;
   final ValueChanged<String>? onModeChanged;
+  final VoidCallback onCallPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +110,7 @@ class MessageTextField extends StatelessWidget {
                       files: files,
                       onFilesChanged: onFilesChanged,
                       onModeChanged: onModeChanged,
+                      onCallPressed: onCallPressed,
                     ),
                   ),
                 );

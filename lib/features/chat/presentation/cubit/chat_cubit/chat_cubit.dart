@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:explore_egypt/core/errors/exception.dart';
 import 'package:explore_egypt/core/errors/exception_handle_helper.dart';
@@ -8,6 +7,7 @@ import 'package:explore_egypt/features/chat/model/repos/chat_repository.dart';
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_pcm_sound/flutter_pcm_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 part 'chat_state.dart';
@@ -16,6 +16,9 @@ class ChatCubit extends Cubit<ChatState> {
   final ChatRepository _chatRepository;
   final AudioRecorder _recorder = AudioRecorder();
   final AudioRecorder _callRecorder = AudioRecorder();
+  final List<Uint8List> _audioBuffer = [];
+  bool _playerIdle = true;
+  static const int _preBufferCount = 4;
   StreamSubscription? _audioSubscription;
   ChatCubit(this._chatRepository) : super(ChatInitial());
   List<MessageModel> _messages = [];
@@ -58,7 +61,9 @@ class ChatCubit extends Cubit<ChatState> {
         int messageLength = data['messages'].length;
         final lastMessage = data['messages'][messageLength - 1];
         if (lastMessage['type'] == 'plan' && lastMessage['data'] != null) {
-          final trip = TripModel.fromJson(lastMessage);
+          final trip = TripModel.fromJson(lastMessage).copyWith(
+            conversationId: _currentConversationId,
+          );
           emit(PlanGeneratied(trip: trip));
         }
       }
@@ -73,7 +78,7 @@ class ChatCubit extends Cubit<ChatState> {
       );
     } catch (e) {
       emit(MessageLoaded(messages: _messages));
-          if (e is DioException) {
+      if (e is DioException) {
         final result = ExceptionHandleHelper.handleDioException(e);
         if (result.type == DioExceptionType2.cancelled) {
           emit(MessageLoaded(messages: _messages));
@@ -83,7 +88,7 @@ class ChatCubit extends Cubit<ChatState> {
         } else {
           emit(ChatError(errorMessage: result.message));
         }
-      }else {
+      } else {
         emit(ChatError(errorMessage: e.toString()));
       }
     }
@@ -120,7 +125,7 @@ class ChatCubit extends Cubit<ChatState> {
       }
     }
   }
-  
+
   /// regenerate the model last reply
   Future<void> regenerateLastMessage() async {
     emit(MessageSending(messages: List.from(_messages)));
@@ -196,49 +201,108 @@ class ChatCubit extends Cubit<ChatState> {
       ),
     );
   }
-  
+
   /// start a live call with the model
   Future<void> startVoiceCall() async {
-    // 1. Connect socket
-    _chatRepository.connectVoiceCall();
+    debugPrint('[VoiceCall] 🚀 startVoiceCall called');
 
-    // 2. Listen to incoming audio from backend
-    _audioSubscription = _chatRepository.getIncomingAudioStream().listen((audioBytes) {
-      // play audioBytes
+    // 1. Setup PCM first
+    await FlutterPcmSound.setup(sampleRate: 16000, channelCount: 1);
+    await FlutterPcmSound.setFeedThreshold(8000);
+    debugPrint('[VoiceCall] 🎧 PCM player ready');
+
+    // 2. Register playback callback
+    _playerIdle = true;
+    FlutterPcmSound.onFeedSamplesCallback = (remainingSamples) {
+      if (_audioBuffer.isEmpty) {
+        debugPrint('[VoiceCall] ⏸️ Buffer empty — player going idle');
+        _playerIdle = true;
+        return;
+      }
+      final chunk = _audioBuffer.removeAt(0);
+      final samples = PcmArrayInt16.fromList(
+        chunk.buffer.asInt16List().toList(),
+      );
+      FlutterPcmSound.feed(samples);
+    };
+
+    // 3. Subscribe to audio stream before connecting
+    _audioSubscription = _chatRepository.getIncomingAudioStream().listen(
+      (audioBytes) {
+        _audioBuffer.add(audioBytes);
+        debugPrint(
+          '[VoiceCall] 🎯 Buffering: ${audioBytes.length} bytes, queue: ${_audioBuffer.length}',
+        );
+
+        // Wait until pre-buffer is full before starting playback
+        if (_playerIdle && _audioBuffer.length >= _preBufferCount) {
+          debugPrint('[VoiceCall] ▶️ Pre-buffer ready — starting playback');
+          _playerIdle = false;
+          FlutterPcmSound.onFeedSamplesCallback!(0);
+        }
+      },
+      onError: (e) => debugPrint('[VoiceCall] ❌ Audio stream error: $e'),
+      onDone: () => debugPrint('[VoiceCall] 🔌 Audio stream done'),
+    );
+
+    // 4. Now connect
+    try {
+      await _chatRepository.connectVoiceCall();
+    } catch (e) {
+      debugPrint('[VoiceCall] ❌ Connection failed: $e');
+      emit(ChatError(errorMessage: 'Voice call connection failed: $e'));
+      return;
+    }
+
+    // 5. Start mic last
+    debugPrint('[VoiceCall] 🎙️ Starting microphone stream...');
+    final micStream = await _callRecorder.startStream(
+      const RecordConfig(
+        encoder: AudioEncoder.pcm16bits,
+        sampleRate: 16000,
+        numChannels: 1,
+      ),
+    );
+    micStream.listen((chunk) {
+      debugPrint('[VoiceCall] 📤 Sending audio chunk: ${chunk.length} bytes');
+      _chatRepository.sendAudioChunk(chunk);
     });
 
-    // 3. Stream mic to backend
-    final micStream = await _callRecorder.startStream(
-      const RecordConfig(encoder: AudioEncoder.pcm16bits),
-    );
-    micStream.listen((chunk) => _chatRepository.sendAudioChunk(chunk));
+    debugPrint('[VoiceCall] ✅ Voice call fully started');
   }
-  
+
   /// end a live call with the model
   Future<void> endVoiceCall() async {
-    await _callRecorder.stop();
-    _audioSubscription?.cancel();
+    await _audioSubscription?.cancel();
+    _audioSubscription = null;
+    _audioBuffer.clear();
+    _playerIdle = true;
+    FlutterPcmSound.onFeedSamplesCallback = null;
+    await FlutterPcmSound.release();
     _chatRepository.endVoiceCall();
+    debugPrint('[VoiceCall] 📵 Voice call ended');
   }
 
-Future<void> startRecording() async {
-  if (await _recorder.hasPermission()) {
-    final dir = await getTemporaryDirectory();
-    final path = '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
-    await _recorder.start(const RecordConfig(), path: path);
-    emit(RecordingStarted());
-  }
-}
+  bool get isCallActive => _audioSubscription != null;
 
-Future<void> stopRecording() async {
-  final path = await _recorder.stop();
-  emit(RecordingStopped());
-
-  if (path != null) {
-    await sendMessage(
-      conversationId: currentConversationId,
-      filePath: [path],
-    );
+  Future<void> startRecording() async {
+    if (await _recorder.hasPermission()) {
+      final dir = await getTemporaryDirectory();
+      final path =
+          '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+      await _recorder.start(const RecordConfig(), path: path);
+      emit(MessageLoaded(messages: _messages));
+    }
   }
-}
+
+  Future<void> stopRecording() async {
+    final path = await _recorder.stop();
+    emit(MessageLoaded(messages: _messages));
+    if (path != null) {
+      await sendMessage(
+        conversationId: currentConversationId,
+        filePath: [path],
+      );
+    }
+  }
 }
