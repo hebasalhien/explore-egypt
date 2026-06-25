@@ -63,4 +63,19 @@ class MapRemoteDataSource {
     );
     return response.data;
   }
+
+  Future<dynamic> addPlacesToDay({
+    required int day,
+    required String landmarkIds,
+    required String planId,
+  }) async {
+    final response = await _apiService.dio.post(
+      '${ApiConstants.plan}/$planId${ApiConstants.places}',
+      data: {
+        'dayIndex': day,
+        'placeId': landmarkIds,
+      },
+    );
+    return response.data;
+  }
 }

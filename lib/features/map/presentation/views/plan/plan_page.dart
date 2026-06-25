@@ -56,7 +56,6 @@ class PlanPage extends StatelessWidget {
             : Container();
       },
     );
-
   }
 }
 

@@ -1,5 +1,4 @@
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
-import 'package:explore_egypt/features/map/presentation/views/main_map_page.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,7 +70,9 @@ class SwitchPlan extends StatelessWidget {
                       : Icons.circle_outlined,
                 ),
                 onPressed: () {
-                  context.read<PlanCubit>().togglePlanActivation(newPlanId: trip.id!);
+                  context.read<PlanCubit>().togglePlanActivation(
+                    newPlanId: trip.id!,
+                  );
                   Navigator.pop(context);
                 },
                 color: trip.active ? Color(0xffD38A5D) : Color(0xffD1D5DB),
@@ -79,15 +80,7 @@ class SwitchPlan extends StatelessWidget {
             ],
           ),
           onTap: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (_) => BlocProvider.value(
-                  value: context.read<PlanCubit>(),
-                  child: MainMapPage(trip: trip),
-                ),
-              ),
-            );
-
+            context.read<PlanCubit>().displayPlan(trip);
             Navigator.pop(context);
           },
         ),

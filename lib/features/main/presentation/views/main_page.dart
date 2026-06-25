@@ -10,6 +10,8 @@ import 'package:explore_egypt/features/favorites/presentation/cubit/favorites_cu
 import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
 import 'package:explore_egypt/features/main/presentation/cubit/navigation_cubit.dart';
 import 'package:explore_egypt/features/main/presentation/views/widgets/custom_navigation_destination.dart';
+import 'package:explore_egypt/features/map/model/data_source/map_remote_data_source.dart';
+import 'package:explore_egypt/features/map/model/repo/map_repository.dart';
 import 'package:explore_egypt/features/map/presentation/views/main_map_page.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:explore_egypt/features/users/model/data_sources/user_remote_data_source.dart';
@@ -30,13 +32,28 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final List<bool> _initialized = [true, false, false, false];
 
-  // Add navigator keys for each tab
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
   ];
+
+  // ✅ PlanCubit lives here so MainPage can read its state for back handling
+  late final PlanCubit _planCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    final mapRepository = MapRepository(MapRemoteDataSource(ApiService.instance));
+    _planCubit = PlanCubit(mapRepository)..getActivePlan();
+  }
+
+  @override
+  void dispose() {
+    _planCubit.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,30 +65,36 @@ class _MainPageState extends State<MainPage> {
             FavoritesRepo(FavoritesRemoteDataSource(ApiService.instance)),
           )..loadFavorites(),
         ),
+        // ✅ Provide PlanCubit at this level so both MainPage and MainMapPage share it
+        BlocProvider.value(value: _planCubit),
       ],
       child: BlocConsumer<NavigationCubit, NavigationState>(
-listener: (context, state) {
-  setState(() {
-    _initialized[state.index] = true;
-  });
+        listener: (context, state) {
+          setState(() {
+            _initialized[state.index] = true;
+          });
 
-  // ✅ Push MainMapPage with trip into tab 2's navigator
-  if (state.trip != null) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _navigatorKeys[2].currentState?.push(
-        MaterialPageRoute(
-          builder: (_) => MainMapPage(trip: state.trip),
-        ),
-      );
-      context.read<NavigationCubit>().clearTrip();
-    });
-  }
-},
+          if (state.trip != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _navigatorKeys[2].currentState?.push(
+                MaterialPageRoute(
+                  builder: (_) => MainMapPage(trip: state.trip),
+                ),
+              );
+              context.read<NavigationCubit>().clearTrip();
+            });
+          }
+        },
         builder: (context, state) {
           return PopScope(
-            // Handle back button: pop within tab instead of exiting
             canPop: false,
             onPopInvokedWithResult: (didPop, result) {
+              // ✅ If on map tab and cubit is in PlanLoaded, intercept and go back
+              if (state.index == 2 && _planCubit.state is PlanLoaded) {
+                _planCubit.goBackToPlans();
+                return;
+              }
+              // Otherwise default behaviour: pop within the tab's navigator
               final navState = _navigatorKeys[state.index].currentState;
               if (navState != null && navState.canPop()) {
                 navState.pop();
@@ -85,7 +108,6 @@ listener: (context, state) {
                   Navigator(
                     key: _navigatorKeys[0],
                     onGenerateRoute: (settings) {
-                      // Initial route: always show HomePage
                       if (settings.name == Navigator.defaultRouteName) {
                         return MaterialPageRoute(
                           builder: (_) => _initialized[0]
@@ -93,8 +115,6 @@ listener: (context, state) {
                               : const SizedBox.shrink(),
                         );
                       }
-                      // Any other named route (e.g. trendingPage) → AppRoutes
-                      // This keeps the bottom nav bar visible
                       return AppRoutes.onGenerateRoute(settings);
                     },
                   ),
@@ -115,38 +135,18 @@ listener: (context, state) {
                   ),
 
                   // Tab 2 - Map
-                  // Navigator(
-                  //   key: _navigatorKeys[2],
-                  //   onGenerateRoute: (_) => MaterialPageRoute(
-                  //     builder: (routeContext) =>
-                  //         BlocBuilder<NavigationCubit, NavigationState>(
-                  //           builder: (context, navState) {
-                  //             if (!_initialized[2])
-                  //               return const SizedBox.shrink();
-
-                  //             return PopScope(
-                  //               canPop: false,
-                  //               onPopInvokedWithResult: (didPop, result) {
-                  //                 final planCubit = context.read<PlanCubit>();
-                  //                 if (planCubit.state is PlanLoaded) {
-                  //                   planCubit.goBackToPlans();
-                  //                 }
-                  //               },
-                  //               child: MainMapPage(trip: navState.trip),
-                  //             );
-                  //           },
-                  //         ),
-                  //   ),
-                  // ),
+                  // ✅ PlanCubit is already provided above via BlocProvider.value
+                  //    MainMapPage no longer creates its own PlanCubit
                   Navigator(
-  key: _navigatorKeys[2],
-  onGenerateRoute: (_) => MaterialPageRoute(
-    builder: (_) => _initialized[2]
-        ? const MainMapPage() // ← always root, no trip
-        : const SizedBox.shrink(),
-  ),
-),
+                    key: _navigatorKeys[2],
+                    onGenerateRoute: (_) => MaterialPageRoute(
+                      builder: (_) => _initialized[2]
+                          ? const MainMapPage()
+                          : const SizedBox.shrink(),
+                    ),
+                  ),
 
+                  // Tab 3 - Profile
                   RepositoryProvider(
                     create: (_) => UserRepository(
                       UserRemoteDataSource(ApiService.instance),
@@ -166,7 +166,6 @@ listener: (context, state) {
                                   : const SizedBox.shrink(),
                             );
                           }
-
                           return AppRoutes.onGenerateRoute(settings);
                         },
                       ),

@@ -20,7 +20,7 @@ class ActivityModel {
   factory ActivityModel.fromjson(json) {
     return ActivityModel(
       cost: json['cost_usd'],
-      time: json['time'],
+      time: json['time']??'9:00 PM',
       landmarkName: json['title'],
       description: json['description'],
       image: json['image_url'] ,

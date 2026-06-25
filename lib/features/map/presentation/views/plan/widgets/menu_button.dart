@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MenuButton extends StatefulWidget {
-  const MenuButton({super.key});
-
+  const MenuButton({super.key, required this.dayNumber, required this.planId});
+  final int dayNumber;
+  final String? planId;
   @override
   State<MenuButton> createState() => _MenuButtonState();
 }
@@ -159,6 +160,7 @@ class _MenuButtonState extends State<MenuButton>
 
   @override
   Widget build(BuildContext context) {
+    PlanCubit planCubit = context.read<PlanCubit>();
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -176,17 +178,18 @@ class _MenuButtonState extends State<MenuButton>
                   icon: Icons.location_on_outlined,
                   label: 'Add Place',
                   hasBorder: false,
-                  onTap: ()  {
-                    context.read<PlanCubit>().getLandmarkList();
-                    var state = context.read<PlanCubit>().state;
+                  onTap: () {
+                    planCubit.getLandmarkList();
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
                       builder: (context) {
-                        return AddNewPlace(
-                          landmark: state is GetLandmarksSuccess
-                              ? state.landmarks
-                              : [],
+                        return BlocProvider.value(
+                          value: planCubit,
+                          child: AddNewPlace(
+                            dayNumber: widget.dayNumber,
+                            planId: widget.planId,
+                          ),
                         );
                       },
                     );
@@ -198,7 +201,7 @@ class _MenuButtonState extends State<MenuButton>
                   label: 'Delete Place',
                   hasBorder: false,
                   onTap: () {
-                    // TODO: Action for Delete Place
+                    planCubit.toggleDeleteMode();
                   },
                 ),
                 const SizedBox(height: 16),

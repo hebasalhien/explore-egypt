@@ -59,6 +59,8 @@ class PlanStepCard extends StatelessWidget {
                 style: Theme.of(
                   context,
                 ).textTheme.labelLarge!.copyWith(color: AppColors.kBlack),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               subtitle: Text(
                 subtitle,
@@ -74,7 +76,9 @@ class PlanStepCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   image: DecorationImage(
-                    image:imageURL!=null?NetworkImage(imageURL!): AssetImage("assets/images/pyramid.png"),
+                    image: imageURL != null
+                        ? NetworkImage(imageURL!)
+                        : AssetImage("assets/images/pyramid.png"),
                   ),
                 ),
               ),

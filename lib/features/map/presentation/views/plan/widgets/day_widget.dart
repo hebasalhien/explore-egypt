@@ -1,7 +1,9 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/features/map/model/entities/day_model.dart';
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/dashed_rounded_button.dart';
+import 'package:explore_egypt/features/map/presentation/views/plan/widgets/delete_place_card.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/no_places_added_yet.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/plan_step_card.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/switch_plan_list.dart';
@@ -27,13 +29,14 @@ class DayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<PlanCubit>().state;
     if (selectedDay >= trip.dayModel.length) {
       return const Expanded(
         child: Center(child: Text('No data available for this day')),
       );
     }
-    if(trip.dayModel[selectedDay].activity.isEmpty){
-      return NoPlacesAddedYet(day: selectedDay,);
+    if (trip.dayModel[selectedDay].activity.isEmpty) {
+      return NoPlacesAddedYet(day: selectedDay);
     }
     return Expanded(
       child: SingleChildScrollView(
@@ -44,18 +47,35 @@ class DayWidget extends StatelessWidget {
             ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return PlanStepCard(
-                  screenHeight: screenHeight,
-                  screenWidth: screenWidth,
-                  time: trip.dayModel[selectedDay].activity[index].time,
-                  cost: trip.dayModel[selectedDay].activity[index].cost
-                      .toString(),
-                  title:
-                      trip.dayModel[selectedDay].activity[index].landmarkName,
-                  subtitle:
-                      trip.dayModel[selectedDay].activity[index].description,
-                  imageURL: trip.dayModel[selectedDay].activity[index].image,
-                );
+                  bool isDeleteMode = context.read<PlanCubit>().isDeleteMode;
+                if (isDeleteMode) {
+                  return DeletePlaceCard(
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                    time: trip.dayModel[selectedDay].activity[index].time,
+                    cost: trip.dayModel[selectedDay].activity[index].cost
+                        .toString(),
+                    isSelected: true,
+                    title:
+                        trip.dayModel[selectedDay].activity[index].landmarkName,
+                    subtitle:
+                        trip.dayModel[selectedDay].activity[index].description,
+                    imageURL: trip.dayModel[selectedDay].activity[index].image,
+                  );
+                } else {
+                  return PlanStepCard(
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                    time: trip.dayModel[selectedDay].activity[index].time,
+                    cost: trip.dayModel[selectedDay].activity[index].cost
+                        .toString(),
+                    title:
+                        trip.dayModel[selectedDay].activity[index].landmarkName,
+                    subtitle:
+                        trip.dayModel[selectedDay].activity[index].description,
+                    imageURL: trip.dayModel[selectedDay].activity[index].image,
+                  );
+                }
               },
               itemCount: trip.dayModel[selectedDay].activity.length,
               shrinkWrap: true,
@@ -135,10 +155,7 @@ class PlanTitle extends StatelessWidget {
                                   ),
                                 );
                               } else if (state is GetAllPlansSuccess) {
-                                return SwitchPlanList(
-                                  plans: state.plans,
-                                  
-                                );
+                                return SwitchPlanList(plans: state.plans);
                               } else if (state is GetAllPlansFailure) {
                                 return Expanded(
                                   child: Center(
@@ -153,7 +170,19 @@ class PlanTitle extends StatelessWidget {
                             },
                           ),
                           DashedRoundedButton(
-                            onTap: () {},
+                            onTap: () {
+                              TripModel newPlan = TripModel(
+                                title: 'new plan',
+                                dayModel: [
+                                  DayModel(activity: [], totalCost: 0),
+                                ],
+                                days: 1,
+                                conversationId: null,
+                                active: false,
+                              );
+                              context.read<PlanCubit>().savePlan(trip: newPlan);
+                              Navigator.pop(context);
+                            },
                             label: 'Create New Plan',
                             color: Color(0xffF3E9D9),
                           ),

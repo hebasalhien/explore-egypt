@@ -76,9 +76,7 @@ class _ActivePlanState extends State<ActivePlan> {
                     widget.onDayChanged?.call(index);
                   },
                   onTap: () {
-                    context.read<PlanCubit>().addNewDayToPlan(
-                      trip: trip,
-                    );
+                    context.read<PlanCubit>().addNewDayToPlan(trip: trip);
                   },
                 ),
                 PlanTitle(trip: trip),
@@ -94,7 +92,47 @@ class _ActivePlanState extends State<ActivePlan> {
                 ),
               ],
             ),
-            Positioned(bottom: 20, right: 20, child: MenuButton()),
+            if (trip.dayModel[selectedDay].activity.isNotEmpty)
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: MenuButton(dayNumber: selectedDay, planId: trip.id),
+              ),
+            if (context.watch<PlanCubit>().isDeleteMode)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          context.read<PlanCubit>().toggleDeleteMode();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          //context.read<PlanCubit>().deleteSelectedPlaces();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: Text('Delete'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         );
       },

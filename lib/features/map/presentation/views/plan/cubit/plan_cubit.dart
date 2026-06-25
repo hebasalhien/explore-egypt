@@ -10,14 +10,21 @@ part 'plan_state.dart';
 class PlanCubit extends Cubit<PlanState> {
   final MapRepository mapRepository;
   PlanCubit(this.mapRepository) : super(PlanInitial());
-  List<TripModel>? _cachedPlans; // ← add this field
-
+  List<TripModel>? _cachedPlans;
+  TripModel? _activePlan;
+  String? addedLandmarkId;
+  bool isDeleteMode = false;
+  Set<String> userPlansId = {};
   Future<void> getAllPlans() async {
     emit(GetAllPlansLoading());
 
     try {
-      _cachedPlans= await mapRepository.getAllMyPlans();
-
+      _cachedPlans = await mapRepository.getAllMyPlans();
+      if (_cachedPlans != null) {
+        for (var trip in _cachedPlans!) {
+          userPlansId.add(trip.id!);
+        }
+      }
       emit(GetAllPlansSuccess(plans: _cachedPlans!));
     } on Exception catch (e) {
       emit(GetAllPlansFailure(e.toString()));
@@ -28,7 +35,6 @@ class PlanCubit extends Cubit<PlanState> {
     emit(PlanLoading());
     try {
       final response = await mapRepository.getActivePlan();
-
       // empty array = no active plan
       if (response is Map && response.isEmpty) {
         _cachedPlans = await mapRepository.getAllMyPlans();
@@ -38,6 +44,7 @@ class PlanCubit extends Cubit<PlanState> {
 
       final trip = TripModel.fromJson(response);
       await SharedPrefHelper.setData(StorageConstants.currentPlanId, trip.id);
+      _activePlan = trip;
       emit(GetActivePlanSuccess(activePlan: trip));
     } catch (e) {
       emit(GetActivePlanFailure(e.toString()));
@@ -83,9 +90,13 @@ class PlanCubit extends Cubit<PlanState> {
   }
 
   void goBackToPlans() {
-    if (_cachedPlans != null) {
-      emit(NoActivePlan(plans: _cachedPlans!));
+    if (_activePlan != null) {
+      emit(GetActivePlanSuccess(activePlan: _activePlan!));
+      return;
     }
+    
+      emit(NoActivePlan(plans: _cachedPlans ?? []));
+    
   }
 
   Future<String> getCurrentPlanId() async {
@@ -99,9 +110,10 @@ class PlanCubit extends Cubit<PlanState> {
       if (currentPlanId == newPlanId) {
         await mapRepository.deactivatePlan(currentPlanId: currentPlanId);
         await SharedPrefHelper.removeData(StorageConstants.currentPlanId);
-        if(_cachedPlans != null){
+        _activePlan = null;
+        if (_cachedPlans != null) {
           emit(NoActivePlan(plans: _cachedPlans!));
-        }else{
+        } else {
           emit(NoActivePlan());
         }
         return;
@@ -112,9 +124,68 @@ class PlanCubit extends Cubit<PlanState> {
       );
       final trip = TripModel.fromJson(result);
       await SharedPrefHelper.setData(StorageConstants.currentPlanId, trip.id);
+      _activePlan = trip;
       emit(GetActivePlanSuccess(activePlan: trip));
     } on Exception catch (e) {
       emit(GetActivePlanFailure(e.toString()));
     }
+  }
+
+  Future<void> savePlan({required TripModel trip}) async {
+    if (trip.id == null || !userPlansId.contains(trip.id)) {
+      try {
+        final result = await mapRepository.savePlan(trip: trip);
+        final TripModel updatedTrip = TripModel.fromJson(result);
+
+        emit(PlanLoaded(trip: updatedTrip));
+      } catch (e) {
+        emit(PlanError());
+      }
+    }
+  }
+
+  // void toggleLandmarkToList({required String landmarkId}) {
+  //   if(landmarksList.any((element) => element == landmarkId)){
+  //     landmarksList.removeWhere((element) => element == landmarkId);
+  //   }else{
+  //     landmarksList.add(landmarkId);
+  //   }
+  // }
+
+  void toggleLandmark({required String? landmarkId}) {
+    if (landmarkId == addedLandmarkId) {
+      addedLandmarkId = null;
+    } else {
+      addedLandmarkId = landmarkId;
+    }
+  }
+
+  Future<void> addPlaceToDay({
+    required int day,
+    required String? planId,
+  }) async {
+    emit(PlanLoading());
+    if (addedLandmarkId == null) {
+      return;
+    }
+    if (planId == null) {
+      return;
+    }
+    try {
+      final response = await mapRepository.addPlaceToDay(
+        day: day,
+        //landmarkIds: landmarksList.map((e) => e).toList(),
+        landmarkIds: addedLandmarkId!,
+        planId: planId,
+      );
+      final TripModel updatedTrip = TripModel.fromJson(response);
+      emit(PlanLoaded(trip: updatedTrip));
+    } catch (e) {
+      emit(PlanError());
+    }
+  }
+
+  void toggleDeleteMode() {
+    isDeleteMode = !isDeleteMode;
   }
 }

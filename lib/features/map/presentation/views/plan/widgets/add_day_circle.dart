@@ -66,7 +66,7 @@ class DashedCirclePainter extends CustomPainter {
 
     final double circumference = 2 * math.pi * radius;
     final int dashCount = (circumference / (dashWidth + dashSpace)).floor();
-    
+
     // Adjust dashSpace so that the dashes fit perfectly around the circle evenly
     final double adjustedDashSpace = (circumference / dashCount) - dashWidth;
 
@@ -80,7 +80,8 @@ class DashedCirclePainter extends CustomPainter {
         false,
         paint,
       );
-      currentAngle += sweepAngle + (adjustedDashSpace / circumference) * 2 * math.pi;
+      currentAngle +=
+          sweepAngle + (adjustedDashSpace / circumference) * 2 * math.pi;
     }
   }
 

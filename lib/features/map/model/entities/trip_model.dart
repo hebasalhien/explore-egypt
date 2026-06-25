@@ -7,18 +7,25 @@ class TripModel {
   final bool active;
   final String? conversationId;
   final List<DayModel> dayModel;
-  TripModel({required this.days, required this.dayModel, required this.title, required this.active,  this.id, this.conversationId});
+  TripModel({
+    required this.days,
+    required this.dayModel,
+    required this.title,
+    required this.active,
+    this.id,
+    this.conversationId,
+  });
 
   factory TripModel.fromJson(json) {
     return TripModel(
-      id: json['id'] ??'has no id',
+      id: json['id'] ?? 'has no id',
       days: json['data']['days'].length,
       title: json['data']['title'],
       active: json['active'] ?? false,
       dayModel: (json['data']['days'] as List)
           .map((e) => DayModel.fromjson(e))
           .toList(),
-          conversationId: json['conversationId'],
+      conversationId: json['conversationId'],
     );
   }
 
@@ -30,8 +37,26 @@ class TripModel {
       },
       "id": id,
       "days": days,
-      "title":title,
+      "title": title,
       "conversationId": conversationId,
     };
   }
+
+TripModel copyWith({
+  String? id,
+  int? days,
+  String? title,
+  bool? active,
+  String? conversationId,
+  List<DayModel>? dayModel,
+}) {
+  return TripModel(
+    id: id ?? this.id,
+    days: days ?? this.days,
+    title: title ?? this.title,
+    active: active ?? this.active,
+    conversationId: conversationId ?? this.conversationId,
+    dayModel: dayModel ?? this.dayModel,
+  );
+}
 }

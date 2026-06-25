@@ -58,7 +58,6 @@ final class CreateNewPlanFailure extends PlanState {
   CreateNewPlanFailure(this.error);
 }
 
-final class DeletePlanSuccess extends PlanState {}
 
 final class DeletePlaceFromTrip extends PlanState {
   final String placeId;

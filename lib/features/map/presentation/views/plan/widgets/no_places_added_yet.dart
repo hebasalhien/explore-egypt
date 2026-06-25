@@ -55,7 +55,7 @@ class NoPlacesAddedYet extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               Text(
-                'Day $day is empty. Start building your \n itinerary by adding your first place.',
+                'Day ${day + 1} is empty. Start building your \n itinerary by adding your first place.',
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                   color: Color(0xff4D5E6F),
                   fontSize: 12,
