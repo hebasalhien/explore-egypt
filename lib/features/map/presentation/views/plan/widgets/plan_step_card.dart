@@ -1,23 +1,15 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
+import 'package:explore_egypt/features/map/model/entities/activity_model.dart';
 import 'package:flutter/material.dart';
 
 class PlanStepCard extends StatelessWidget {
-  final String time;
-  final String cost;
-  final String title;
-  final String subtitle;
-  final String? imageURL;
   const PlanStepCard({
     super.key,
     required this.screenHeight,
     required this.screenWidth,
-    required this.time,
-    required this.cost,
-    required this.title,
-    required this.subtitle,
-    required this.imageURL,
+    required this.activityModel
   });
-
+  final ActivityModel activityModel;
   final double screenHeight;
   final double screenWidth;
 
@@ -39,13 +31,13 @@ class PlanStepCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  time,
+                  activityModel.time,
                   style: Theme.of(context).textTheme.labelSmall!.copyWith(
                     color: AppColors.kPrimaryColor,
                   ),
                 ),
                 Text(
-                  cost.contains('\$') ? cost : '$cost\$',
+                  activityModel.cost.toString().contains('\$') ? activityModel.cost.toString(): '${activityModel.cost.toString()}\$',
                   style: Theme.of(context).textTheme.labelSmall!.copyWith(
                     color: AppColors.kPrimaryColor,
                   ),
@@ -55,7 +47,7 @@ class PlanStepCard extends StatelessWidget {
             ListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(
-                title,
+                activityModel.landmarkName,
                 style: Theme.of(
                   context,
                 ).textTheme.labelLarge!.copyWith(color: AppColors.kBlack),
@@ -63,7 +55,7 @@ class PlanStepCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               subtitle: Text(
-                subtitle,
+                activityModel.description,
                 style: Theme.of(
                   context,
                 ).textTheme.titleSmall!.copyWith(color: Color(0xff64748B)),
@@ -76,8 +68,8 @@ class PlanStepCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   image: DecorationImage(
-                    image: imageURL != null
-                        ? NetworkImage(imageURL!)
+                    image: activityModel.image != null
+                        ? NetworkImage(activityModel.image!)
                         : AssetImage("assets/images/pyramid.png"),
                   ),
                 ),

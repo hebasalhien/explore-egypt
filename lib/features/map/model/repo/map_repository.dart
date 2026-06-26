@@ -51,11 +51,22 @@ class MapRepository {
 
   Future<dynamic> addPlaceToDay({
     required int day,
-    // required List<String> landmarkIds,
-    required String landmarkIds,
+    required List<String> landmarkIds,
     required String planId,
   }) async {
     return await _mapRemoteDataSource.addPlacesToDay(
+      day: day,
+      landmarkIds: landmarkIds,
+      planId: planId,
+    );
+  }
+
+  Future<dynamic> deletePlaceFromDay({
+    required int day,
+    required List<String> landmarkIds,
+    required String planId,
+  }) async {
+    return await _mapRemoteDataSource.deletePlacesFromDay(
       day: day,
       landmarkIds: landmarkIds,
       planId: planId,

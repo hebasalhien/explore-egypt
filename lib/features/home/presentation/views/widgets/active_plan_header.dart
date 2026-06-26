@@ -10,11 +10,15 @@ class ActivePlanHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          activePlanModel.planName?.toUpperCase() ?? '',
-          style: Theme.of(
-            context,
-          ).textTheme.titleSmall!.copyWith(color: AppColors.kTitleMedium),
+        Expanded(
+          child: Text(
+            activePlanModel.planName?.toUpperCase() ?? '',
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall!.copyWith(color: AppColors.kTitleMedium),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
         Text(
           'Day ${activePlanModel.theCurrentDay} of ${activePlanModel.planDays}',
@@ -27,4 +31,3 @@ class ActivePlanHeader extends StatelessWidget {
     );
   }
 }
-

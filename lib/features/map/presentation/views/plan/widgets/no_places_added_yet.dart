@@ -1,17 +1,29 @@
 import 'package:explore_egypt/core/constants/app_constants.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/core/widgets/custom_button.dart';
+import 'package:explore_egypt/features/main/presentation/cubit/navigation_cubit.dart';
+import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
+import 'package:explore_egypt/features/map/presentation/views/plan/widgets/add_new_place.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NoPlacesAddedYet extends StatelessWidget {
   final int day;
-  const NoPlacesAddedYet({super.key, required this.day});
+  final String planId;
+  final String? conversationId;
+  const NoPlacesAddedYet({
+    super.key,
+    required this.day,
+    required this.planId,
+    required this.conversationId,
+  });
 
   @override
   Widget build(BuildContext context) {
+    PlanCubit planCubit = context.read<PlanCubit>();
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 20),
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 24),
           decoration: BoxDecoration(
@@ -61,16 +73,38 @@ class NoPlacesAddedYet extends StatelessWidget {
                   fontSize: 12,
                 ),
               ),
-              CustomButton(onPressed: () {}, label: 'Add Selected Place'),
+              CustomButton(
+                onPressed: () {
+                  planCubit.getLandmarkList();
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return BlocProvider.value(
+                        value: planCubit,
+                        child: AddNewPlace(dayNumber: day, planId: planId),
+                      );
+                    },
+                  );
+                },
+                label: 'Add Selected Place',
+              ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  planCubit.deletePlan(tripId: planId);
+                  if (conversationId != null) {
+                    context.read<NavigationCubit>().switchTab(
+                      1,
+                      conversationId: conversationId,
+                    );
+                  } else {
+                    context.read<NavigationCubit>().switchTab(1);
+                  }
+                },
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets
-                      .zero, // CRITICAL: Removes default padding so gradient fills the button
+                  padding: EdgeInsets.zero,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      12,
-                    ), // Match your Figma corner radius
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   side: BorderSide(color: AppColors.kPrimaryColor),
                   backgroundColor: Color(0xFFFBF7F2),

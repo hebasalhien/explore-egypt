@@ -4,16 +4,18 @@ import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 class NavigationState {
   final int index;
   final TripModel? trip;
-  NavigationState(this.index, {this.trip});
+  final String? conversationId;
+  NavigationState(this.index, {this.trip,this.conversationId});
 }
 
 class NavigationCubit extends Cubit<NavigationState> {
   NavigationCubit() : super(NavigationState(0));
 
-  void switchTab(int index, {TripModel? trip}) {
-    emit(NavigationState(index, trip: trip ?? state.trip));
+  void switchTab(int index, {TripModel? trip, String? conversationId}) {
+    emit(NavigationState(index, trip: trip ?? state.trip,conversationId: conversationId));
   }
+
   void clearTrip() {
-  emit(NavigationState(state.index, trip: null));
-}
+    emit(NavigationState(state.index, trip: null));
+  }
 }

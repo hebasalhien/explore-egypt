@@ -24,4 +24,7 @@ class ActivityModelHive extends HiveObject {
 
   @HiveField(6)
   late double lng;
+
+  @HiveField(7)
+  late String id;
 }

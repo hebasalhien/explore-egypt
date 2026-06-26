@@ -53,6 +53,16 @@ class PlanPage extends StatelessWidget {
                 screenHeight: screenHeight,
                 plans: state.plans,
               )
+            // Current state is unrelated (e.g. GetAllPlansSuccess from the
+            // plan-switcher sheet) — show the last successfully loaded trip.
+            : context.read<PlanCubit>().currentTrip != null
+            ? ActivePlan(
+                trip: context.read<PlanCubit>().currentTrip!,
+                screenHeight: screenHeight,
+                screenWidth: screenWidth,
+                selectedDay: selectedDay,
+                onDayChanged: onDayChanged,
+              )
             : Container();
       },
     );

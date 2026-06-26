@@ -74,6 +74,7 @@ class AddNewPlace extends StatelessWidget {
                       day: dayNumber,
                       planId: planId,
                     );
+                    Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.kSecondary,
@@ -200,12 +201,12 @@ class _ToggleLandmarkButtonState extends State<ToggleLandmarkButton> {
               ),
               onPressed: () {
                 // 2. Fire the Cubit event AND update the local UI state
-                // context.read<PlanCubit>().toggleLandmarkToList(
-                //   landmarkId: widget.landmark.id,
-                // );
-                context.read<PlanCubit>().toggleLandmark(
+                context.read<PlanCubit>().toggleLandmarkToList(
                   landmarkId: widget.landmark.id,
                 );
+                // context.read<PlanCubit>().toggleLandmark(
+                //   landmarkId: widget.landmark.id,
+                // );
                 setState(() {
                   _isSelected = !_isSelected;
                 });
@@ -217,12 +218,12 @@ class _ToggleLandmarkButtonState extends State<ToggleLandmarkButton> {
             style: IconButton.styleFrom(backgroundColor: AppColors.kSecondary),
             onPressed: () {
               // 3. Fire the Cubit event AND update the local UI state
-              // context.read<PlanCubit>().toggleLandmarkToList(
-              //   landmarkId: widget.landmark.id,
-              // );
-              context.read<PlanCubit>().toggleLandmark(
+              context.read<PlanCubit>().toggleLandmarkToList(
                 landmarkId: widget.landmark.id,
               );
+              // context.read<PlanCubit>().toggleLandmark(
+              //   landmarkId: widget.landmark.id,
+              // );
               setState(() {
                 _isSelected = !_isSelected;
               });

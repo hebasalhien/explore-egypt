@@ -26,6 +26,7 @@ ActivityModel fromHiveActivity(ActivityModelHive hive) {
     image: hive.image,
     lat: hive.lat,
     lng: hive.lng,
+    id: hive.id,
   );
 }
 

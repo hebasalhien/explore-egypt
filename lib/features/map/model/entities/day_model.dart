@@ -8,7 +8,7 @@ class DayModel {
 
   factory DayModel.fromjson(json) {
     return DayModel(
-      totalCost: json['total_cost_usd'] as int,
+      totalCost: (json['total_cost_usd'] as num).toInt(),
       activity: (json['activities'] as List)
           .map((e) => ActivityModel.fromjson(e))
           .toList(),

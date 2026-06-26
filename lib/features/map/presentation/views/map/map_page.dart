@@ -11,13 +11,13 @@ import 'package:geolocator/geolocator.dart' as geo;
 
 class MapPage extends StatefulWidget {
   final List<ActivityModel>? activityModel;
-  final int dayNumber;
-  final String planTitle;
+  final int? dayNumber;
+  final String? planTitle;
   const MapPage({
     super.key,
     this.activityModel,
-    required this.dayNumber,
-    required this.planTitle,
+     this.dayNumber,
+     this.planTitle,
   });
 
   @override
@@ -150,8 +150,8 @@ class _MapPageState extends State<MapPage> {
           ),
           if (widget.activityModel != null && widget.activityModel!.isNotEmpty)
             MapBottomSheet(
-              dayNumber: widget.dayNumber,
-              planTitle: widget.planTitle,
+              dayNumber: widget.dayNumber!,
+              planTitle: widget.planTitle!,
               activityModel: widget.activityModel!,
               selectedIndex: _selectedCardIndex,
               onCardSelected: (index) {

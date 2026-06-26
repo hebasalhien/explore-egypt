@@ -23,7 +23,9 @@ class ActivityModelHiveAdapter extends TypeAdapter<ActivityModelHive> {
       ..description = fields[3] as String
       ..image = fields[4] as String
       ..lat = fields[5] as double
-      ..lng = fields[6] as double;
+      ..lng = fields[6] as double
+      ..id = fields [7] as String;
+      
   }
 
   @override
@@ -43,7 +45,9 @@ class ActivityModelHiveAdapter extends TypeAdapter<ActivityModelHive> {
       ..writeByte(5)
       ..write(obj.lat)
       ..writeByte(6)
-      ..write(obj.lng);
+      ..write(obj.lng)
+      ..writeByte(7)
+      ..write(obj.id);
   }
 
   @override

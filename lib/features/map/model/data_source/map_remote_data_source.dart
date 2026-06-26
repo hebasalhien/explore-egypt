@@ -55,9 +55,7 @@ class MapRemoteDataSource {
     return response.data;
   }
 
-  Future<dynamic> deactivatePlan({
-    required String currentPlanId,
-  }) async {
+  Future<dynamic> deactivatePlan({required String currentPlanId}) async {
     final response = await _apiService.dio.post(
       '${ApiConstants.plan}/$currentPlanId${ApiConstants.deactivatePlan}',
     );
@@ -66,15 +64,24 @@ class MapRemoteDataSource {
 
   Future<dynamic> addPlacesToDay({
     required int day,
-    required String landmarkIds,
+    required List<String> landmarkIds,
     required String planId,
   }) async {
     final response = await _apiService.dio.post(
       '${ApiConstants.plan}/$planId${ApiConstants.places}',
-      data: {
-        'dayIndex': day,
-        'placeId': landmarkIds,
-      },
+      data: {'dayIndex': day, 'placeIds': landmarkIds},
+    );
+    return response.data;
+  }
+
+  Future<dynamic> deletePlacesFromDay({
+    required int day,
+    required List<String> landmarkIds,
+    required String planId,
+  }) async {
+    final response = await _apiService.dio.delete(
+      '${ApiConstants.plan}/$planId${ApiConstants.places}',
+      data: {'dayIndex': day, 'placeIds': landmarkIds},
     );
     return response.data;
   }

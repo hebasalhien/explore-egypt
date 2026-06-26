@@ -70,137 +70,149 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ChatCubit(context.read<ChatRepository>()),
-      child: Scaffold(
-        appBar: GradientAppBar(
-          title: 'ChatBot AI',
-          actions: [
-            Builder(
-              builder: (context) {
-                return IconButton(
-                  onPressed: () {
-                    _openDrawer(context);
-                  },
-                  icon: SvgPicture.asset(
-                    AppConstants.chatbubbleIcon,
-                    colorFilter: ColorFilter.mode(
-                      AppColors.kWhite,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-        body: Stack(
-          children: [
-            ChatBackground(),
-            Column(
-              children: [
-                MessageList(),
-                BlocConsumer<ChatCubit, ChatState>(
-                  listener: (context, state) {
-                    if (state is PlanGeneratied) {
-                      setState(() {
-                        mode = 'chat'; // Reset mode after generating the plan
-                      });
-                      context.read<NavigationCubit>().switchTab(
-                        2,
-                        trip: state.trip,
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is MessageSending) {
-                      return Column(
-                        children: [
-                          StopGenerating(
-                            onTap: () {
-                              context.read<ChatCubit>().stopGenerating();
-                            },
-                          ),
-                        ],
-                      );
-                    }
-                    if (state is MessageLoaded && state.messages.isNotEmpty) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(width: 12),
-                          RetryBubble(
-                            onRetry: () => context
-                                .read<ChatCubit>()
-                                .regenerateLastMessage(),
-                          ),
-                        ],
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: 8.0,
-                    left: 8.0,
-                    right: 8.0,
-                    bottom: 15,
-                  ),
-                  child: Builder(
+      child: BlocListener<NavigationCubit, NavigationState>(
+                listenWhen: (previous, current) =>
+            current.index == 1 &&
+            current.conversationId != previous.conversationId,
+        listener: (context, state) {
+          if (state.conversationId != null) {
+            context.read<ChatCubit>().fetchConversationById(conversationId:state.conversationId!);
+          } else {
+            context.read<ChatCubit>().startNewConversation();
+          }
+        },
+        child: Scaffold(
+              appBar: GradientAppBar(
+                title: 'ChatBot AI',
+                actions: [
+                  Builder(
                     builder: (context) {
-                      return CustomRow(
-                        controller: messageController,
-                        files: selectedFiles,
-                        onFilesChanged: (files) {
-                          setState(() {
-                            selectedFiles = files;
-                          });
+                      return IconButton(
+                        onPressed: () {
+                          _openDrawer(context);
                         },
-                        onModeChanged: (newMode) {
-                          setState(() {
-                            mode = newMode;
-                          });
-                        },
-                        onCallPressed: () {
-                          if (context.mounted) {
-                            final chatCubit = context.read<ChatCubit>();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: chatCubit,
-                                  child: const VoiceCallScreen(),
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        onPressed: (files) {
-                          List<String>? filePaths;
-                          if (files.isNotEmpty) {
-                            filePaths = files.map((e) => e.path!).toList();
-                          }
-
-                          context.read<ChatCubit>().sendMessage(
-                            message: messageController.text,
-                            conversationId: context
-                                .read<ChatCubit>()
-                                .currentConversationId,
-                            filePath: filePaths,
-                            mode: mode,
-                          );
-                          messageController.clear();
-                          setState(() {
-                            selectedFiles.clear();
-                          });
-                        },
+                        icon: SvgPicture.asset(
+                          AppConstants.chatbubbleIcon,
+                          colorFilter: ColorFilter.mode(
+                            AppColors.kWhite,
+                            BlendMode.srcIn,
+                          ),
+                        ),
                       );
                     },
                   ),
-                ),
-              ],
+                ],
+              ),
+              body: Stack(
+                children: [
+                  ChatBackground(),
+                  Column(
+                    children: [
+                      MessageList(),
+                      BlocConsumer<ChatCubit, ChatState>(
+                        listener: (context, state) {
+                          if (state is PlanGeneratied) {
+                            setState(() {
+                              mode = 'chat'; // Reset mode after generating the plan
+                            });
+                            context.read<NavigationCubit>().switchTab(
+                              2,
+                              trip: state.trip,
+                            );
+                          }
+                        },
+                        builder: (context, state) {
+                          if (state is MessageSending) {
+                            return Column(
+                              children: [
+                                StopGenerating(
+                                  onTap: () {
+                                    context.read<ChatCubit>().stopGenerating();
+                                  },
+                                ),
+                              ],
+                            );
+                          }
+                          if (state is MessageLoaded && state.messages.isNotEmpty) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(width: 12),
+                                RetryBubble(
+                                  onRetry: () => context
+                                      .read<ChatCubit>()
+                                      .regenerateLastMessage(),
+                                ),
+                              ],
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: 8.0,
+                          left: 8.0,
+                          right: 8.0,
+                          bottom: 15,
+                        ),
+                        child: Builder(
+                          builder: (context) {
+                            return CustomRow(
+                              controller: messageController,
+                              files: selectedFiles,
+                              onFilesChanged: (files) {
+                                setState(() {
+                                  selectedFiles = files;
+                                });
+                              },
+                              onModeChanged: (newMode) {
+                                setState(() {
+                                  mode = newMode;
+                                });
+                              },
+                              onCallPressed: () {
+                                if (context.mounted) {
+                                  final chatCubit = context.read<ChatCubit>();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BlocProvider.value(
+                                        value: chatCubit,
+                                        child: const VoiceCallScreen(),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              onPressed: (files) {
+                                List<String>? filePaths;
+                                if (files.isNotEmpty) {
+                                  filePaths = files.map((e) => e.path!).toList();
+                                }
+      
+                                context.read<ChatCubit>().sendMessage(
+                                  message: messageController.text,
+                                  conversationId: context
+                                      .read<ChatCubit>()
+                                      .currentConversationId,
+                                  filePath: filePaths,
+                                  mode: mode,
+                                );
+                                messageController.clear();
+                                setState(() {
+                                  selectedFiles.clear();
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
       ),
     );
   }

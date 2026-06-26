@@ -1,6 +1,5 @@
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/core/widgets/gradient_app_bar.dart';
-import 'package:explore_egypt/features/map/model/entities/activity_model.dart';
 import 'package:explore_egypt/features/map/presentation/views/map/map_page.dart';
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
@@ -49,7 +48,6 @@ class _MainMapPageState extends State<MainMapPage>
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    // ✅ No MultiBlocProvider here — PlanCubit comes from MainPage
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -81,44 +79,30 @@ class _MainMapPageState extends State<MainMapPage>
               onPointerCancel: (event) {
                 setState(() => _mapGestureActive = false);
               },
-              child: BlocBuilder <PlanCubit,PlanState>(
+              child: BlocBuilder<PlanCubit, PlanState>(
                 buildWhen: (previous, current) =>
                     current is GetActivePlanSuccess ||
                     current is PlanLoaded ||
                     current is NoActivePlan,
-                builder:(context,state){
+                builder: (context, state) {
                   TripModel? activeTripForMap;
                   if (state is GetActivePlanSuccess) {
                     activeTripForMap = state.activePlan;
                   } else if (state is PlanLoaded) {
                     activeTripForMap = state.trip;
+                  } else {
+                    activeTripForMap = context.read<PlanCubit>().currentTrip;
                   }
                   return activeTripForMap != null
-                  ? MapPage(
-                      activityModel:
-                          widget.trip!.dayModel[_selectedDay].activity,
-                      dayNumber: _selectedDay + 1,
-                      planTitle: widget.trip!.title,
-                    )
-                  : MapPage(
-                      activityModel: const <ActivityModel>[],
-                      dayNumber: 1,
-                      planTitle: '',
-                    );
-                }
+                      ? MapPage(
+                          activityModel:
+                              activeTripForMap.dayModel[_selectedDay].activity,
+                          dayNumber: _selectedDay + 1,
+                          planTitle: activeTripForMap.title,
+                        )
+                      : MapPage();
+                },
               ),
-              // widget.trip != null
-              //     ? MapPage(
-              //         activityModel:
-              //             widget.trip!.dayModel[_selectedDay].activity,
-              //         dayNumber: _selectedDay + 1,
-              //         planTitle: widget.trip!.title,
-              //       )
-              //     : MapPage(
-              //         activityModel: const <ActivityModel>[],
-              //         dayNumber: 1,
-              //         planTitle: '',
-              //       ),
             ),
           ],
         ),

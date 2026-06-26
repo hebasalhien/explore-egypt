@@ -3,7 +3,7 @@ import 'package:explore_egypt/features/map/model/entities/activity_model.dart';
 import 'package:flutter/material.dart';
 
 class PlaceCard extends StatelessWidget {
-   const PlaceCard({
+  const PlaceCard({
     super.key,
     required this.isCardSelected,
     required this.activityModel,
@@ -56,29 +56,31 @@ class PlaceCard extends StatelessWidget {
                       children: [
                         Text(
                           activityModel.time,
-                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                            color: AppColors.kSecondary,
-                          ),
+                          style: Theme.of(context).textTheme.titleSmall!
+                              .copyWith(color: AppColors.kSecondary),
                         ),
                         Text(
                           '${activityModel.cost}\$',
-                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                            color: AppColors.kSecondary,
-                          ),
+                          style: Theme.of(context).textTheme.titleSmall!
+                              .copyWith(color: AppColors.kSecondary),
                         ),
                       ],
                     ),
-                    Text(
-                      activityModel.landmarkName,
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.w700,
+                    Expanded(
+                      child: Text(
+                        activityModel.landmarkName,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Text(
                       activityModel.description,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleSmall!.copyWith(color: Color(0xff6B7280)),
+                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Color(0xff6B7280),
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),

@@ -1,3 +1,4 @@
+import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/cost_widget.dart';
@@ -51,8 +52,12 @@ class _ActivePlanState extends State<ActivePlan> {
           current is AddNewDaySuccess ||
           current is PlanError ||
           current is GetActivePlanSuccess ||
-          current is PlanLoaded,
+          current is PlanLoaded ||
+          current is DeleteModeToggled,
       builder: (context, state) {
+        final planCubit = context.read<PlanCubit>();
+        final isDeleteMode = planCubit.isDeleteMode;
+
         TripModel trip = widget.trip!;
         if (state is AddNewDaySuccess) {
           trip = state.trip;
@@ -69,15 +74,19 @@ class _ActivePlanState extends State<ActivePlan> {
                 DayStepper(
                   selectedDay: selectedDay,
                   totalDays: trip.days,
-                  onDaySelected: (index) {
-                    setState(() {
-                      selectedDay = index;
-                    });
-                    widget.onDayChanged?.call(index);
-                  },
-                  onTap: () {
-                    context.read<PlanCubit>().addNewDayToPlan(trip: trip);
-                  },
+                  onDaySelected: isDeleteMode
+                      ? (_) {}
+                      : (index) {
+                          setState(() {
+                            selectedDay = index;
+                          });
+                          widget.onDayChanged?.call(index);
+                        },
+                  onTap: isDeleteMode
+                      ? () {}
+                      : () {
+                          context.read<PlanCubit>().addNewDayToPlan(trip: trip);
+                        },
                 ),
                 PlanTitle(trip: trip),
                 CostWidget(
@@ -92,20 +101,20 @@ class _ActivePlanState extends State<ActivePlan> {
                 ),
               ],
             ),
-            if (trip.dayModel[selectedDay].activity.isNotEmpty)
+            if (trip.dayModel[selectedDay].activity.isNotEmpty && !isDeleteMode)
               Positioned(
                 bottom: 20,
                 right: 20,
                 child: MenuButton(dayNumber: selectedDay, planId: trip.id),
               ),
-            if (context.watch<PlanCubit>().isDeleteMode)
+            if (isDeleteMode)
               Positioned(
                 bottom: 0,
                 left: 0,
                 right: 0,
                 child: Container(
                   padding: const EdgeInsets.all(16.0),
-                  color: Colors.white,
+                  color: Color(0xffFEF8F1),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -113,21 +122,47 @@ class _ActivePlanState extends State<ActivePlan> {
                         onPressed: () {
                           context.read<PlanCubit>().toggleDeleteMode();
                         },
+
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey,
-                          foregroundColor: Colors.white,
+                          fixedSize: Size(
+                            MediaQuery.of(context).size.width * 0.4,
+                            40,
+                          ),
+                          backgroundColor: Color(0xffFEF8F1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: AppColors.kErrorColor,
+                              width: 2,
+                            ),
+                          ),
                         ),
-                        child: Text('Cancel'),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(color: AppColors.kErrorColor),
+                        ),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          //context.read<PlanCubit>().deleteSelectedPlaces();
+                          context.read<PlanCubit>().deletePlaceFromDay(
+                            day: selectedDay,
+                            planId: trip.id,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
+                          fixedSize: Size(
+                            MediaQuery.of(context).size.width * 0.4,
+                            40,
+                          ),
+                          backgroundColor: AppColors.kErrorColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                        child: Text('Delete'),
+                        child: Text(
+                          'Delete Selected',
+                          style: TextStyle(color: AppColors.kWhite),
+                        ),
                       ),
                     ],
                   ),

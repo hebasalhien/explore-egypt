@@ -36,8 +36,13 @@ class DayWidget extends StatelessWidget {
       );
     }
     if (trip.dayModel[selectedDay].activity.isEmpty) {
-      return NoPlacesAddedYet(day: selectedDay);
+      return NoPlacesAddedYet(
+        day: selectedDay,
+        planId: trip.id!,
+        conversationId: trip.conversationId,
+      );
     }
+    final isDeleteMode = context.read<PlanCubit>().isDeleteMode;
     return Expanded(
       child: SingleChildScrollView(
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
@@ -47,33 +52,17 @@ class DayWidget extends StatelessWidget {
             ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                  bool isDeleteMode = context.read<PlanCubit>().isDeleteMode;
                 if (isDeleteMode) {
                   return DeletePlaceCard(
                     screenHeight: screenHeight,
                     screenWidth: screenWidth,
-                    time: trip.dayModel[selectedDay].activity[index].time,
-                    cost: trip.dayModel[selectedDay].activity[index].cost
-                        .toString(),
-                    isSelected: true,
-                    title:
-                        trip.dayModel[selectedDay].activity[index].landmarkName,
-                    subtitle:
-                        trip.dayModel[selectedDay].activity[index].description,
-                    imageURL: trip.dayModel[selectedDay].activity[index].image,
+                    activityModel: trip.dayModel[selectedDay].activity[index],
                   );
                 } else {
                   return PlanStepCard(
                     screenHeight: screenHeight,
                     screenWidth: screenWidth,
-                    time: trip.dayModel[selectedDay].activity[index].time,
-                    cost: trip.dayModel[selectedDay].activity[index].cost
-                        .toString(),
-                    title:
-                        trip.dayModel[selectedDay].activity[index].landmarkName,
-                    subtitle:
-                        trip.dayModel[selectedDay].activity[index].description,
-                    imageURL: trip.dayModel[selectedDay].activity[index].image,
+                    activityModel: trip.dayModel[selectedDay].activity[index],
                   );
                 }
               },

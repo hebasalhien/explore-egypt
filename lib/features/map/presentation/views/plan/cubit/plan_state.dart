@@ -60,7 +60,7 @@ final class CreateNewPlanFailure extends PlanState {
 
 
 final class DeletePlaceFromTrip extends PlanState {
-  final String placeId;
+  final List<String> placeId;
   final String tripId;
   DeletePlaceFromTrip({required this.placeId, required this.tripId});
 }
@@ -83,3 +83,8 @@ final class AddNewDaySuccess extends PlanState {
 }
 
 final class PlanError extends PlanState {}
+
+final class DeleteModeToggled extends PlanState {
+  final bool isDeleteMode;
+  DeleteModeToggled({required this.isDeleteMode});
+}
