@@ -22,6 +22,8 @@ class AppConstants {
   static const String helpIcon = 'assets/icons/help.svg';
   static const String nextDestinationIcon = 'assets/icons/next_dest.svg';
   static const String messageIcon = 'assets/icons/message.svg';
+  static const String categoryIcon = 'assets/icons/category.svg';
+  static const String audioGuideIcon = 'assets/icons/audio.svg';
 
   /// data
   static const String faqData = 'assets/data/FAQ.json';

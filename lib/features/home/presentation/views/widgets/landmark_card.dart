@@ -3,6 +3,7 @@ import 'package:explore_egypt/features/favorites/presentation/cubit/favorites_cu
 import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/glass_icon_button.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/photo_info.dart';
+import 'package:explore_egypt/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,63 +21,72 @@ class LandmarkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 10),
-      child: CachedNetworkImage(
-        imageUrl: landmark.imageUrl,
-        imageBuilder: (context, imageProvider) => Container(
-          height: screenHeight,
-          width: screenWidth * .45,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.transparent,
-            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                right: 8,
-                top: 8,
-                child: BlocSelector<FavoritesCubit, FavoritesState, bool>(
-                selector: (state) =>
-                    state is FavoritesLoaded &&
-                    state.favLandmarkIds.contains(landmark.id),
-                  builder: (context, isFavorite) {
-                    return GlassIconButton(
-                      isFavorite: isFavorite,
-                      onPressed: () {
-                        context.read<FavoritesCubit>().toggleLandmarkFavorite(
-                                landmark.id!,
-                              );
-                      },
-                    );
-                  },
-                ),
-              ),
-
-              Positioned(
-                left: 15,
-                bottom: 15,
-                child: SizedBox(
-                  width: screenWidth * .35,
-                  child: PhotoInfo(
-                    title: landmark.name,
-                    subtitle: landmark.subtitle,
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          AppRoutes.landmarkPage,
+          arguments: landmark,
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(right: 10),
+        child: CachedNetworkImage(
+          imageUrl: landmark.imageUrl,
+          imageBuilder: (context, imageProvider) => Container(
+            height: screenHeight,
+            width: screenWidth * .45,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.transparent,
+              image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: BlocSelector<FavoritesCubit, FavoritesState, bool>(
+                  selector: (state) =>
+                      state is FavoritesLoaded &&
+                      state.favLandmarkIds.contains(landmark.id),
+                    builder: (context, isFavorite) {
+                      return GlassIconButton(
+                        isFavorite: isFavorite,
+                        onPressed: () {
+                          context.read<FavoritesCubit>().toggleLandmarkFavorite(
+                                  landmark.id!,
+                                );
+                        },
+                      );
+                    },
                   ),
                 ),
-              ),
-            ],
+      
+                Positioned(
+                  left: 15,
+                  bottom: 15,
+                  child: SizedBox(
+                    width: screenWidth * .35,
+                    child: PhotoInfo(
+                      title: landmark.name,
+                      subtitle: landmark.subtitle,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        placeholder: (context, url) => SizedBox(
-          height: screenHeight,
-          width: screenWidth * .45,
-          child: Center(child: CircularProgressIndicator()),
-        ),
-        errorWidget: (context, url, error) => SizedBox(
-          height: screenHeight,
-          width: screenWidth * .45,
-          child: Icon(Icons.error),
+          placeholder: (context, url) => SizedBox(
+            height: screenHeight,
+            width: screenWidth * .45,
+            child: Center(child: CircularProgressIndicator()),
+          ),
+          errorWidget: (context, url, error) => SizedBox(
+            height: screenHeight,
+            width: screenWidth * .45,
+            child: Icon(Icons.error),
+          ),
         ),
       ),
     );
