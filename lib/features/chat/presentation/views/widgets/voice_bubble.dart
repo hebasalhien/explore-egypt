@@ -43,11 +43,12 @@ class _VoiceBubbleState extends State<VoiceBubble> {
         if (mounted) setState(() => _position = p);
       });
 
-      _player.playerStateStream.listen((state) {
+      _player.playerStateStream.listen((state) async {
         if (mounted) {
           setState(() => _isPlaying = state.playing);
           if (state.processingState == ProcessingState.completed) {
-            _player.seek(Duration.zero);
+            await _player.pause();
+            await _player.seek(Duration.zero);
             setState(() => _isPlaying = false);
           }
         }
@@ -78,8 +79,9 @@ class _VoiceBubbleState extends State<VoiceBubble> {
         : 0.0;
 
     return Row(
-      mainAxisAlignment:
-          _isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+      mainAxisAlignment: _isUser
+          ? MainAxisAlignment.end
+          : MainAxisAlignment.start,
       children: [
         Container(
           width: MediaQuery.of(context).size.width * 0.7,
@@ -131,9 +133,7 @@ class _VoiceBubbleState extends State<VoiceBubble> {
                           ? Colors.white30
                           : AppColors.kPrimaryColor.withAlpha(50),
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        _isUser
-                            ? AppColors.kWhite
-                            : AppColors.kPrimaryColor,
+                        _isUser ? AppColors.kWhite : AppColors.kPrimaryColor,
                       ),
                       borderRadius: BorderRadius.circular(4),
                       minHeight: 4,
