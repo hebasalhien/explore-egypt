@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:explore_egypt/core/errors/exception.dart';
 import 'package:explore_egypt/core/errors/exception_handle_helper.dart';
@@ -16,14 +17,13 @@ class ChatCubit extends Cubit<ChatState> {
   final ChatRepository _chatRepository;
   final AudioRecorder _recorder = AudioRecorder();
   final AudioRecorder _callRecorder = AudioRecorder();
-  final List<Uint8List> _audioBuffer = [];
-  bool _playerIdle = true;
-  static const int _preBufferCount = 4;
   StreamSubscription? _audioSubscription;
   ChatCubit(this._chatRepository) : super(ChatInitial());
   List<MessageModel> _messages = [];
   String? _currentConversationId;
   CancelToken? _cancelToken;
+  Timer? _aiSpeakingTimer;
+  bool _aiSpeaking = false;
 
   /// sends a message to a new or existing conversation and updates the state accordingly
   Future<void> sendMessage({
@@ -61,9 +61,9 @@ class ChatCubit extends Cubit<ChatState> {
         int messageLength = data['messages'].length;
         final lastMessage = data['messages'][messageLength - 1];
         if (lastMessage['type'] == 'plan' && lastMessage['data'] != null) {
-          final trip = TripModel.fromJson(lastMessage).copyWith(
-            conversationId: _currentConversationId,
-          );
+          final trip = TripModel.fromJson(
+            lastMessage,
+          ).copyWith(conversationId: _currentConversationId);
           emit(PlanGeneratied(trip: trip));
         }
       }
@@ -203,49 +203,19 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   /// start a live call with the model
+  StreamSubscription<List<int>>?
+  _micSubscription; // FIX: add this field to your cubit
+
+  /// start a live call with the model
   Future<void> startVoiceCall() async {
     debugPrint('[VoiceCall] 🚀 startVoiceCall called');
 
-    // 1. Setup PCM first
     await FlutterPcmSound.setup(sampleRate: 16000, channelCount: 1);
-    await FlutterPcmSound.setFeedThreshold(8000);
+    await FlutterPcmSound.setFeedThreshold(512);
     debugPrint('[VoiceCall] 🎧 PCM player ready');
 
-    // 2. Register playback callback
-    _playerIdle = true;
-    FlutterPcmSound.onFeedSamplesCallback = (remainingSamples) {
-      if (_audioBuffer.isEmpty) {
-        debugPrint('[VoiceCall] ⏸️ Buffer empty — player going idle');
-        _playerIdle = true;
-        return;
-      }
-      final chunk = _audioBuffer.removeAt(0);
-      final samples = PcmArrayInt16.fromList(
-        chunk.buffer.asInt16List().toList(),
-      );
-      FlutterPcmSound.feed(samples);
-    };
-
-    // 3. Subscribe to audio stream before connecting
-    _audioSubscription = _chatRepository.getIncomingAudioStream().listen(
-      (audioBytes) {
-        _audioBuffer.add(audioBytes);
-        debugPrint(
-          '[VoiceCall] 🎯 Buffering: ${audioBytes.length} bytes, queue: ${_audioBuffer.length}',
-        );
-
-        // Wait until pre-buffer is full before starting playback
-        if (_playerIdle && _audioBuffer.length >= _preBufferCount) {
-          debugPrint('[VoiceCall] ▶️ Pre-buffer ready — starting playback');
-          _playerIdle = false;
-          FlutterPcmSound.onFeedSamplesCallback!(0);
-        }
-      },
-      onError: (e) => debugPrint('[VoiceCall] ❌ Audio stream error: $e'),
-      onDone: () => debugPrint('[VoiceCall] 🔌 Audio stream done'),
-    );
-
-    // 4. Now connect
+    FlutterPcmSound.onFeedSamplesCallback = null;
+    // FIX: connect first so the controller is recreated before we listen
     try {
       await _chatRepository.connectVoiceCall();
     } catch (e) {
@@ -254,8 +224,43 @@ class ChatCubit extends Cubit<ChatState> {
       return;
     }
 
-    // 5. Start mic last
+    _audioSubscription = _chatRepository.getIncomingAudioStream().listen(
+      (audioBytes) {
+        _aiSpeaking = true; // AI is speaking
+        final samples = PcmArrayInt16.fromList(
+          audioBytes.buffer.asInt16List().toList(),
+        );
+        FlutterPcmSound.feed(samples);
+        debugPrint(
+          '[VoiceCall] 🔊 Fed ${audioBytes.length ~/ 2} samples directly to PCM',
+        );
+
+        // Clear flag after a short delay — if no new audio arrives, AI is done
+        _aiSpeakingTimer?.cancel();
+        _aiSpeakingTimer = Timer(const Duration(milliseconds: 300), () {
+          _aiSpeaking = false;
+          debugPrint('[VoiceCall] 🎤 AI done speaking — mic re-enabled');
+        });
+      },
+      onError: (e) => debugPrint('[VoiceCall] ❌ Audio stream error: $e'),
+      onDone: () {
+        _aiSpeaking = false;
+        debugPrint('[VoiceCall] 🔌 Audio stream done');
+      },
+    );
+
     debugPrint('[VoiceCall] 🎙️ Starting microphone stream...');
+
+    // Check permission before starting
+    final hasPermission = await _callRecorder.hasPermission();
+    debugPrint('[VoiceCall] 🎙️ Mic permission: $hasPermission');
+
+    if (!hasPermission) {
+      debugPrint('[VoiceCall] ❌ No mic permission — aborting');
+      emit(ChatError(errorMessage: 'Microphone permission denied'));
+      return;
+    }
+
     final micStream = await _callRecorder.startStream(
       const RecordConfig(
         encoder: AudioEncoder.pcm16bits,
@@ -263,9 +268,13 @@ class ChatCubit extends Cubit<ChatState> {
         numChannels: 1,
       ),
     );
-    micStream.listen((chunk) {
+
+    _micSubscription = micStream.listen((chunk) {
+      // VAD: calculate RMS energy, skip silent chunks
+      if (_aiSpeaking) return;
+      if (_isSilent(chunk)) return;
       debugPrint('[VoiceCall] 📤 Sending audio chunk: ${chunk.length} bytes');
-      _chatRepository.sendAudioChunk(chunk);
+      _chatRepository.sendAudioChunk(Uint8List.fromList(chunk));
     });
 
     debugPrint('[VoiceCall] ✅ Voice call fully started');
@@ -273,10 +282,15 @@ class ChatCubit extends Cubit<ChatState> {
 
   /// end a live call with the model
   Future<void> endVoiceCall() async {
+    // FIX: cancel mic subscription and stop recorder — was leaking before
+    await _micSubscription?.cancel();
+    _micSubscription = null;
+    await _callRecorder.stop();
+    _aiSpeakingTimer?.cancel();
+    _aiSpeakingTimer = null;
+    _aiSpeaking = false;
     await _audioSubscription?.cancel();
     _audioSubscription = null;
-    _audioBuffer.clear();
-    _playerIdle = true;
     FlutterPcmSound.onFeedSamplesCallback = null;
     await FlutterPcmSound.release();
     _chatRepository.endVoiceCall();
@@ -304,5 +318,21 @@ class ChatCubit extends Cubit<ChatState> {
         filePath: [path],
       );
     }
+  }
+
+  bool _isSilent(List<int> chunk) {
+    if (chunk.length < 2) return true;
+
+    // Interpret bytes as int16 samples and compute RMS
+    double sum = 0;
+    for (int i = 0; i < chunk.length - 1; i += 2) {
+      final sample = (chunk[i + 1] << 8) | chunk[i]; // little-endian int16
+      final signed = sample > 32767 ? sample - 65536 : sample;
+      sum += signed * signed;
+    }
+    final rms = sqrt(sum / (chunk.length / 2));
+
+    // Tune this threshold: 300-500 is typically good for speech vs silence
+    return rms < 400;
   }
 }

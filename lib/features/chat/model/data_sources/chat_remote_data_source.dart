@@ -10,8 +10,10 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 class ChatRemoteDataSource {
   final ApiService _apiService;
   WebSocketChannel? _channel;
+
   StreamController<Uint8List> _audioStreamController =
       StreamController<Uint8List>(); // single-subscriber; buffers data until cubit subscribes
+StreamSubscription? _wsSubscription;
 
   ChatRemoteDataSource(this._apiService);
 
@@ -109,7 +111,7 @@ class ChatRemoteDataSource {
     // Push incoming audio into the stream.
     // web_socket_channel delivers binary frames as List<int>, NOT Uint8List —
     // so we must cast rather than type-check with `is Uint8List`.
-    _channel!.stream.listen(
+    _wsSubscription = _channel!.stream.listen(
       (data) {
         Uint8List bytes;
         if (data is Uint8List) {
@@ -144,10 +146,10 @@ class ChatRemoteDataSource {
         debugPrint('[VoiceCall] 🔌 WebSocket closed by server');
         if (!_audioStreamController.isClosed) _audioStreamController.close();
       },
-      onError: (e) {
-        debugPrint('[VoiceCall] ❌ WebSocket stream error: $e');
-        _audioStreamController.addError(e);
-      },
+onError: (e) {
+  debugPrint('[VoiceCall] ❌ WebSocket stream error: $e');
+  if (!_audioStreamController.isClosed) _audioStreamController.addError(e);
+},
     );
   }
 
@@ -157,8 +159,11 @@ class ChatRemoteDataSource {
   }
 
   
-  void endVoiceCall() {
-    _channel?.sink.close();
-    _audioStreamController.close();
-  }
+void endVoiceCall() {
+  _wsSubscription?.cancel();
+  _wsSubscription = null;
+  _channel?.sink.close();
+  _channel = null;
+  if (!_audioStreamController.isClosed) _audioStreamController.close();
+}
 }
