@@ -3,6 +3,7 @@ import 'package:explore_egypt/core/widgets/custom_button.dart';
 import 'package:explore_egypt/features/favorites/presentation/cubit/favorites_cubit.dart';
 import 'package:explore_egypt/features/home/model/entities/plan_card_model.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/glass_icon_button.dart';
+import 'package:explore_egypt/features/plans/presentation/cubit/suggested_plans_cubit.dart';
 import 'package:explore_egypt/features/plans/presentation/view/widgets/plan_info.dart';
 import 'package:explore_egypt/features/plans/presentation/view/widgets/suggested_plan_card_background.dart';
 import 'package:explore_egypt/features/plans/presentation/view/widgets/suggested_plan_card_image.dart';
@@ -30,7 +31,9 @@ class SuggestedPlansList extends StatelessWidget {
           child: Container(
             height: screenHeight * .4,
             width: screenWidth,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+            ),
             child: Stack(
               children: [
                 Positioned.fill(child: SuggestedPlanCardBG()),
@@ -69,15 +72,19 @@ class SuggestedPlansList extends StatelessWidget {
                       BlocSelector<FavoritesCubit, FavoritesState, bool>(
                         selector: (state) =>
                             state is FavoritesLoaded &&
-                            state.favPlanIds.contains(planCardModel[index].id),
+                            state.favPlanIds.contains(
+                              planCardModel[index].id,
+                            ),
                         builder: (context, isFavorite) {
                           return GlassIconButton(
                             opacity: 0,
                             isFavorite: isFavorite,
                             onPressed: () {
-                              context.read<FavoritesCubit>().togglePlanFavorite(
-                                planCardModel[index].id,
-                              );
+                              context
+                                  .read<FavoritesCubit>()
+                                  .togglePlanFavorite(
+                                    planCardModel[index].id,
+                                  );
                             },
                           );
                         },
@@ -85,7 +92,7 @@ class SuggestedPlansList extends StatelessWidget {
                     ],
                   ),
                 ),
-
+    
                 Positioned(
                   left: 15,
                   right: 8,
@@ -100,12 +107,23 @@ class SuggestedPlansList extends StatelessWidget {
                   bottom: 10,
                   left: 10,
                   right: 10,
-                  child: CustomButton(
-                    onPressed: () {},
-                    label: 'Add Plan',
-                    radius: 26,
-                    color: Colors.black,
-                  ),
+                  child:
+                      BlocBuilder<SuggestedPlansCubit, SuggestedPlansState>(
+                        builder: (context, state) {
+                          return CustomButton(
+                            onPressed: () {
+                              context
+                                  .read<SuggestedPlansCubit>()
+                                  .getPlanDetails(
+                                    planId: planCardModel[index].id,
+                                  );
+                            },
+                            label: 'Add Plan',
+                            radius: 26,
+                            color: Colors.black,
+                          );
+                        },
+                      ),
                 ),
               ],
             ),

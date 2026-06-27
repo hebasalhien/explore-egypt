@@ -22,9 +22,9 @@ class PlanCardModel {
     );
   }
 
-  PlanCardModel copyWith({
-    bool? isFavorite,
-  }) {
+  PlanCardModel copyWith({bool?
+   isFavorite}) 
+   {
     return PlanCardModel(
       name: name,
       subtitle: subtitle,

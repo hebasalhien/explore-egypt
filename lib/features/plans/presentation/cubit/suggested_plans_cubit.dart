@@ -1,5 +1,6 @@
 import 'package:explore_egypt/features/home/model/entities/plan_card_model.dart';
 import 'package:explore_egypt/features/home/model/repos/home_repository.dart';
+import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:explore_egypt/features/plans/model/entities/categories_model.dart';
 import 'package:explore_egypt/features/plans/model/repo/suggested_plans_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -102,6 +103,16 @@ class SuggestedPlansCubit extends Cubit<SuggestedPlansState> {
           selectedCategoryId: categoryId,
         ),
       );
+    } catch (e) {
+      emit(SuggestedPlansError(error: e.toString()));
+    }
+  }
+  Future<void> getPlanDetails({required String planId}) async {
+    emit(SuggestedPlansLoading());
+    try {
+      final response = await _suggestedPlansRepo.getPlanDetails(planId: planId);
+      final trip = TripModel.fromJson(response);
+      emit(GetSuggestedPlanSuccessful(trip: trip));
     } catch (e) {
       emit(SuggestedPlansError(error: e.toString()));
     }

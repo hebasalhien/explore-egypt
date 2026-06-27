@@ -16,4 +16,9 @@ class SuggestedPlansRemoteDataSource {
     return response.data;
   }
 
+  Future<dynamic> getPlanDetails({required String planId}) async {
+    final response = await _apiService.dio.get('${ApiConstants.home}/suggested-plans/$planId');
+    return response.data;
+  }
+
 }

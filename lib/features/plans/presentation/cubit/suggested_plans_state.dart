@@ -13,6 +13,11 @@ final class SuggestedPlansLoaded extends SuggestedPlansState {
   final String selectedCategoryId;
   SuggestedPlansLoaded({required this.categories, required this.plans,required this.selectedCategoryId});
 }
+final class GetSuggestedPlanSuccessful extends SuggestedPlansState {
+final TripModel trip;
+
+GetSuggestedPlanSuccessful({required this.trip});
+}
 
 final class SuggestedPlansError extends SuggestedPlansState {
   final String error;

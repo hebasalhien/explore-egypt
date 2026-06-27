@@ -32,4 +32,16 @@ class SuggestedPlansRepo {
         type: DioExceptionType2.unknown,
       ));    }
   }
+  Future<dynamic> getPlanDetails({required String planId}) async {
+    try {
+      final data = await _dataSource.getPlanDetails(planId: planId);
+      return data;
+    } on DioException catch (e) {
+      throw ServerException(ExceptionHandleHelper.handleDioException(e));
+    } catch (e) {
+      throw ServerException(ExceptionResult(
+        message: 'An unexpected error occurred: $e',
+        type: DioExceptionType2.unknown,
+      ));    }
+  }
 }
