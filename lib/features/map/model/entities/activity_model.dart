@@ -1,3 +1,5 @@
+import 'package:explore_egypt/features/map/model/local/activity_model_hive.dart';
+
 class ActivityModel {
   final int cost;
   final String time;
@@ -42,4 +44,15 @@ class ActivityModel {
       'title': landmarkName,
     };
   }
+  ActivityModelHive toHive() {
+  return ActivityModelHive()
+    ..cost = cost
+    ..time = time
+    ..landmarkName = landmarkName
+    ..description = description
+    ..image = image ?? 'assets/images/pyramid.png'
+    ..lat = lat
+    ..lng = lng
+    ..id = id;
+}
 }

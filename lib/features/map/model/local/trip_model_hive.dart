@@ -1,3 +1,4 @@
+import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:hive/hive.dart';
 import 'day_model_hive.dart';
 
@@ -19,4 +20,15 @@ class TripModelHive extends HiveObject {
 
   @HiveField(4)
   late List<DayModelHive> dayModels;
+
+  TripModel toTripModel() {
+  return TripModel(
+    id: remoteId,
+    days: days,
+    title: title,
+    active: active,
+    dayModel: dayModels.map((day) => day.toActivityModel()).toList(),
+  );
+}
+
 }

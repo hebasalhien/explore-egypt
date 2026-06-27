@@ -1,4 +1,5 @@
 import 'package:explore_egypt/core/constants/storage_constants.dart';
+import 'package:explore_egypt/core/local_db/hive_service.dart';
 import 'package:explore_egypt/core/services/shared_pref_helper.dart';
 import 'package:explore_egypt/features/map/model/entities/landmark_model_plan.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,15 @@ class PlanCubit extends Cubit<PlanState> {
   }
 
   Future<void> getActivePlan() async {
-    emit(PlanLoading());
+    // 1️⃣ load from hive first for instant display
+    final localTrip = await HiveService().getActiveTrip();
+    if (localTrip != null) {
+      _activePlan = localTrip.toTripModel();
+      currentTrip = _activePlan;
+      emit(GetActivePlanSuccess(activePlan: _activePlan!));
+    } else {
+      emit(PlanLoading());
+    }
     try {
       final response = await mapRepository.getActivePlan();
       // empty array = no active plan
@@ -47,11 +56,16 @@ class PlanCubit extends Cubit<PlanState> {
 
       final trip = TripModel.fromJson(response);
       await SharedPrefHelper.setData(StorageConstants.currentPlanId, trip.id);
+      await HiveService().saveActiveTrip(trip.toHive());
       _activePlan = trip;
       currentTrip = trip;
       emit(GetActivePlanSuccess(activePlan: trip));
     } catch (e) {
-      emit(GetActivePlanFailure(e.toString()));
+      if (localTrip != null) {
+        emit(GetActivePlanSuccess(activePlan: _activePlan!));
+      } else {
+        emit(GetActivePlanFailure(e.toString()));
+      }
     }
   }
 
@@ -114,6 +128,7 @@ class PlanCubit extends Cubit<PlanState> {
       if (currentPlanId == newPlanId) {
         await mapRepository.deactivatePlan(currentPlanId: currentPlanId);
         await SharedPrefHelper.removeData(StorageConstants.currentPlanId);
+        await HiveService().deleteActiveTrip();
         _activePlan = null;
         if (_cachedPlans != null) {
           emit(NoActivePlan(plans: _cachedPlans!));
@@ -128,6 +143,7 @@ class PlanCubit extends Cubit<PlanState> {
       );
       final trip = TripModel.fromJson(result);
       await SharedPrefHelper.setData(StorageConstants.currentPlanId, trip.id);
+      await HiveService().saveActiveTrip(trip.toHive());
       _activePlan = trip;
       currentTrip = trip;
       emit(GetActivePlanSuccess(activePlan: trip));

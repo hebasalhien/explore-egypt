@@ -1,4 +1,5 @@
 import 'package:explore_egypt/features/map/model/entities/day_model.dart';
+import 'package:explore_egypt/features/map/model/local/trip_model_hive.dart';
 
 class TripModel {
   final String? id;
@@ -58,5 +59,13 @@ TripModel copyWith({
     conversationId: conversationId ?? this.conversationId,
     dayModel: dayModel ?? this.dayModel,
   );
+}
+TripModelHive toHive() {
+  return TripModelHive()
+    ..remoteId = id
+    ..days = days
+    ..title = title
+    ..active = active
+    ..dayModels = dayModel.map((day) => day.toHive()).toList();
 }
 }

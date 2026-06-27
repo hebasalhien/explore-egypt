@@ -1,3 +1,4 @@
+import 'package:explore_egypt/features/map/model/entities/activity_model.dart';
 import 'package:hive/hive.dart';
 
 part 'activity_model_hive.g.dart';
@@ -27,4 +28,17 @@ class ActivityModelHive extends HiveObject {
 
   @HiveField(7)
   late String id;
+
+  ActivityModel toActivityModel() {
+  return ActivityModel(
+    cost: cost,
+    time: time,
+    landmarkName: landmarkName,
+    description: description,
+    image: image,
+    lat: lat,
+    lng: lng,
+    id: id,
+  );
+}
 }

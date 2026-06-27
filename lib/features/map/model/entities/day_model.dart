@@ -1,4 +1,5 @@
 import 'package:explore_egypt/features/map/model/entities/activity_model.dart';
+import 'package:explore_egypt/features/map/model/local/day_model_hive.dart';
 
 class DayModel {
   final int totalCost;
@@ -21,6 +22,11 @@ class DayModel {
       "activities": activity.map((e) => e.toJson()).toList(),
     };
   }
+  DayModelHive toHive() {
+  return DayModelHive()
+    ..totalCost = totalCost
+    ..activities = activity.map((a) => a.toHive()).toList();
+}
 }
    
                                           

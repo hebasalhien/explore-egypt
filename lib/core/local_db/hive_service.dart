@@ -20,6 +20,8 @@ class HiveService {
 
     // open boxes
     await Hive.openBox<UserModelHive>(_userBox);
+      await Hive.deleteBoxFromDisk(_tripBox);
+  
     await Hive.openBox<TripModelHive>(_tripBox);
   }
 
@@ -46,7 +48,7 @@ class HiveService {
   Future<void> saveTrip(TripModelHive trip) async {
     final box = Hive.box<TripModelHive>(_tripBox);
 
-    if (box.length >= 5) {
+    if (box.length <= 1) {
       await box.deleteAt(0); // remove oldest
     }
 
@@ -63,5 +65,32 @@ class HiveService {
 
   Future<void> clearAllTrips() async {
     await Hive.box<TripModelHive>(_tripBox).clear();
+  }
+
+  /// delete active plan
+  Future<void> deleteActiveTrip() async {
+    final box = Hive.box<TripModelHive>(_tripBox);
+    final activeIndex = box.values.toList().indexWhere((t) => t.active);
+    if (activeIndex != -1) {
+      await box.deleteAt(activeIndex);
+    }
+  }
+
+  /// save active plan
+  Future<void> saveActiveTrip(TripModelHive trip) async {
+    await deleteActiveTrip();
+    final box = Hive.box<TripModelHive>(_tripBox);
+    await box.add(trip);
+    debugPrint('plan saved successfully');
+  }
+
+  /// get active plan
+  Future<TripModelHive?> getActiveTrip() async {
+    final box = Hive.box<TripModelHive>(_tripBox);
+    try {
+      return box.values.firstWhere((t) => t.active);
+    } catch (_) {
+      return null;
+    }
   }
 }
