@@ -13,6 +13,7 @@ import 'package:explore_egypt/routes/app_routes.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -70,7 +71,10 @@ class _HomePageState extends State<HomePage> {
                     spacing: 20,
                     children: [
                       SizedBox(height: 24),
-                      HomeCardWidget(screenWidth: screenWidth, screenHeight: screenHeight),
+                      HomeCardWidget(
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
+                      ),
                       Center(
                         child: Text(
                           homeState is HomeError
@@ -104,9 +108,62 @@ class _HomePageState extends State<HomePage> {
                   spacing: 20,
                   children: [
                     SizedBox(height: 24),
-                    HomeCardWidget(screenWidth: screenWidth, screenHeight: screenHeight),
-                    Center(
-                      child: CircularProgressIndicator(color: AppColors.kSecondary),
+                    HomeCardWidget(
+                      screenWidth: screenWidth,
+                      screenHeight: screenHeight,
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      period: Duration(seconds: 2),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * .9,
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  height: 20,
+                                  width: 150,
+                                  color: Colors.grey[300],
+                                ),
+
+                                Container(
+                                  height: 16,
+                                  width: 60,
+                                  color: Colors.grey[300],
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 225,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: 2,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    height: 220,
+                                    width:
+                                        MediaQuery.of(context).size.width * .4,
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                      horizontal: 6,
+                                    ), // Added horizontal gap between blocks
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(
+                                        16,
+                                      ), // Matches your app's smooth card style
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -185,17 +242,18 @@ class HomeLoadedWidget extends StatelessWidget {
       children: [
         const SizedBox(height: 24),
         HomeCardWidget(screenHeight: screenHeight, screenWidth: screenWidth),
-        if(homeState.activePlanModel !=null && homeState.activePlanModel!.isNotEmpty)
-        Column(
-          children: [
-            CustomRow(
-              onPressed: () {},
-              header: 'Your Active Plan ',
-              label: 'Live Now',
-            ),
-            ActivePlanWidget(activePlanModel: homeState.activePlanModel!),
-          ],
-        ),
+        if (homeState.activePlanModel != null &&
+            homeState.activePlanModel!.isNotEmpty)
+          Column(
+            children: [
+              CustomRow(
+                onPressed: () {},
+                header: 'Your Active Plan ',
+                label: 'Live Now',
+              ),
+              ActivePlanWidget(activePlanModel: homeState.activePlanModel!),
+            ],
+          ),
         HorizontalSection(
           header: 'Trending Expeditions',
           label: 'view all',

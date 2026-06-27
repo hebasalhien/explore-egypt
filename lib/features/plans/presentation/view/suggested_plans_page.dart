@@ -27,7 +27,7 @@ class SuggestedPlansPage extends StatelessWidget {
               current is SuggestedPlansError,
           builder: (context, state) {
             if (state is SuggestedPlansLoading) {
-              return Center(child: CircularProgressIndicator());
+              return PlansLoadingWidget(screenHeight: screenHeight, screenWidth: screenWidth, );
             } else if (state is SuggestedPlansError) {
               return Center(child: Text(state.error));
             } else if (state is SuggestedPlansLoaded) {

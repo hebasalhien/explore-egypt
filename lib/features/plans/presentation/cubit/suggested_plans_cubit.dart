@@ -107,6 +107,7 @@ class SuggestedPlansCubit extends Cubit<SuggestedPlansState> {
       emit(SuggestedPlansError(error: e.toString()));
     }
   }
+  
   Future<void> getPlanDetails({required String planId}) async {
     emit(SuggestedPlansLoading());
     try {

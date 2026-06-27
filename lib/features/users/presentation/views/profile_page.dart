@@ -18,8 +18,12 @@ class _ProfilePageState extends State<ProfilePage> {
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
           if (state is ProfileLoading) {
-            return Center(child: CircularProgressIndicator());
-          } else if (state is ProfileLoaded  ) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: AppColors.kPrimaryVariant,
+              ),
+            );
+          } else if (state is ProfileLoaded) {
             return ProfileWidget(userModel: state.user);
           } else if (state is ProfileLoadedFaild) {
             return Center(child: Text(state.errorMessage));
