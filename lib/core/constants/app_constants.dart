@@ -24,6 +24,7 @@ class AppConstants {
   static const String messageIcon = 'assets/icons/message.svg';
   static const String categoryIcon = 'assets/icons/category.svg';
   static const String audioGuideIcon = 'assets/icons/audio.svg';
+  static const String spaIcon = 'assets/icons/spa.svg';
 
   /// data
   static const String faqData = 'assets/data/FAQ.json';

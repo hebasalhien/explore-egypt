@@ -34,6 +34,11 @@ class SessionCubit extends Cubit<SessionState> {
   }
 
   Future<void> restoreSession() async {
+        final seen = await SharedPrefHelper.getBool(StorageConstants.seenOnboarding) ?? false;
+    if (!seen) {
+      emit(SessionNeedsOnboarding());
+      return;
+    }
     try {
       final token = await SharedPrefHelper.getSecuredString('accessToken');
       if (token == null) {
@@ -86,4 +91,9 @@ class SessionCubit extends Cubit<SessionState> {
       throw ('An unexpected error occurred $e');
     }
   }
+
+  Future<void> completeOnboarding() async {
+  await SharedPrefHelper.setData(StorageConstants.seenOnboarding  , true);
+  emit(SessionUnauthenticated()); // proceed to login
+}
 }

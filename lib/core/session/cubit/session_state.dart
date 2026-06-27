@@ -12,3 +12,5 @@ final class SessionAuthenticated extends SessionState {
 
 }
 class SessionUnauthenticated extends SessionState {}
+
+class SessionNeedsOnboarding extends SessionState { }

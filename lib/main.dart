@@ -4,6 +4,7 @@ import 'package:explore_egypt/core/session/cubit/session_cubit.dart';
 import 'package:explore_egypt/core/theme/app_theme.dart';
 import 'package:explore_egypt/features/auth/model/data_sources/auth_remote_data_source.dart';
 import 'package:explore_egypt/features/auth/model/repos/auth_repository.dart';
+import 'package:explore_egypt/features/onBoarding/presentation/views/on_boarding.dart';
 import 'package:explore_egypt/features/users/model/data_sources/user_remote_data_source.dart';
 import 'package:explore_egypt/features/users/model/repos/user_repository.dart';
 import 'package:explore_egypt/routes/app_routes.dart';
@@ -67,6 +68,8 @@ class MyApp extends StatelessWidget {
             return MainPage();
           } else if (state is SessionUnauthenticated) {
             return const LoginPage();
+          } else if (state is SessionNeedsOnboarding) {
+            return const OnboardingScreen();
           } else {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
