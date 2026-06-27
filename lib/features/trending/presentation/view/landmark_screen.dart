@@ -3,6 +3,7 @@ import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/core/utils/validators.dart';
 import 'package:explore_egypt/features/auth/presentation/view/widget/custom_text_field.dart';
 import 'package:explore_egypt/features/home/model/entities/landmark_model.dart';
+import 'package:explore_egypt/features/home/presentation/views/widgets/custom_gradient_button.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/dashed_rounded_button.dart';
 import 'package:explore_egypt/features/trending/model/data_source/comment_remote_data_source.dart';
 import 'package:explore_egypt/features/trending/model/entities/comment_model.dart';
@@ -153,10 +154,17 @@ class LandmarkScreen extends StatelessWidget {
                                                           }
                                                         },
                                                       ),
-
-                                                      AddCommentWidget(
-                                                        landmarkId:
-                                                            landmark.id!,
+                                                      DashedRoundedButton(
+                                                        onTap: () =>
+                                                            _showAddCommentSheet(
+                                                              innerContext,
+                                                              isNested: true,
+                                                              landmarkId:
+                                                                  landmark.id!,
+                                                            ),
+                                                        label: 'Add Comment',
+                                                        color: AppColors
+                                                            .kPrimaryColor,
                                                       ),
                                                     ],
                                                   ),
@@ -183,7 +191,7 @@ class LandmarkScreen extends StatelessWidget {
                         ),
 
                         BlocBuilder<CommentCubit, CommentState>(
-                          builder: (context, state) {
+                          builder: (blocContext, state) {
                             if (state is CommentLoaded &&
                                 state.comments.isNotEmpty) {
                               return CommentWidget(
@@ -191,7 +199,15 @@ class LandmarkScreen extends StatelessWidget {
                               );
                             } else if (state is CommentLoaded &&
                                 state.comments.isEmpty) {
-                              return AddCommentWidget(landmarkId: landmark.id!);
+                              return DashedRoundedButton(
+                                onTap: () => _showAddCommentSheet(
+                                  blocContext,
+                                  isNested: false,
+                                  landmarkId: landmark.id!,
+                                ),
+                                label: 'Add Comment',
+                                color: AppColors.kPrimaryColor,
+                              );
                             } else if (state is CommentLoading) {
                               return CircularProgressIndicator();
                             } else {
@@ -210,6 +226,146 @@ class LandmarkScreen extends StatelessWidget {
       ),
     );
   }
+
+  void _showAddCommentSheet(
+    BuildContext context, {
+    required bool isNested,
+    required String landmarkId,
+  }) {
+    final commentCubit = context.read<CommentCubit>();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      showDragHandle: true,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * .5,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(35)),
+      ),
+      builder: (sheetContext) {
+        final GlobalKey<FormState> formKey = GlobalKey();
+        final TextEditingController message = TextEditingController();
+        double selectedRating = 0; // ✅ holds the star rating
+
+        return BlocProvider.value(
+          value: commentCubit,
+          child: StatefulBuilder(
+            builder: (innerContext, setSheetState) {
+              return Container(
+                height: MediaQuery.of(context).size.height * .5,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(35)),
+                ),
+                child: Form(
+                  key: formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 20,
+                      children: [
+                        Text(
+                          'Add New Comment',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xff4A3728),
+                          ),
+                        ),
+                        Text(
+                          'Comment',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        CustomTextField(
+                          controller: message,
+                          label: 'Comment',
+                          validator: Validators.generalValidator,
+                          maxLength: 50,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Rating',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            StarRatingRow(
+                              onRatingChanged: (value) {
+                                setSheetState(
+                                  () => selectedRating = value.toDouble(),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        BlocConsumer<CommentCubit, CommentState>(
+                          listener: (context, state) {
+                            if (state is CommentLoaded) {
+                              if (isNested) {
+                                // close add-comment sheet + the comments sheet
+                                Navigator.pop(innerContext);
+                                //Navigator.pop(innerContext);
+                              } else {
+                                // only close add-comment sheet
+                                Navigator.pop(innerContext);
+                              }
+                            } else if (state is CommentFailure) {}
+                          },
+                          builder: (context, state) {
+                            return CustomGradientButton(
+                              screenWidth: MediaQuery.of(context).size.width,
+                              title: 'Add Comment',
+                              hasIcon: false,
+                              onPressed: state is CommentLoading
+                                  ? null
+                                  : () {
+                                      if (selectedRating == 0) {
+                                        ScaffoldMessenger.of(
+                                          innerContext,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Please select a rating',
+                                            ),
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      if (formKey.currentState!.validate()) {
+                                        context
+                                            .read<CommentCubit>()
+                                            .addNewComment(
+                                              landmarkId: landmarkId,
+                                              message: message.text,
+                                              rating: selectedRating,
+                                            );
+                                      }
+                                    },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
 }
 
 class CommentsList extends StatelessWidget {
@@ -221,6 +377,7 @@ class CommentsList extends StatelessWidget {
     return Expanded(
       child: ListView.builder(
         itemCount: commentModel.length,
+        reverse: true,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -228,127 +385,6 @@ class CommentsList extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-}
-
-class AddCommentWidget extends StatelessWidget {
-  const AddCommentWidget({super.key, required this.landmarkId});
-  final String landmarkId;
-  @override
-  Widget build(BuildContext context) {
-    return DashedRoundedButton(
-      onTap: () {
-        final commentCubit = context.read<CommentCubit>();
-
-        showBottomSheet(
-          context: context,
-          backgroundColor: Colors.white,
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * .5,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(35)),
-          ),
-          builder: (sheetContext) {
-            final GlobalKey<FormState> formKey = GlobalKey();
-            final TextEditingController message = TextEditingController();
-            double selectedRating = 0; // ✅ holds the star rating
-
-            return BlocProvider.value(
-              value: commentCubit,
-              child: StatefulBuilder(
-                builder: (innerContext, setSheetState) {
-                  return Container(
-                    height: MediaQuery.of(context).size.height * .5,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(35),
-                      ),
-                    ),
-                    child: Form(
-                      key: formKey,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          spacing: 20,
-                          children: [
-                            // ✅ Star rating row instead of the text field
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Rating',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey.shade600,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                StarRatingRow(
-                                  onRatingChanged: (value) {
-                                    setSheetState(
-                                      () => selectedRating = value.toDouble(),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                            Text('Comment'),
-                            CustomTextField(
-                              controller: message,
-                              label: 'Comment',
-                              validator: Validators.generalValidator,
-                              maxLength: 50,
-                            ),
-
-                            BlocConsumer<CommentCubit, CommentState>(
-                              listener: (context, state) {
- if (state is CommentLoaded) {
-                          Navigator.pop(innerContext); // close sheet on success
-                        } else if (state is CommentFailure) {
-                          
-                        }                              },
-                              builder: (context, state) {
-                                        return ElevatedButton(
-                          onPressed: state is CommentLoading
-                              ? null
-                              : () {
-                                  if (selectedRating == 0) {
-                                    ScaffoldMessenger.of(innerContext).showSnackBar(
-                                      const SnackBar(content: Text('Please select a rating')),
-                                    );
-                                    return;
-                                  }
-                                  if (formKey.currentState!.validate()) {
-                                    context.read<CommentCubit>().addNewComment(
-                                      landmarkId: landmarkId,
-                                      message: message.text,
-                                      rating: selectedRating,
-                                    );
-                                  }
-                                },
-                          child: state is CommentLoading
-                              ? const CircularProgressIndicator()
-                              : const Text('Add comment'),
-                        );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        );
-      },
-      label: 'Add Comment',
-      color: AppColors.kPrimaryColor,
     );
   }
 }
@@ -391,13 +427,13 @@ class _StarRatingRowState extends State<StarRatingRow> {
               scale: _hovered == value ? 1.2 : 1.0,
               duration: const Duration(milliseconds: 150),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 2),
                 child: Icon(
                   isActive ? Icons.star_rounded : Icons.star_outline_rounded,
                   color: isActive
                       ? const Color(0xFFEF9F27)
                       : Colors.grey.shade400,
-                  size: 36,
+                  size: 24,
                 ),
               ),
             ),

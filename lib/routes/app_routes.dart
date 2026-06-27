@@ -19,7 +19,10 @@ import 'package:explore_egypt/features/plans/model/data_source/suggested_plans_r
 import 'package:explore_egypt/features/plans/model/repo/suggested_plans_repo.dart';
 import 'package:explore_egypt/features/plans/presentation/cubit/suggested_plans_cubit.dart';
 import 'package:explore_egypt/features/plans/presentation/view/suggested_plans_page.dart';
+import 'package:explore_egypt/features/trending/model/data_source/landmarks_remote_data_source.dart';
+import 'package:explore_egypt/features/trending/model/repo/landmarks_repo.dart';
 import 'package:explore_egypt/features/trending/presentation/cubit/landmarks_cubit.dart';
+import 'package:explore_egypt/features/trending/presentation/view/landmark_screen.dart';
 import 'package:explore_egypt/features/trending/presentation/view/trending_page.dart';
 import 'package:explore_egypt/features/users/model/entities/user_model.dart';
 import 'package:explore_egypt/features/users/presentation/cubit/profile_cubit/profile_cubit.dart';
@@ -38,11 +41,11 @@ class AppRoutes {
   static const String profilePage = 'ProfilePage';
   static const String mainPage = 'MainPage';
   static const String homePage = 'HomePage';
-  //static const String paymentMethodsPage = 'PaymentMethodsPage';
   static const String helpCenterPage = 'HelpCenterPage';
   static const String trendingPage = 'TrendingPage';
   static const String suggestedPlansPage = 'SuggestedPlansPage';
   static const String editProfilePage = 'EditProfilePage';
+  static const String landmarkPage = 'LandmarkPage';
 
   static Route<dynamic> onGenerateRoute(settings) {
     switch (settings.name) {
@@ -106,18 +109,42 @@ class AppRoutes {
       case trendingPage:
         final landmarkModel = settings.arguments as List<LandmarkModel>;
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => LandmarksCubit(
-              initialLandmarks: landmarkModel,
-              homeRepository: HomeRepository(
-                HomeRemoteDataSource(ApiService.instance),
-              ),
-
-            )..getCategories(),
-            child: TrendingPage(),
-          ),
+          builder: (_) {
+            final api = ApiService.instance;
+            return BlocProvider(
+              create: (_) => LandmarksCubit(
+                initialLandmarks: landmarkModel,
+                landmarksRepository: LandmarksRepository(
+                  LandmarksRemoteDataSource(api),
+                ),
+                homeRepository: HomeRepository(
+                  HomeRemoteDataSource(api),
+                ),
+              )..getCategories(),
+              child: TrendingPage(),
+            );
+          },
         );
-
+        
+      case landmarkPage:
+        final landmarkModel = settings.arguments as LandmarkModel;
+        return MaterialPageRoute(
+          builder: (_) {
+            final api = ApiService.instance;
+            return BlocProvider(
+              create: (_) => LandmarksCubit(
+                initialLandmarks: [landmarkModel],
+                landmarksRepository: LandmarksRepository(
+                  LandmarksRemoteDataSource(api),
+                ),
+                homeRepository: HomeRepository(
+                  HomeRemoteDataSource(api),
+                ),
+              )..getCategories(),
+              child: LandmarkScreen(landmark: landmarkModel),
+            );
+          },
+        );
       case suggestedPlansPage:
         final plans = settings.arguments as List<PlanCardModel>;
 

@@ -21,6 +21,6 @@ class CommentRemoteDataSource {
       '${ApiConstants.landmarks}/$landmarkId${ApiConstants.comments}',
       data: {'message': message, 'rating': rating},
     );
-    return response.data;
+    return response;
   }
 }

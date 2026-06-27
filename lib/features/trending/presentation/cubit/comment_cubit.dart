@@ -36,10 +36,15 @@ class CommentCubit extends Cubit<CommentState> {
         message: message,
         rating: rating,
       );
-      List<CommentModel> comments = (response as List)
-          .map((e) => CommentModel.fromjson(response))
-          .toList();
-      emit(CommentLoaded(comments: comments));
+      if (response.statusCode == 200) {
+        final result = await _repo.getLandmarkComments(landmarkId: landmarkId);
+        List<CommentModel> comments = (result as List)
+            .map((e) => CommentModel.fromjson(e))
+            .toList();
+        emit(CommentLoaded(comments: comments));
+      } else {
+        emit(CommentLoaded(comments: []));
+      }
     } catch (e) {
       emit(CommentFailure());
     }
