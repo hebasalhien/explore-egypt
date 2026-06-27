@@ -1,8 +1,5 @@
-import 'package:explore_egypt/core/services/api_service.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/favorites/presentation/cubit/favorites_cubit.dart';
-import 'package:explore_egypt/features/home/model/data_sources/home_remote_data_source.dart';
-import 'package:explore_egypt/features/home/model/repos/home_repository.dart';
 import 'package:explore_egypt/features/home/presentation/cubit/home_cubit.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/active_plan_widget.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/custom_app_bar.dart';
@@ -60,49 +57,11 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: AppColors.kHBGColor,
       extendBodyBehindAppBar: true,
       appBar: CustomAppBar(),
-      body: BlocProvider(
-        create: (context) =>
-            HomeCubit(HomeRepository(HomeRemoteDataSource(ApiService.instance)))
-              ..getHome(),
-        child: BlocBuilder<HomeCubit, HomeState>(
-          builder: (context, homeState) {
-            return BlocBuilder<FavoritesCubit, FavoritesState>(
-              builder: (context, favState) {
-                if (homeState is HomeError || favState is FavoritesError) {
-                  return HomeBaseWidget(
-                    scrollController: _scrollController,
-                    appBarHeight: appBarHeight,
-                    gradientHeight: gradientHeight,
-                    child: Column(
-                      spacing: 20,
-                      children: [
-                        SizedBox(height: 24),
-                        HomeCardWidget(screenWidth: screenWidth, screenHeight: screenHeight),
-                        Center(
-                          child: Text(
-                            homeState is HomeError
-                                ? 'Home Error'
-                                : favState is FavoritesError
-                                ? favState.message
-                                : 'Error',
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                if (homeState is HomeLoaded && favState is FavoritesLoaded) {
-                  return HomeBaseWidget(
-                    gradientHeight: gradientHeight,
-                    appBarHeight: appBarHeight,
-                    scrollController: _scrollController,
-                    child: HomeLoadedWidget(
-                      screenHeight: screenHeight,
-                      screenWidth: screenWidth,
-                      homeState: homeState,
-                    ),
-                  );
-                }
+      body: BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, homeState) {
+          return BlocBuilder<FavoritesCubit, FavoritesState>(
+            builder: (context, favState) {
+              if (homeState is HomeError || favState is FavoritesError) {
                 return HomeBaseWidget(
                   scrollController: _scrollController,
                   appBarHeight: appBarHeight,
@@ -113,15 +72,48 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(height: 24),
                       HomeCardWidget(screenWidth: screenWidth, screenHeight: screenHeight),
                       Center(
-                        child: CircularProgressIndicator(color: AppColors.kSecondary),
+                        child: Text(
+                          homeState is HomeError
+                              ? 'Home Error'
+                              : favState is FavoritesError
+                              ? favState.message
+                              : 'Error',
+                        ),
                       ),
                     ],
                   ),
                 );
-              },
-            );
-          },
-        ),
+              }
+              if (homeState is HomeLoaded && favState is FavoritesLoaded) {
+                return HomeBaseWidget(
+                  gradientHeight: gradientHeight,
+                  appBarHeight: appBarHeight,
+                  scrollController: _scrollController,
+                  child: HomeLoadedWidget(
+                    screenHeight: screenHeight,
+                    screenWidth: screenWidth,
+                    homeState: homeState,
+                  ),
+                );
+              }
+              return HomeBaseWidget(
+                scrollController: _scrollController,
+                appBarHeight: appBarHeight,
+                gradientHeight: gradientHeight,
+                child: Column(
+                  spacing: 20,
+                  children: [
+                    SizedBox(height: 24),
+                    HomeCardWidget(screenWidth: screenWidth, screenHeight: screenHeight),
+                    Center(
+                      child: CircularProgressIndicator(color: AppColors.kSecondary),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

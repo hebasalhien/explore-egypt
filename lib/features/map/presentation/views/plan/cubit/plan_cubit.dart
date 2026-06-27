@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:explore_egypt/features/map/model/repo/map_repository.dart';
+import 'package:explore_egypt/features/plans/model/repo/suggested_plans_repo.dart';
 part 'plan_state.dart';
 
 class PlanCubit extends Cubit<PlanState> {
   final MapRepository mapRepository;
-  PlanCubit(this.mapRepository) : super(PlanInitial());
+  final SuggestedPlansRepo suggestedPlansRepo;
+  PlanCubit(this.mapRepository, this.suggestedPlansRepo) : super(PlanInitial());
   List<TripModel>? _cachedPlans;
   TripModel? _activePlan;
   TripModel? currentTrip;
@@ -50,6 +52,11 @@ class PlanCubit extends Cubit<PlanState> {
       // empty array = no active plan
       if (response is Map && response.isEmpty) {
         _cachedPlans = await mapRepository.getAllMyPlans();
+        if (_cachedPlans != null && _cachedPlans!.isNotEmpty) {
+          for (var trip in _cachedPlans!) {
+            userPlansId.add(trip.id!);
+          }
+        }
         emit(NoActivePlan(plans: _cachedPlans!));
         return;
       }
@@ -98,6 +105,18 @@ class PlanCubit extends Cubit<PlanState> {
 
     try {
       await mapRepository.deletePlan(tripId: tripId);
+      if (userPlansId.contains(tripId)) {
+        userPlansId.remove(tripId);
+      }
+      _cachedPlans = await mapRepository.getAllMyPlans();
+      if (_cachedPlans != null && _cachedPlans!.isNotEmpty) {
+        for (var trip in _cachedPlans!) {
+          userPlansId.add(trip.id!);
+        }
+      }
+      if (_cachedPlans == null || _cachedPlans!.isEmpty) {
+        emit(NoActivePlan());
+      }
     } on Exception catch (e) {
       emit(GetAllPlansFailure(e.toString()));
     }
@@ -157,11 +176,37 @@ class PlanCubit extends Cubit<PlanState> {
       try {
         final result = await mapRepository.savePlan(trip: trip);
         final TripModel updatedTrip = TripModel.fromJson(result);
-
+        if (updatedTrip.id != null) {
+          userPlansId.add(updatedTrip.id!);
+        }
         emit(PlanLoaded(trip: updatedTrip));
       } catch (e) {
         emit(PlanError());
       }
+    }
+  }
+
+  Future<void> loadAndSaveSuggestedPlan({required String planId}) async {
+    emit(LoadSuggestedPlanLoading());
+    try {
+      final response = await suggestedPlansRepo.getPlanDetails(planId: planId);
+      final trip = TripModel.fromJson(response);
+      final result = await mapRepository.savePlan(trip: trip);
+      final TripModel updatedTrip = TripModel.fromJson(result);
+      if (updatedTrip.id != null) {
+        userPlansId.add(updatedTrip.id!);
+      }
+      if (_cachedPlans != null) {
+        if (!_cachedPlans!.any((element) => element.id == updatedTrip.id)) {
+          _cachedPlans!.add(updatedTrip);
+        }
+      } else {
+        _cachedPlans = [updatedTrip];
+      }
+      currentTrip = updatedTrip;
+      emit(PlanLoaded(trip: updatedTrip));
+    } catch (e) {
+      emit(LoadSuggestedPlanFailure(e.toString()));
     }
   }
 

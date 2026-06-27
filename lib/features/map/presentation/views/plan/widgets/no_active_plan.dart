@@ -9,12 +9,14 @@ class NoActivePlanWidget extends StatelessWidget {
     super.key,
     required this.screenWidth,
     required this.screenHeight,
-    required this.plans
+    this.plans,
+    this.isSuggested = false,
   });
 
   final double screenWidth;
   final double screenHeight;
-  final List<TripModel> plans;
+  final List<TripModel>? plans;
+  final bool isSuggested;
 
   @override
   Widget build(BuildContext context) {
@@ -51,12 +53,12 @@ class NoActivePlanWidget extends StatelessWidget {
               endIndent: 150,
               radius: BorderRadius.circular(12),
             ),
-
-                 WhereToStart(
-                  screenHeight: screenHeight,
-                  screenWidth: screenWidth,
-                  plans: plans,
-                )
+            WhereToStart(
+              screenHeight: screenHeight,
+              screenWidth: screenWidth,
+              plans: plans,
+              isSuggested: isSuggested,
+            )
           ],
         ),
       ),

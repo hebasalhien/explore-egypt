@@ -7,12 +7,14 @@ class WhereToStart extends StatelessWidget {
     super.key,
     required this.screenHeight,
     required this.screenWidth,
-    this.plans
+    this.plans,
+    this.isSuggested = false,
   });
 
   final double screenHeight;
   final double screenWidth;
   final List<TripModel>? plans;
+  final bool isSuggested;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -22,7 +24,7 @@ class WhereToStart extends StatelessWidget {
         spacing: 16,
         children: [
           Text(
-            plans!= null && plans!.isNotEmpty ? 'Available Plans':'Suggested expedition',
+            isSuggested ? 'Suggested Plans' : 'Available Plans',
             style: Theme.of(
               context,
             ).textTheme.headlineMedium!.copyWith(fontSize: 20),

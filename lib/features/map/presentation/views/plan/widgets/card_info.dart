@@ -29,7 +29,12 @@ class CardInfo extends StatelessWidget {
         ElevatedButton(
           onPressed: () {
             if (trip != null) {
-              context.read<PlanCubit>().displayPlan(trip!);
+              final planCubit = context.read<PlanCubit>();
+              if (trip!.id != null && trip!.id != 'has no id' && !planCubit.userPlansId.contains(trip!.id)) {
+                planCubit.loadAndSaveSuggestedPlan(planId: trip!.id!);
+              } else {
+                planCubit.displayPlan(trip!);
+              }
             }
           },
           style: ElevatedButton.styleFrom(

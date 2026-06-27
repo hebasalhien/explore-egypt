@@ -88,3 +88,11 @@ final class DeleteModeToggled extends PlanState {
   final bool isDeleteMode;
   DeleteModeToggled({required this.isDeleteMode});
 }
+
+final class LoadSuggestedPlanLoading extends PlanState {}
+
+final class LoadSuggestedPlanFailure extends PlanState {
+  final String error;
+  LoadSuggestedPlanFailure(this.error);
+}
+

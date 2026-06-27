@@ -36,7 +36,7 @@ class _MapPageState extends State<MapPage> {
     });
     if (index != null && widget.activityModel != null) {
       final activity = widget.activityModel![index];
-      final currentZoom = _controller?.getCamera()?.zoom;
+      final currentZoom = _controller?.getCamera().zoom;
       _controller?.animateCamera(
         center: Geographic(lon: activity.lng, lat: activity.lat),
         zoom: currentZoom != null && currentZoom > 12 ? currentZoom : 12,

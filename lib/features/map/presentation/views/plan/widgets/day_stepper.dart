@@ -1,9 +1,7 @@
-import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/add_day_circle.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/day_circle.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/rps_custom_painter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DayStepper extends StatelessWidget {
   final int selectedDay;

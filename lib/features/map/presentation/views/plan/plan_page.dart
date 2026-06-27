@@ -1,3 +1,5 @@
+import 'package:explore_egypt/features/home/presentation/cubit/home_cubit.dart';
+import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/active_plan.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/widgets/no_active_plan.dart';
@@ -25,7 +27,9 @@ class PlanPage extends StatelessWidget {
           current is PlanLoaded ||
           current is GetActivePlanSuccess ||
           current is GetActivePlanFailure ||
-          current is NoActivePlan,
+          current is NoActivePlan ||
+          current is LoadSuggestedPlanLoading ||
+          current is LoadSuggestedPlanFailure,
       builder: (context, state) {
         return state is GetActivePlanSuccess
             ? ActivePlan(
@@ -47,11 +51,32 @@ class PlanPage extends StatelessWidget {
             ? Center(child: CircularProgressIndicator())
             : state is GetActivePlanFailure
             ? Center(child: Text(state.error))
+            : state is LoadSuggestedPlanFailure
+            ? Center(child: Text(state.error))
+            : state is LoadSuggestedPlanLoading
+            ? Center(child: CircularProgressIndicator())
             : state is NoActivePlan
-            ? NoActivePlanWidget(
-                screenWidth: screenWidth,
-                screenHeight: screenHeight,
-                plans: state.plans,
+            ? BlocBuilder<HomeCubit, HomeState>(
+                builder: (context, homeState) {
+                  final suggestedPlans = context.read<HomeCubit>().planCards;
+                  final hasNoAvailablePlans = state.plans.isEmpty;
+                  return NoActivePlanWidget(
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight,
+                    plans: hasNoAvailablePlans
+                        ? suggestedPlans
+                            .map((card) => TripModel(
+                                  id: card.id,
+                                  title: card.name,
+                                  days: 0,
+                                  active: false,
+                                  dayModel: [],
+                                ))
+                            .toList()
+                        : state.plans,
+                    isSuggested: hasNoAvailablePlans,
+                  );
+                },
               )
             // Current state is unrelated (e.g. GetAllPlansSuccess from the
             // plan-switcher sheet) — show the last successfully loaded trip.

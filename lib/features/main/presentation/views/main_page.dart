@@ -7,6 +7,9 @@ import 'package:explore_egypt/features/chat/presentation/views/chat_page.dart';
 import 'package:explore_egypt/features/favorites/model/data_source/favorites_remote_data_source.dart';
 import 'package:explore_egypt/features/favorites/model/repo/favorites_repo.dart';
 import 'package:explore_egypt/features/favorites/presentation/cubit/favorites_cubit.dart';
+import 'package:explore_egypt/features/home/model/data_sources/home_remote_data_source.dart';
+import 'package:explore_egypt/features/home/model/repos/home_repository.dart';
+import 'package:explore_egypt/features/home/presentation/cubit/home_cubit.dart';
 import 'package:explore_egypt/features/home/presentation/views/home_page.dart';
 import 'package:explore_egypt/features/main/presentation/cubit/navigation_cubit.dart';
 import 'package:explore_egypt/features/main/presentation/views/widgets/custom_navigation_destination.dart';
@@ -14,6 +17,8 @@ import 'package:explore_egypt/features/map/model/data_source/map_remote_data_sou
 import 'package:explore_egypt/features/map/model/repo/map_repository.dart';
 import 'package:explore_egypt/features/map/presentation/views/main_map_page.dart';
 import 'package:explore_egypt/features/map/presentation/views/plan/cubit/plan_cubit.dart';
+import 'package:explore_egypt/features/plans/model/data_source/suggested_plans_remote_data_source.dart';
+import 'package:explore_egypt/features/plans/model/repo/suggested_plans_repo.dart';
 import 'package:explore_egypt/features/users/model/data_sources/user_remote_data_source.dart';
 import 'package:explore_egypt/features/users/model/repos/user_repository.dart';
 import 'package:explore_egypt/features/users/presentation/cubit/profile_cubit/profile_cubit.dart';
@@ -46,7 +51,8 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     final mapRepository = MapRepository(MapRemoteDataSource(ApiService.instance));
-    _planCubit = PlanCubit(mapRepository)..getActivePlan();
+    final suggestedPlansRepo = SuggestedPlansRepo(SuggestedPlansRemoteDataSource(ApiService.instance));
+    _planCubit = PlanCubit(mapRepository, suggestedPlansRepo)..getActivePlan();
   }
 
   @override
@@ -64,6 +70,11 @@ class _MainPageState extends State<MainPage> {
           create: (context) => FavoritesCubit(
             FavoritesRepo(FavoritesRemoteDataSource(ApiService.instance)),
           )..loadFavorites(),
+        ),
+        BlocProvider(
+          create: (context) => HomeCubit(
+            HomeRepository(HomeRemoteDataSource(ApiService.instance)),
+          )..getHome(),
         ),
         // ✅ Provide PlanCubit at this level so both MainPage and MainMapPage share it
         BlocProvider.value(value: _planCubit),
