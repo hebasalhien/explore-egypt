@@ -17,21 +17,20 @@ class ActivityModelHiveAdapter extends TypeAdapter<ActivityModelHive> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ActivityModelHive()
-      ..cost = fields[0] as int
-      ..time = fields[1] as String
-      ..landmarkName = fields[2] as String
-      ..description = fields[3] as String
-      ..image = fields[4] as String
-      ..lat = fields[5] as double
-      ..lng = fields[6] as double
-      ..id = fields [7] as String;
-      
+      ..cost = fields[0] as int?
+      ..time = fields[1] as String?
+      ..landmarkName = fields[2] as String?
+      ..description = fields[3] as String?
+      ..image = fields[4] as String?
+      ..lat = fields[5] as double?
+      ..lng = fields[6] as double?
+      ..id = fields[7] as String?;
   }
 
   @override
   void write(BinaryWriter writer, ActivityModelHive obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.cost)
       ..writeByte(1)

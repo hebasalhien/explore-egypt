@@ -3,6 +3,7 @@ import 'package:explore_egypt/features/favorites/presentation/cubit/favorites_cu
 import 'package:explore_egypt/features/home/presentation/cubit/home_cubit.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/active_plan_widget.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/custom_app_bar.dart';
+import 'package:explore_egypt/features/home/presentation/views/widgets/custom_gradient_button.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/custom_row.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/home_card_widget.dart';
 import 'package:explore_egypt/features/home/presentation/views/widgets/horizontal_section.dart';
@@ -75,15 +76,31 @@ class _HomePageState extends State<HomePage> {
                         screenWidth: screenWidth,
                         screenHeight: screenHeight,
                       ),
-                      Center(
-                        child: Text(
-                          homeState is HomeError
-                              ? 'Home Error'
-                              : favState is FavoritesError
-                              ? favState.message
-                              : 'Error',
+                      
+                      if (homeState is HomeError || favState is FavoritesError)
+                        Center(
+                          child: Column(
+                            mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text('Something went wrong',style:TextStyle(fontSize: 24,fontWeight:FontWeight.bold)),
+                              Icon(
+                                Icons.warning,
+                                color: AppColors.kPrimaryVariant,
+                                size:30
+                              ),
+                              CustomGradientButton(
+                                screenWidth: screenWidth,
+                                title: 'Retry',
+                                onPressed: () {
+                                  context.read<HomeCubit>().getHome();
+                                  context
+                                      .read<FavoritesCubit>()
+                                      .loadFavorites();
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 );

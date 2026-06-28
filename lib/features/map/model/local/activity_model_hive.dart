@@ -6,39 +6,39 @@ part 'activity_model_hive.g.dart';
 @HiveType(typeId: 1)
 class ActivityModelHive extends HiveObject {
   @HiveField(0)
-  late int cost;
+  int? cost;
 
   @HiveField(1)
-  late String time;
+  String? time;
 
   @HiveField(2)
-  late String landmarkName;
+  String? landmarkName;
 
   @HiveField(3)
-  late String description;
+  String? description;
 
   @HiveField(4)
-  late String image;
+  String? image;
 
   @HiveField(5)
-  late double lat;
+  double? lat;
 
   @HiveField(6)
-  late double lng;
+  double? lng;
 
   @HiveField(7)
-  late String id;
+  String? id;
 
   ActivityModel toActivityModel() {
-  return ActivityModel(
-    cost: cost,
-    time: time,
-    landmarkName: landmarkName,
-    description: description,
-    image: image,
-    lat: lat,
-    lng: lng,
-    id: id,
-  );
-}
+    return ActivityModel(
+      cost: cost ?? 0,
+      time: time ?? '',
+      landmarkName: landmarkName ?? '',
+      description: description ?? '',
+      image: image ,
+      lat: lat ?? 0.0,
+      lng: lng ?? 0.0,
+      id: id ?? '',
+    );
+  }
 }

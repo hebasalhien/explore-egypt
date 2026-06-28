@@ -17,8 +17,8 @@ class DayModelHiveAdapter extends TypeAdapter<DayModelHive> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return DayModelHive()
-      ..totalCost = fields[0] as int
-      ..activities = (fields[1] as List).cast<ActivityModelHive>();
+      ..totalCost = fields[0] as int?
+      ..activities = (fields[1] as List?)?.cast<ActivityModelHive>();
   }
 
   @override

@@ -18,10 +18,10 @@ class TripModelHiveAdapter extends TypeAdapter<TripModelHive> {
     };
     return TripModelHive()
       ..remoteId = fields[0] as String?
-      ..days = fields[1] as int
-      ..title = fields[2] as String
-      ..active = fields[3] as bool
-      ..dayModels = (fields[4] as List).cast<DayModelHive>();
+      ..days = fields[1] as int?
+      ..title = fields[2] as String?
+      ..active = fields[3] as bool?
+      ..dayModels = (fields[4] as List?)?.cast<DayModelHive>();
   }
 
   @override

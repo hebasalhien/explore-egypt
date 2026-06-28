@@ -40,6 +40,7 @@ class PlanCubit extends Cubit<PlanState> {
   Future<void> getActivePlan() async {
     // 1️⃣ load from hive first for instant display
     final localTrip = await HiveService().getActiveTrip();
+      debugPrint('🟡 localTrip: $localTrip'); // null or not?
     if (localTrip != null) {
       _activePlan = localTrip.toTripModel();
       currentTrip = _activePlan;
@@ -62,6 +63,7 @@ class PlanCubit extends Cubit<PlanState> {
       }
 
       final trip = TripModel.fromJson(response);
+      debugPrint('trip.active from API: ${trip.active}');
       await SharedPrefHelper.setData(StorageConstants.currentPlanId, trip.id);
       await HiveService().saveActiveTrip(trip.toHive());
       _activePlan = trip;
@@ -162,8 +164,10 @@ class PlanCubit extends Cubit<PlanState> {
       );
       final trip = TripModel.fromJson(result);
       await SharedPrefHelper.setData(StorageConstants.currentPlanId, trip.id);
-      await HiveService().saveActiveTrip(trip.toHive());
-      _activePlan = trip;
+debugPrint('✅ activatePlan success, calling saveActiveTrip');
+await HiveService().saveActiveTrip(trip.toHive());
+debugPrint('✅ saveActiveTrip done');     
+ _activePlan = trip;
       currentTrip = trip;
       emit(GetActivePlanSuccess(activePlan: trip));
     } on Exception catch (e) {

@@ -7,14 +7,15 @@ part 'day_model_hive.g.dart';
 @HiveType(typeId: 2)
 class DayModelHive extends HiveObject {
   @HiveField(0)
-  late int totalCost;
+  int? totalCost;
 
   @HiveField(1)
-  late List<ActivityModelHive> activities;
+  List<ActivityModelHive>? activities;
+
   DayModel toActivityModel() {
-  return DayModel(
-    totalCost: totalCost,
-    activity: activities.map((a) => a.toActivityModel()).toList(),
-  );
-}
+    return DayModel(
+      totalCost: totalCost ?? 0,
+      activity: activities?.map((a) => a.toActivityModel()).toList() ?? [],
+    );
+  }
 }

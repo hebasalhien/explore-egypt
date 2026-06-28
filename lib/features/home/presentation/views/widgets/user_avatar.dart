@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:explore_egypt/core/constants/app_constants.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +16,12 @@ class UserAvatar extends StatelessWidget {
         child: CircleAvatar(
           radius: 20,
           backgroundColor: Colors.transparent,
-          backgroundImage: (imageUrl != null && imageUrl!.isNotEmpty)
-              ? NetworkImage(imageUrl!)
-              : const AssetImage(AppConstants.userImage), // Placeholder icon
+          backgroundImage: const AssetImage(
+            AppConstants.userImage,
+          ), // ← always shown as fallback
+          foregroundImage: (imageUrl != null && imageUrl!.isNotEmpty)
+              ? CachedNetworkImageProvider(imageUrl!)
+              : null, // Placeholder icon
         ),
       ),
     );

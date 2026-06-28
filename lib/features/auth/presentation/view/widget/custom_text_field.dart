@@ -13,6 +13,10 @@ class CustomTextField extends StatelessWidget {
     this.textInputAction = TextInputAction.next,
     this.onFieldSubmitted,
     this.onChanged,
+    this.textAlign = TextAlign.start,
+    this.textAlignVertical,
+    this.maxLength,
+    this.contentPadding,
   });
   final TextEditingController controller;
   final bool isObscure;
@@ -23,15 +27,22 @@ class CustomTextField extends StatelessWidget {
   final TextInputAction textInputAction;
   final void Function(String)? onFieldSubmitted;
   final void Function(String)? onChanged;
+  final TextAlign textAlign;
+  final TextAlignVertical? textAlignVertical;
+  final int? maxLength;
+  final EdgeInsetsGeometry? contentPadding;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       obscureText: isObscure,
       decoration: InputDecoration(
+        counterText: '',
         hintText: label,
         suffixIcon: sufixIcon,
-        contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 14),
+        contentPadding:
+            contentPadding ??
+            EdgeInsets.symmetric(vertical: 14, horizontal: 14),
       ),
       validator: validator,
       keyboardType: keyboardType,
@@ -39,6 +50,9 @@ class CustomTextField extends StatelessWidget {
       onFieldSubmitted: onFieldSubmitted,
       cursorColor: AppColors.kPrimaryColor,
       onChanged: onChanged,
+      textAlign: textAlign,
+      textAlignVertical: textAlignVertical,
+      maxLength: maxLength,
     );
   }
 }

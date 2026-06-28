@@ -42,6 +42,11 @@ class OtpCustomTextField extends StatelessWidget {
               FocusScope.of(context).nextFocus();
             }
           },
+          textAlign: TextAlign.center,
+          textAlignVertical: TextAlignVertical.center,
+          maxLength: 1,
+          contentPadding: EdgeInsets.zero,
+          
         ),
       ),
     );

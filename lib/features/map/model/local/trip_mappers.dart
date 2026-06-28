@@ -4,7 +4,6 @@ import 'package:explore_egypt/features/map/model/entities/trip_model.dart';
 import 'activity_model_hive.dart';
 import 'day_model_hive.dart';
 import 'trip_model_hive.dart';
-
 // ─── Activity ───────────────────────────────────────
 ActivityModelHive toHiveActivity(ActivityModel model) {
   return ActivityModelHive()
@@ -12,21 +11,22 @@ ActivityModelHive toHiveActivity(ActivityModel model) {
     ..time = model.time
     ..landmarkName = model.landmarkName
     ..description = model.description
-    ..image = model.image??'assets/images/pyramid.png'
+    ..image = model.image ?? 'assets/images/pyramid.png'
     ..lat = model.lat
-    ..lng = model.lng;
+    ..lng = model.lng
+    ..id = model.id;  // ← was missing!
 }
 
 ActivityModel fromHiveActivity(ActivityModelHive hive) {
   return ActivityModel(
-    cost: hive.cost,
-    time: hive.time,
-    landmarkName: hive.landmarkName,
-    description: hive.description,
-    image: hive.image,
-    lat: hive.lat,
-    lng: hive.lng,
-    id: hive.id,
+    cost: hive.cost ?? 0,
+    time: hive.time ?? '',
+    landmarkName: hive.landmarkName ?? '',
+    description: hive.description ?? '',
+    image: hive.image ?? 'assets/images/pyramid.png',
+    lat: hive.lat ?? 0.0,
+    lng: hive.lng ?? 0.0,
+    id: hive.id ?? '',
   );
 }
 
@@ -39,8 +39,8 @@ DayModelHive toHiveDay(DayModel model) {
 
 DayModel fromHiveDay(DayModelHive hive) {
   return DayModel(
-    totalCost: hive.totalCost,
-    activity: hive.activities.map(fromHiveActivity).toList(),
+    totalCost: hive.totalCost ?? 0,
+    activity: hive.activities?.map(fromHiveActivity).toList() ?? [], // ← null safe
   );
 }
 
@@ -50,16 +50,16 @@ TripModelHive toHiveTrip(TripModel model) {
     ..remoteId = model.id
     ..days = model.days
     ..title = model.title
-    ..active = model.active
+    ..active = true  // ← always true when saving active trip
     ..dayModels = model.dayModel.map(toHiveDay).toList();
 }
 
 TripModel fromHiveTrip(TripModelHive hive) {
   return TripModel(
     id: hive.remoteId,
-    days: hive.days,
-    title: hive.title,
-    active: hive.active,
-    dayModel: hive.dayModels.map(fromHiveDay).toList(),
+    days: hive.days ?? 0,
+    title: hive.title ?? '',
+    active: hive.active ?? false,
+    dayModel: hive.dayModels?.map(fromHiveDay).toList() ?? [], // ← null safe
   );
 }

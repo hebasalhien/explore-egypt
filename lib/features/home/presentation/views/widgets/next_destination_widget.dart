@@ -17,17 +17,13 @@ class NextDestinationWidget extends StatelessWidget {
           context,
         ).textTheme.titleSmall!.copyWith(color: AppColors.kRowActionColor),
       ),
-      subtitle: Expanded(
-        child: Text(
-          activePlanModel.time != null
-              ? '${activePlanModel.time} - ${activePlanModel.title}'
-              : '',
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium!.copyWith(fontSize: 18),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
+      subtitle: Text(
+        activePlanModel.time != null
+            ? '${activePlanModel.time} - ${activePlanModel.title}'
+            : '',
+        style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 18),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
       leading: Container(
         width: 50,

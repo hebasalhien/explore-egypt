@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:explore_egypt/core/theme/app_colors.dart';
 import 'package:explore_egypt/features/map/model/entities/activity_model.dart';
 import 'package:flutter/material.dart';
@@ -68,8 +69,8 @@ class PlanStepCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   image: DecorationImage(
-                    image: activityModel.image != null
-                        ? NetworkImage(activityModel.image!)
+                    image: activityModel.image != null && activityModel.image!.startsWith('http')
+                        ? CachedNetworkImageProvider(activityModel.image!)
                         : AssetImage("assets/images/pyramid.png"),
                   ),
                 ),

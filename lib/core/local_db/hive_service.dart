@@ -19,9 +19,7 @@ class HiveService {
     Hive.registerAdapter(TripModelHiveAdapter());
 
     // open boxes
-    await Hive.openBox<UserModelHive>(_userBox);
-      await Hive.deleteBoxFromDisk(_tripBox);
-  
+    await Hive.openBox<UserModelHive>(_userBox);  
     await Hive.openBox<TripModelHive>(_tripBox);
   }
 
@@ -67,30 +65,31 @@ class HiveService {
     await Hive.box<TripModelHive>(_tripBox).clear();
   }
 
-  /// delete active plan
-  Future<void> deleteActiveTrip() async {
-    final box = Hive.box<TripModelHive>(_tripBox);
-    final activeIndex = box.values.toList().indexWhere((t) => t.active);
-    if (activeIndex != -1) {
-      await box.deleteAt(activeIndex);
-    }
-  }
+
 
   /// save active plan
   Future<void> saveActiveTrip(TripModelHive trip) async {
-    await deleteActiveTrip();
-    final box = Hive.box<TripModelHive>(_tripBox);
-    await box.add(trip);
-    debugPrint('plan saved successfully');
-  }
+  final box = Hive.box<TripModelHive>(_tripBox);
+  debugPrint('💾 saving to box: $_tripBox');
+  debugPrint('💾 box isOpen: ${box.isOpen}');
+  trip.active = true;
+  await box.put('activeTrip', trip);
+  debugPrint('💾 box length after save: ${box.length}'); // ← does this print 1?
+  debugPrint('plan saved successfully');
+}
 
-  /// get active plan
-  Future<TripModelHive?> getActiveTrip() async {
-    final box = Hive.box<TripModelHive>(_tripBox);
-    try {
-      return box.values.firstWhere((t) => t.active);
-    } catch (_) {
-      return null;
-    }
-  }
+Future<void> deleteActiveTrip() async {
+  final box = Hive.box<TripModelHive>(_tripBox);
+  await box.delete('activeTrip'); // ✅ deletes same fixed key
+}
+
+Future<TripModelHive?> getActiveTrip() async {
+  final box = Hive.box<TripModelHive>(_tripBox);
+  debugPrint('📦 box length: ${box.length}');
+  debugPrint('📦 box keys: ${box.keys.toList()}');
+  debugPrint('📦 box values: ${box.values.map((e) => 'id:${e.remoteId} active:${e.active}').toList()}');
+
+  final trip = box.get('activeTrip'); // ✅ always reads same fixed key
+  return trip; // returns null automatically if not found
+}
 }

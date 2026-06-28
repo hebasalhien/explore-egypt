@@ -50,7 +50,7 @@ class ActivityModel {
     ..time = time
     ..landmarkName = landmarkName
     ..description = description
-    ..image = image ?? 'assets/images/pyramid.png'
+    ..image = image 
     ..lat = lat
     ..lng = lng
     ..id = id;
