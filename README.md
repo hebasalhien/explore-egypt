@@ -22,7 +22,7 @@ A cross-platform Flutter Graduation-Project app for exploring Egypt's landmarks,
 
 ### 🎥 Video Demo
 
-![App Demo](assets/screenshots/Graduation-project.gif)
+![App Demo](assets/screenshots/video_demo.gif)
 
 ---
 
